@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+  <Properties>
+    <Property name="name" type="java.lang.String" value="Form" noResource="true"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="closeDialog"/>
+  </Events>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="2"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jLabel104" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jLabel103" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jLabel102" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jLabel101" alignment="0" min="-2" pref="83" max="-2" attributes="1"/>
+                      </Group>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="szallitoUtca" alignment="0" pref="293" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="szallitoIrsz" min="-2" pref="36" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jLabel106" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="szallitoVaros" pref="218" max="32767" attributes="0"/>
+                          </Group>
+                          <Component id="szallitoNev" alignment="0" pref="293" max="32767" attributes="0"/>
+                          <Component id="szallitoAdoszam" alignment="1" pref="293" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jLabel111" max="32767" attributes="1"/>
+                          <Component id="jLabel105" alignment="0" max="32767" attributes="1"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="szallitoBankszamlaszam" alignment="0" pref="293" max="32767" attributes="0"/>
+                          <Component id="szallitoMegjegyzes" alignment="0" pref="293" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <Component id="jButton1" alignment="1" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel101" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="szallitoNev" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel102" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="szallitoIrsz" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel106" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="szallitoVaros" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel103" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="szallitoUtca" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel104" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="szallitoAdoszam" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel105" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="szallitoBankszamlaszam" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel111" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="szallitoMegjegyzes" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="32767" attributes="0"/>
+              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Component class="javax.swing.JButton" name="jButton1">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="jButton1" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="szallitoNev">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="szallitoNev" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="szallitoNevFocusLost"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel106">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="jLabel106" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="szallitoVaros">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="szallitoVaros" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="szallitoVarosFocusLost"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="szallitoUtca">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="szallitoUtca" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="szallitoUtcaFocusLost"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="szallitoIrsz">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="szallitoIrsz" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="szallitoIrszFocusLost"/>
+        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="szallitoIrszKeyReleased"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel101">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="jLabel101" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="szallitoBankszamlaszam">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="szallitoBankszamlaszam" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="szallitoBankszamlaszamFocusLost"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel103">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="jLabel103" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel111">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="jLabel111" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel104">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="jLabel104" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="szallitoAdoszam">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="szallitoAdoszam" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="szallitoAdoszamFocusLost"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="szallitoMegjegyzes">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="szallitoMegjegyzes" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="szallitoMegjegyzesFocusLost"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel102">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="jLabel102" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel105">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="jLabel105" noResource="true"/>
+      </Properties>
+    </Component>
+  </SubComponents>
+</Form>

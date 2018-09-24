@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Mon Sep 17 16:29:13 CEST 2018:
+ Derby The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137) változat betöltése: a816c00e-0165-e7ef-7068-00000e4ccaa0 példány
+a(z) F:\moviez\_prog\cezeszamlazo2.0\testdb adatbázis-könyvtáron: sun.misc.Launcher$AppClassLoader@5674cd4d 
+
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_152-b16
+user.dir=F:\moviez\_prog\cezeszamlazo2.0
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Az adatbázis-osztálybetöltõ elindult - derby.database.classpath=''

@@ -1,0 +1,229 @@
+Angola-AO
+Benin-BJ
+Botswana-BW
+Brit Indiai-Óceániai Terület-IO
+Burkina Faso-BF
+Burundi-BI
+Comore-szigetek-KM
+Csád-TD
+Dél-Afrikai Köztársaság-ZA
+Dzsibuti-DJ
+Egyenlítõi Guinea-GQ
+Elefántcsontpart-CI
+Eritrea-ER
+Etiópia-ET
+Gabon-GA
+Gambia-GM
+Ghana-GH
+Guinea-GN
+Guinea-Bissau-GW
+Kamerun-CM
+Kenya-KE
+Kongo-CG
+Kongói Demokratikus Köztársaság-CD
+Közép-Afrikai Köztársaság-CF
+Lesotho-LS
+Liberia-LR
+Malawi-MW
+Malgas Köztársaság-MG
+Mali-ML
+Mauritania-MR
+Mauritius-MU
+Mozambik-MZ
+Namibia-NA
+Niger-NE
+Nigéria-NG
+Ruanda-RW
+Saint Helena-SH
+Sao Tome és Principe-ST
+Seychelle-szigetek-SC
+Sierra Leone-SL
+Somalia-SO
+Szenegambia-SN
+Szudán-SD
+Szvázi-SZ
+Tanzánia-TZ
+Togo-TG
+Uganda-UG
+Zambia-ZM
+Zimbabwe-ZW
+Zöldfoki Köztársaság-CV
+Algéria-DZ
+Egyiptom-EG
+Líbia-LY
+Marokkó-MA
+Tunézia-TN
+Argentina-AR
+Bolívia-BO
+Brazília-BR
+Chile-CL
+Equador-EC
+Falkland-szigetek-FK
+Guyana-GY
+Kolumbia-CO
+Paraguay-PY
+Peru-PE
+Suriname-SR
+Uruguay-UY
+Venezuela-VE
+Amerikai Egyesült Államok-US
+Kanada-CA
+Amerikai Virgin-szigetek-VI
+Anguilla-AI
+Antigua-AG
+Aruba-AW
+Bahama-szigetek Nassau-BS
+Barbadosz-BB
+Belize-BZ
+Bermuda-BM
+Brit Virgin-szigetek-VG
+Costa Rica-CR
+Dominika-DM
+Dominikai Köztársaság-DO 
+Grenada-GD
+Guatemala-GT
+Haiti-HT
+Holland Antillák-AN
+Honduras-HN
+Jamaica-JM
+Kajmán-szigetek-KY
+Kuba-CU
+Mexikó-MX
+Montserrat-MS
+Nicaragua-NI
+Panama-PA
+Saint Christopher és Nevis-KN
+Saint Lucia-LC
+Saint Vincent Grenada-VC
+Salvador-SV
+Trinidad and Tobago-TT
+Turks- és Caicos-szigetek-TC
+Afganisztán-AF
+Banglades-BD
+Bhután-BT
+Brunei-BN
+Mianmar-MM
+Dél-Korea-KR
+Fülöp-szigetek-PH
+Hongkong-HK
+India-IN
+Indonézia-ID
+Japán-JP
+Kambodzsa-KH
+Kazahsztán-KZ
+Kína-CN
+Kirgizisztán-KG
+Koreai NDK-KP
+Laosz-LA
+Macao-MO
+Malaysia-MY
+Maldív-szigetek-MV
+Mongólia-MN
+Nepál-NP
+Pakisztán-PK
+Sri Lanka-LK
+Szingapúr-SG
+Tadzsikisztán-TJ
+Taiwan-TW
+Thaiföld-TH
+Türkmenisztán-TM
+Üzbegisztán-UZ
+Vietnámi Köztársaság-VN
+Azerbajdzsán-AZ
+Grúzia-GE
+Jordánia-JO
+Libanon-LB
+Örményország-AM
+Palesztína-PS
+Szíria-SY
+Bahrain-BH
+Egyesült Arab Emírségek-AE
+Irak-IQ
+Irán-IR
+Izrael-IL
+Jemeni Arab Köztársaság-YE
+Kuwait-KW
+Omán-OM
+Quatar-QA
+Szaud-Arábia-SA
+Izland-IS
+Liechtenstein-LI
+Norvégia-NO
+Svájc-CH
+Albánia-AL
+Andorra-AD
+Belorusszia-BY
+Bosznia-Hercegovina-BA
+Bulgária-BG
+Gibraltár-GI
+Guernsey-GG
+Horvátország-HR
+Isle of Man-IM
+Jersey-JE
+Szerbia-Montenegró-CS
+Makedónia-MK
+Moldova-MD
+Oroszország-RU
+Románia-RO
+San Marino-SM
+Törökország-TR
+Ukrajna-UA
+Vatikán-VA
+Ausztria-AT
+Belgium-BE
+Dánia-DK 
+Egyesült Királyság-GB
+Finnország-FI
+Franciaország-FR
+Görögország-GR
+Hollandia-NL
+Írország-IE
+Luxembourg-LU
+Németország-DE
+Olaszország-IT
+Portugália-PT
+Spanyolország-ES
+Svédország-SE
+Ciprus-CY
+Csehország-CZ
+Észtország-EE
+Lengyelország-PL
+Lettország-LV
+Litvánia-LT
+Magyarország-HU
+Málta-MT
+Szlovákia-SK
+Szlovénia-SI
+Amerikai Szamoa-AS
+Guam-GU
+United States Minor Outlying Islands-UM
+Coco-sziget-CC
+Heard-sziget és McDonalds-szigetek-HM
+Karácsony-sziget-CX
+Norfolk szigetek-NF
+Ausztrália-AU
+Északi-Mariana-szigetek-MP
+Fidzsi-szigetek-FJ
+Francia Polinézia-PF
+Kiribati Köztársaság Tuvalu-KI
+Marshall-szigetek-MH
+Mikronézia-FM
+Nauru-NR
+Nyugat-Szamoa-WS
+Palau-PW
+Papua és Új-Ginea-PG
+Pitcairn-sziget-PN
+Solomon-szigetek-SB
+Tonga-TO
+Tuvalu-TV
+Új-Kaledónia-NC
+Új-Zéland-NZ
+Vanuatu-VU
+Wallis és Futuna-WF
+Antarktisz-AQ
+Bouvet-sziget-BV
+Déli-Georgia és Déli-Sandwich-szigetek-GS
+Francia Déli Területek-TF
+Cook-szigetek-CK
+Niue-NU
+Tokelau-szigetek-TK

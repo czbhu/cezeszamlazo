@@ -2197,7 +2197,7 @@ private void csvKeszitesEgyszeruMenuItemActionPerformed(java.awt.event.ActionEve
         {
             File[] listOfFiles = folders[i].listFiles();
             
-            if(listOfFiles.length > 0)
+            if(listOfFiles != null)
             {
                 for(int j = 0; j < listOfFiles.length; j++)
                 {

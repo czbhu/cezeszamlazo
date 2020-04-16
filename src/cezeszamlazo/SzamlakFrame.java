@@ -2197,14 +2197,17 @@ private void csvKeszitesEgyszeruMenuItemActionPerformed(java.awt.event.ActionEve
         {
             File[] listOfFiles = folders[i].listFiles();
             
-            for(int j = 0; j < listOfFiles.length; j++)
+            if(listOfFiles.length > 0)
             {
-                String fileName = listOfFiles[j].getName();
-                String extension = FilenameUtils.getExtension(fileName);
-                
-                if(extension.equals("pdf"))
+                for(int j = 0; j < listOfFiles.length; j++)
                 {
-                    listOfFiles[j].delete();
+                    String fileName = listOfFiles[j].getName();
+                    String extension = FilenameUtils.getExtension(fileName);
+
+                    if(extension.equals("pdf"))
+                    {
+                        listOfFiles[j].delete();
+                    }
                 }
             }
         }

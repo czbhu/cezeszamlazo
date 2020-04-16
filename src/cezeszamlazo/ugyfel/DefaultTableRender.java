@@ -12,8 +12,8 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author Fejlesztes
  */
-public class DefaultTableRender extends JLabel implements TableCellRenderer {
-
+public class DefaultTableRender extends JLabel implements TableCellRenderer
+{
     protected boolean showColor = false;
     protected boolean userTable = false;
 
@@ -29,7 +29,8 @@ public class DefaultTableRender extends JLabel implements TableCellRenderer {
     /**
      * alap konstruktor
      */
-    public DefaultTableRender() {
+    public DefaultTableRender()
+    {
         setOpaque(true);
     }
 
@@ -39,55 +40,83 @@ public class DefaultTableRender extends JLabel implements TableCellRenderer {
      * @param cols a formázandó oszlopok azonosítói
      * @param colLabels a az oszlopokhoz tartozó címkék
      */
-    public DefaultTableRender(int[] cols, String[] colLabels) {
+    public DefaultTableRender(int[] cols, String[] colLabels)
+    {
         this.cols = cols;
         this.colLabels = colLabels;
         setOpaque(true);
     }
 
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-
-        if (isSelected) {
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+    {
+        if (isSelected)
+        {
             // ha a sor kijelölt akkor kiemelt színt kap
             setBackground(Color.decode("#3399FF"));
             setForeground(Color.white);
-        } else {
-
-            if (this.isShowColor()) {
-                if (column == 0) {
-                    int ajanlatkeresId = Integer.parseInt(String.valueOf(table.getValueAt(row, column)));
-//                    String color = PixiRendszer.getColorByAjalkeresId(ajanlatkeresId);
+        }
+        else
+        {
+            if (this.isShowColor())
+            {
+                if (column == 0)
+                {
+                    //int ajanlatkeresId = Integer.parseInt(String.valueOf(table.getValueAt(row, column)));
+                    //String color = PixiRendszer.getColorByAjalkeresId(ajanlatkeresId);
                     String color = "";
-                    if (color != "") {
-                        setBackground(Color.decode(color));
-                    } else {
-                        if (row % 2 == 1) {
+                    
+                    if(color.isEmpty())
+                    {
+                        if(row % 2 == 1)
+                        {
                             setBackground(Color.decode("#F5F5F5"));
-                        } else {
+                        }
+                        else
+                        {
                             setBackground(Color.white);
                         }
                     }
-                }
-            } else if (this.isUserTable()) {
-                if (column == 0) {
-                    int userId = Integer.parseInt(String.valueOf(table.getValueAt(row, column)));
-//                    String color = PixiRendszer.getColorByUserId(userId);
-                    String color = "";
-                    if (color != "") {
+                    else
+                    {
                         setBackground(Color.decode(color));
-                    } else {
-                        if (row % 2 == 1) {
+                    }
+                }
+            }
+            else if(isUserTable())
+            {
+                if (column == 0)
+                {
+                    //int userId = Integer.parseInt(String.valueOf(table.getValueAt(row, column)));
+                    //String color = PixiRendszer.getColorByUserId(userId);
+                    String color = "";
+                    
+                    if (color.isEmpty())
+                    {
+                        if (row % 2 == 1)
+                        {
                             setBackground(Color.decode("#F5F5F5"));
-                        } else {
+                        }
+                        else
+                        {
                             setBackground(Color.white);
                         }
                     }
+                    else
+                    {
+                        setBackground(Color.decode(color));
+                    }
                 }
-            } else {
+            }
+            else
+            {
                 //egyébként felváltva soronként eltérő szín
-                if (row % 2 == 1) {
+                if (row % 2 == 1)
+                {
                     setBackground(Color.decode("#F5F5F5"));
-                } else {
+                }
+                else
+                {
                     setBackground(Color.white);
                 }
             }
@@ -95,28 +124,38 @@ public class DefaultTableRender extends JLabel implements TableCellRenderer {
             // a betűszín egységesen fekete
             setForeground(Color.black);
         }
+        
         // font beállítása
         setFont(table.getFont());
-        if (cols.length != 0) {
+        
+        if (cols.length != 0)
+        {
             // ha vannak formázandó oszlopok
-            for (int i = 0; i < cols.length; i++) {
-                if (column == cols[i]) {
+            for (int i = 0; i < cols.length; i++)
+            {
+                if (column == cols[i])
+                {
                     // ha az aktuális oszlop pont formázandó
                     // akkor jobbra igazítjuk és 
                     setHorizontalAlignment(RIGHT);
                     setText(Functions.numberFormat(String.valueOf(value), true) + (colLabels[i].isEmpty() ? "" : " " + colLabels[i]));
                     break;
-                } else {
+                }
+                else
+                {
                     // egyébként balra igazítva beállítjuk a szöveget
                     setHorizontalAlignment(LEFT);
                     setText(String.valueOf(value));
                 }
             }
-        } else {
+        }
+        else
+        {
             // egyébként balra igazítva beállítjuk a szöveget
             setHorizontalAlignment(LEFT);
             setText(String.valueOf(value));
         }
+        
         return this;
     }
 
@@ -135,5 +174,4 @@ public class DefaultTableRender extends JLabel implements TableCellRenderer {
     public boolean isUserTable() {
         return userTable;
     }
-
 }

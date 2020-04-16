@@ -4,14 +4,17 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
-public class FrissitesDialog extends javax.swing.JDialog {
-
+public class FrissitesDialog extends javax.swing.JDialog
+{
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
     public static final int RET_OK = 1;
+    
+    private int returnStatus = RET_CANCEL;
 
-    public FrissitesDialog(String verzio, String leiras) {
+    public FrissitesDialog(String verzio, String leiras)
+    {
 	initComponents();
 
 	this.verzio.setText("Elérhető az új " + verzio + " verzió!");
@@ -31,7 +34,6 @@ public class FrissitesDialog extends javax.swing.JDialog {
 
 	setModal(true);
 	setVisible(true);
-
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
@@ -225,5 +227,4 @@ public class FrissitesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel ok;
     private javax.swing.JLabel verzio;
     // End of variables declaration//GEN-END:variables
-    private int returnStatus = RET_CANCEL;
 }

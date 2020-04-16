@@ -1,6 +1,5 @@
 package cezeszamlazo;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -12,26 +11,23 @@ import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 /**
- *
  * @author adam.papp
  */
-public class CalendarDialog extends javax.swing.JDialog {
-
-    /** A return status code - returned if Cancel button has been pressed */
-    public static final int RET_CANCEL = 0;
-    /** A return status code - returned if OK button has been pressed */
-    public static final int RET_OK = 1;
+public class CalendarDialog extends javax.swing.JDialog
+{
+    public static final int RET_CANCEL = 0, RET_OK = 1;
     
-    private String[] honapok = {"január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"};
-    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    private final String[] honapok = {"január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"};
+    private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     private int year, month, day;
-    private JTextField field;
+    private JTextField field = null;
+    private JLabel label = null;
 
-    /** Creates new form CalendarDialog */
     public CalendarDialog(java.awt.Frame parent, JTextField field)
     {
 	super(parent, true);
@@ -39,21 +35,30 @@ public class CalendarDialog extends javax.swing.JDialog {
 	
 	this.field = field;
 	Calendar c = Calendar.getInstance();
+        
 	if (!field.getText().isEmpty())
         {
 	    String[] date = field.getText().split("-", 3);
+            
 	    this.year = Integer.parseInt(date[0]);
 	    this.month = Integer.parseInt(date[1]);
+            month--;//mivel a hónapok indexelése 0-tól kezdődik
 	    this.day = Integer.parseInt(date[2]);
-	    month--;
-	    c.set(year, month, day);
+	    
+	    c.set(year, month, day); 
+            
+            System.err.println(year + " - " + month + " - " + day);
 	}
         else
         {
 	    year = c.get(Calendar.YEAR);
 	    month = c.get(Calendar.MONTH);
-            month++;
+            month++;//mivel a hónapok indexelése 0-tól kezdődik
+            day = c.get(Calendar.DAY_OF_MONTH);
+            
+            System.err.println(year + " - " + month + " - " + day);
 	}
+        
 	szamolNaptar(c);
 	
 	Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -74,17 +79,75 @@ public class CalendarDialog extends javax.swing.JDialog {
 	String cancelName = "cancel";
 	InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-	ActionMap actionMap = getRootPane().getActionMap();
-	actionMap.put(cancelName, new AbstractAction() {
+	
+        ActionMap actionMap = getRootPane().getActionMap();
+	actionMap.put(cancelName, new AbstractAction()
+        {
+	    public void actionPerformed(ActionEvent e)
+            {
+		doClose(RET_CANCEL);
+	    }
+	});
+    }
+    
+    public CalendarDialog(java.awt.Frame parent, JLabel label)
+    {
+	super(parent, true);
+	initComponents();
+	
+	this.label = label;
+	Calendar c = Calendar.getInstance();
+        
+	if (!label.getText().isEmpty())
+        {
+	    String[] date = label.getText().split("-", 3);
+	    this.year = Integer.parseInt(date[0]);
+	    this.month = Integer.parseInt(date[1]);
+	    this.day = Integer.parseInt(date[2]);
+	    month--;
+	    c.set(year, month, day);
+	}
+        else
+        {
+	    year = c.get(Calendar.YEAR);
+	    month = c.get(Calendar.MONTH);
+            month++;
+	}
+        
+	szamolNaptar(c);
+	
+	Toolkit toolkit = Toolkit.getDefaultToolkit();
+	Dimension screenSize = toolkit.getScreenSize();
+	int x = (screenSize.width - getWidth()) / 2;
+	int y = (screenSize.height - getHeight()) / 2;
+	
+	java.net.URL url = ClassLoader.getSystemResource("cezeszamlazo/resources/calendar.png");
+	java.awt.Image img = toolkit.createImage(url);
+	setIconImage(img);
+	
+	setLocation(x, y);
+	
+	setTitle("Naptár");
+	setVisible(true);
 
-	    public void actionPerformed(ActionEvent e) {
+	// Close the dialog when Esc is pressed
+	String cancelName = "cancel";
+	InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        
+	ActionMap actionMap = getRootPane().getActionMap();
+	actionMap.put(cancelName, new AbstractAction()
+        {
+	    public void actionPerformed(ActionEvent e)
+            {
 		doClose(RET_CANCEL);
 	    }
 	});
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
-    public int getReturnStatus() {
+    public int getReturnStatus()
+    {
 	return returnStatus;
     }
 
@@ -97,13 +160,11 @@ public class CalendarDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        button_Previous = new javax.swing.JButton();
         calendarHeader = new javax.swing.JLabel();
+        button_Next = new javax.swing.JButton();
         jScrollPane8 = new javax.swing.JScrollPane();
         calendarTabla = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
 
         setName("Form"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -113,10 +174,28 @@ public class CalendarDialog extends javax.swing.JDialog {
         });
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(cezeszamlazo.App.class).getContext().getResourceMap(CalendarDialog.class);
+        button_Previous.setIcon(resourceMap.getIcon("button_Previous.icon")); // NOI18N
+        button_Previous.setText(resourceMap.getString("button_Previous.text")); // NOI18N
+        button_Previous.setName("button_Previous"); // NOI18N
+        button_Previous.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_PreviousActionPerformed(evt);
+            }
+        });
+
         calendarHeader.setFont(resourceMap.getFont("calendarHeader.font")); // NOI18N
         calendarHeader.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         calendarHeader.setText(resourceMap.getString("calendarHeader.text")); // NOI18N
         calendarHeader.setName("calendarHeader"); // NOI18N
+
+        button_Next.setIcon(resourceMap.getIcon("button_Next.icon")); // NOI18N
+        button_Next.setText(resourceMap.getString("button_Next.text")); // NOI18N
+        button_Next.setName("button_Next"); // NOI18N
+        button_Next.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_NextActionPerformed(evt);
+            }
+        });
 
         jScrollPane8.setName("jScrollPane8"); // NOI18N
 
@@ -151,97 +230,32 @@ public class CalendarDialog extends javax.swing.JDialog {
         });
         jScrollPane8.setViewportView(calendarTabla);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("jPanel1.border.lineColor"))); // NOI18N
-        jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jPanel1.setName("jPanel1"); // NOI18N
-        jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanel1MouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jPanel1MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jPanel1MouseExited(evt);
-            }
-        });
-
-        jLabel1.setIcon(resourceMap.getIcon("jLabel1.icon")); // NOI18N
-        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
-        jLabel1.setName("jLabel1"); // NOI18N
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
-        );
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("jPanel2.border.lineColor"))); // NOI18N
-        jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jPanel2.setName("jPanel2"); // NOI18N
-        jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanel2MouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jPanel2MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jPanel2MouseExited(evt);
-            }
-        });
-
-        jLabel2.setIcon(resourceMap.getIcon("jLabel2.icon")); // NOI18N
-        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
-        jLabel2.setName("jLabel2"); // NOI18N
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(button_Previous, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(calendarHeader, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(button_Next, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(calendarHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(calendarHeader, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(button_Previous)
+                        .addComponent(button_Next)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -257,102 +271,121 @@ public class CalendarDialog extends javax.swing.JDialog {
 private void calendarTablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_calendarTablaMouseClicked
 	int row = calendarTabla.getSelectedRow();
 	int col = calendarTabla.getSelectedColumn();
-	if (row >= 0 && col >= 0 && evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1) {
+        
+	if (row >= 0 && col >= 0 && evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1)
+        {
 	    String d = String.valueOf(calendarTabla.getValueAt(row, col));
-	    try {
+            
+	    try
+            {
 		Calendar c = Calendar.getInstance();
 		day = Integer.parseInt(d);
 		c.set(year, month, day);
-		field.setText(format.format(c.getTime()));
-                System.out.println("kiválasztott nap:"+format.format(c.getTime()));
+                
+                if(field == null)
+                {
+                    label.setText(format.format(c.getTime()));
+                }
+                else
+                {
+                    field.setText(format.format(c.getTime()));
+                }
+                
+                System.out.println("Kiválasztott nap: " + format.format(c.getTime()) + " (CalendarDialog.java/calendarTableMouseClicked())");
 		setVisible(false);
-	    } catch (NumberFormatException ex) {
+	    }
+            catch (NumberFormatException ex)
+            {
 		System.out.println("NumberFormatException váltódott ki!");
 		ex.printStackTrace();
 	    }
 	}
 }//GEN-LAST:event_calendarTablaMouseClicked
 
-    private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
-	month--;
+    private void button_PreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_PreviousActionPerformed
+        month--;
+        
 	if (month < 0)
         {
-	    month = 12;
+	    month = 11;
 	    year = year - 1;
 	}
-        System.out.println("month:" + month);
+        
+        System.out.println("month:" + month + " CalendarDialog.java/jpanel1MouseClicked()");
 	Calendar c = Calendar.getInstance();
 	c.set(year, month, day);
+        
 	szamolNaptar(c);
-    }//GEN-LAST:event_jPanel1MouseClicked
+    }//GEN-LAST:event_button_PreviousActionPerformed
 
-    private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
-	month++;
-	if (month > 12) {
+    private void button_NextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_NextActionPerformed
+        month++;
+        
+	if (month >= 12)
+        {
 	    month = 0;
 	    year = year + 1;
 	}
-        System.out.println("month:" + month);
+        
+        System.out.println("month:" + month + " CalendarDialog.java/jpanel2MouseClicked()");
 	Calendar c = Calendar.getInstance();
 	c.set(year, month, day);
 	szamolNaptar(c);
-    }//GEN-LAST:event_jPanel2MouseClicked
-
-    private void jPanel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseEntered
-	jPanel1.setBackground(Color.decode("#abd043"));
-    }//GEN-LAST:event_jPanel1MouseEntered
-
-    private void jPanel1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseExited
-	jPanel1.setBackground(Color.decode("#f0f0f0"));
-    }//GEN-LAST:event_jPanel1MouseExited
-
-    private void jPanel2MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseEntered
-	jPanel2.setBackground(Color.decode("#abd043"));
-    }//GEN-LAST:event_jPanel2MouseEntered
-
-    private void jPanel2MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseExited
-	jPanel2.setBackground(Color.decode("#f0f0f0"));
-    }//GEN-LAST:event_jPanel2MouseExited
+    }//GEN-LAST:event_button_NextActionPerformed
     
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
 	returnStatus = retStatus;
 	setVisible(false);
 	dispose();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton button_Next;
+    private javax.swing.JButton button_Previous;
     private javax.swing.JLabel calendarHeader;
     private javax.swing.JTable calendarTabla;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane8;
     // End of variables declaration//GEN-END:variables
     private int returnStatus = RET_CANCEL;
     
-    private void szamolNaptar(Calendar c) {
-	calendarHeader.setText(c.get(Calendar.YEAR) + ". " + honapok[c.get(Calendar.MONTH)]);
+    private void szamolNaptar(Calendar c)
+    {
+        calendarHeader.setText(year + ". " + honapok[month]);
+	//calendarHeader.setText(c.get(Calendar.YEAR) + ". " + honapok[c.get(Calendar.MONTH)]);
 	Calendar temp = c;
 	temp.set(Calendar.DATE, 1);
 	int elso = temp.get(Calendar.DAY_OF_WEEK); //azt adja vissza, hogy hanyadik nap a héten, az aktuális nap
-	if (elso == 1) {
+	
+        if (elso == 1)
+        {
 	    elso = 6;
-	} else {
+	}
+        else
+        {
 	    elso -= 2;
 	}
+        
 	int osszes = temp.getActualMaximum(Calendar.DAY_OF_MONTH); //az adott hónap összes napját adja vissza
-	for (int i = 0; i < 6; i++) {
-	    for (int j = 0; j < 7; j++) {
+	
+        for (int i = 0; i < 6; i++)
+        {
+	    for (int j = 0; j < 7; j++)
+            {
 		calendarTabla.setValueAt("", i, j);
 	    }
 	}
-	for (int i = 1; i <= osszes; i++) {
+        
+	for (int i = 1; i <= osszes; i++)
+        {
 	    int row = (i + elso - 1) / 7;
 	    calendarTabla.setValueAt(i, row, (i + elso - 1) % 7);
 	}
+        
 	CalendarTableRender render = new CalendarTableRender();
-	for (int i = 0; i < calendarTabla.getColumnCount(); i++) {
+        
+	for (int i = 0; i < calendarTabla.getColumnCount(); i++)
+        {
 	    calendarTabla.getColumnModel().getColumn(i).setCellRenderer(render);
 	}
     }

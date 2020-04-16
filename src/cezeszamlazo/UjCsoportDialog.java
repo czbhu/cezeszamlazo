@@ -11,8 +11,8 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
-public class UjCsoportDialog extends javax.swing.JDialog {
-
+public class UjCsoportDialog extends javax.swing.JDialog
+{
     /**
      * A return status code - returned if Cancel button has been pressed
      */
@@ -24,10 +24,8 @@ public class UjCsoportDialog extends javax.swing.JDialog {
     private String id = "0";
     private boolean isSzamlaCsoport = true;
 
-    /**
-     * Creates new form UjCsoportDialog
-     */
-    public UjCsoportDialog(String id, boolean isSzamlaCsoport) {
+    public UjCsoportDialog(String id, boolean isSzamlaCsoport)
+    {
         initComponents();
 
         this.id = id;
@@ -36,37 +34,51 @@ public class UjCsoportDialog extends javax.swing.JDialog {
         Object[][] select;
 
         String title = "";
-        if (isSzamlaCsoport && id.equalsIgnoreCase("0")) {
+        
+        if (isSzamlaCsoport && id.equalsIgnoreCase("0"))
+        {
             title = "Új számla csoport";
-        } else if (isSzamlaCsoport && !id.equalsIgnoreCase("0")) {
+        }
+        else if (isSzamlaCsoport && !id.equalsIgnoreCase("0"))
+        {
             title = "Számla csoport módosítás";
+            
             Query query = new Query.QueryBuilder()
-                    .select("nev, leiras")
-                    .from("szamlazo_szamla_csoportok")
-                    .where("id = " + id)
-                    .build();
+                .select("nev, leiras")
+                .from("szamlazo_szamla_csoportok")
+                .where("id = " + id)
+                .build();
             select = App.db.select(query.getQuery());
-            nev.setText(String.valueOf(select[0][0]));
-            leiras.setText(String.valueOf(select[0][1]));
-        } else if (!isSzamlaCsoport && id.equalsIgnoreCase("0")) {
-            title = "Új termék csoport";
-        } else if (!isSzamlaCsoport && !id.equalsIgnoreCase("0")) {
-            title = "Termék csoport módosítás";
-            Query query = new Query.QueryBuilder()
-                    .select("nev, leiras ")
-                    .from("szamlazo_termek_csoportok")
-                    .where("id = " + id)
-                    .build();
-            select = App.db.select(query.getQuery());
+            
             nev.setText(String.valueOf(select[0][0]));
             leiras.setText(String.valueOf(select[0][1]));
         }
+        else if (!isSzamlaCsoport && id.equalsIgnoreCase("0"))
+        {
+            title = "Új termék csoport";
+        }
+        else if (!isSzamlaCsoport && !id.equalsIgnoreCase("0"))
+        {
+            title = "Termék csoport módosítás";
+            
+            Query query = new Query.QueryBuilder()
+                .select("nev, leiras ")
+                .from("szamlazo_termek_csoportok")
+                .where("id = " + id)
+                .build();
+            select = App.db.select(query.getQuery());
+            
+            nev.setText(String.valueOf(select[0][0]));
+            leiras.setText(String.valueOf(select[0][1]));
+        }
+        
         init(title);
 
         // Close the dialog when Esc is pressed
         String cancelName = "cancel";
         InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        
         ActionMap actionMap = getRootPane().getActionMap();
         actionMap.put(cancelName, new AbstractAction() {
 
@@ -76,9 +88,6 @@ public class UjCsoportDialog extends javax.swing.JDialog {
         });
     }
 
-    /**
-     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
-     */
     public int getReturnStatus() {
         return returnStatus;
     }
@@ -189,21 +198,25 @@ public class UjCsoportDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        if (nev.getText().isEmpty()) {
+        if (nev.getText().isEmpty())
+        {
             HibaDialog h = new HibaDialog("Nincs megadva név!", "Ok", "");
-        } else {
+        } else
+        {
             Object[] o = new Object[2];
             o[0] = nev.getText();
             o[1] = leiras.getText();
+            
             if (isSzamlaCsoport && id.equalsIgnoreCase("0")) {
-                App.db.insert("INSERT INTO szamlazo_szamla_csoportok (nev, leiras) VALUES (?, ?)", o, o.length);
+                App.db.insert("INSERT INTO szamlazo_szamla_csoportok (nev, leiras) VALUES (?, ?)", o);
             } else if (isSzamlaCsoport && !id.equalsIgnoreCase("0")) {
-                App.db.insert("UPDATE szamlazo_szamla_csoportok SET nev = ?, leiras = ? WHERE id = " + id, o, o.length);
+                App.db.insert("UPDATE szamlazo_szamla_csoportok SET nev = ?, leiras = ? WHERE id = " + id, o);
             } else if (!isSzamlaCsoport && id.equalsIgnoreCase("0")) {
-                App.db.insert("INSERT INTO szamlazo_termek_csoportok (nev, leiras) VALUES (?, ?)", o, o.length);
+                App.db.insert("INSERT INTO szamlazo_termek_csoportok (nev, leiras) VALUES (?, ?)", o);
             } else if (!isSzamlaCsoport && !id.equalsIgnoreCase("0")) {
-                App.db.insert("UPDATE szamlazo_termek_csoportok SET nev = ?, leiras = ? WHERE id = " + id, o, o.length);
+                App.db.insert("UPDATE szamlazo_termek_csoportok SET nev = ?, leiras = ? WHERE id = " + id, o);
             }
+            
             doClose(RET_OK);
         }
     }//GEN-LAST:event_okButtonActionPerformed
@@ -212,18 +225,17 @@ public class UjCsoportDialog extends javax.swing.JDialog {
         doClose(RET_CANCEL);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    /**
-     * Closes the dialog
-     */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
 
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
         returnStatus = retStatus;
         setVisible(false);
         dispose();
     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel jLabel1;
@@ -235,18 +247,24 @@ public class UjCsoportDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     private int returnStatus = RET_CANCEL;
 
-    private void init(String title) {
+    private void init(String title)
+    {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         int x = (screenSize.width - getWidth()) / 2;
         int y = (screenSize.height - getHeight()) / 2;
 
         java.net.URL url;
-        if (isSzamlaCsoport) {
+        
+        if (isSzamlaCsoport)
+        {
             url = ClassLoader.getSystemResource("cezeszamlazo/resources/uj-szamla-csoportok-16.png");
-        } else {
+        }
+        else
+        {
             url = ClassLoader.getSystemResource("cezeszamlazo/resources/uj-termek-csoportok-16.png");
         }
+        
         java.awt.Image img = toolkit.createImage(url);
 
         setIconImage(img);

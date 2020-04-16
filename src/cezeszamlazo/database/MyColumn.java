@@ -1,15 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cezeszamlazo.database;
 
 /**
  *
  * @author szekus
  */
-public class MyColumn {
+public class MyColumn
+{
     private  int columnNumber;
     private String columnName;
 
@@ -38,8 +34,4 @@ public class MyColumn {
     public String toString() {
         return "columnNumber: " + columnNumber + " - " + "columnName: " + columnName  ;
     }
-    
-    
-   
-    
 }

@@ -3,19 +3,23 @@ package cezeszamlazo;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-public class EncodeDecode {
-
+public class EncodeDecode
+{
     public static boolean on = true;
 
-    public static String encode(String text) {
-        if (!EncodeDecode.on) {
+    public static String encode(String text)
+    {
+        if (!EncodeDecode.on)
+        {
             return text;
         }
         
-        if (EncodeDecode.on == false) {
+        if (EncodeDecode.on == false)
+        {
             return text;
         }
-        text = text.replace("Á", "&Aacute;");
+        
+        /*text = text.replace("Á", "&Aacute;");
         text = text.replace("á", "&aacute;");
         text = text.replace("É", "&Eacute;");
         text = text.replace("é", "&eacute;");
@@ -32,17 +36,23 @@ public class EncodeDecode {
         text = text.replace("Ü", "&Uuml;");
         text = text.replace("ü", "&uuml;");
         text = text.replace("Ű", "&#368");
-        text = text.replace("ű", "&#369");
+        text = text.replace("ű", "&#369");*/
+        
         return text;
     }
 
-    public static String decode(String text) {
-        if (text == null) {
+    public static String decode(String text)
+    {
+        if (text == null)
+        {
             return "";
         }
-        if (EncodeDecode.on == false) {
+        
+        if (EncodeDecode.on == false)
+        {
             return text;
         }
+        
         text = text.replace("&Aacute;", "Á");
         text = text.replace("&aacute;", "á");
         text = text.replace("&Eacute;", "É");
@@ -61,48 +71,171 @@ public class EncodeDecode {
         text = text.replace("&uuml;", "ü");
         text = text.replace("&#368", "Ű");
         text = text.replace("&#369", "ű");
+        
         return text;
     }
 
-    public static String numberFormat(String num, boolean tizedes) {
+    public static String numberFormat(String num, boolean tizedes)
+    {
         String result = "";
         double szam = Double.parseDouble(num);
         NumberFormat formatter;
-        if (tizedes) {
-            if (szam - Math.floor(szam) != 0) {
-                formatter = new DecimalFormat("#,###.00");
-            } else {
-                formatter = new DecimalFormat("#,###");
+        
+        if (tizedes)
+        {
+            if (szam - Math.floor(szam) != 0)
+            {
+                formatter = new DecimalFormat("#,##0.00");
             }
-        } else {
+            else
+            {
+                formatter = new DecimalFormat("#,###.00");
+            }
+        }
+        else
+        {
             formatter = new DecimalFormat("#,###");
         }
-        if (szam == 0) {
+        
+        if (szam == 0)
+        {
             result = "0";
-        } else {
+        }
+        else
+        {
             result = formatter.format(szam);
         }
+        
+        return result;
+    }
+    
+    public static String numberFormat(double num, boolean tizedes, int paymentMethod)
+    {
+        String result;
+        double szam = num;
+        NumberFormat formatter;
+        
+        if (tizedes)
+        {
+            if (szam - Math.floor(szam) != 0)
+            {
+                formatter = new DecimalFormat("#,##0.00");
+            }
+            else
+            {
+                formatter = new DecimalFormat("#,###.00");
+            }
+        }
+        else
+        {
+            formatter = new DecimalFormat("#,###");
+        }
+        
+        if (szam == 0)
+        {
+            result = "0";
+        }
+        else
+        {
+            if(paymentMethod != 1)
+            {
+                szam = Round(szam, tizedes, paymentMethod);
+            }
+            
+            result = formatter.format(szam);
+        }
+        
+        result = result.replace(",", ".");
+        
+        return result;
+    }
+    
+    private static double Round(double value, boolean foreignCurrency, int paymentMethod)
+    {
+        double result;
+        
+        if(foreignCurrency)
+        {
+            result = ((int)Math.round(value * 100)) / 100.0;
+        }
+        else
+        {
+            if (paymentMethod != 1)
+            {
+                value = (int)Math.round(value);
+                int endOfNumber = (int) (Math.abs(value) % 10);
+
+                switch (endOfNumber)
+                {
+                    case 1:
+                    case 6:
+                    {
+                        value = value - 1;
+                        break;
+                    }
+                    case 2:
+                    case 7:
+                    {
+                        value = value - 2;
+                        break;
+                    }
+                    case 3:
+                    case 8:
+                    {
+                        value = value + 2;
+                        break;
+                    }
+                    case 4:
+                    case 9:
+                    {
+                        value = value + 1;
+                        break;
+                    }
+                    case 0:
+                    case 5:
+                    {
+                        result = value;
+                        break;
+                    }
+                    default:
+                        value = value;
+                        break;
+                }
+            }
+            result = value;
+        }
+        
         return result;
     }
 
-    public static String csakszam(String text, int size, boolean tizedes) {
+    public static String csakszam(String text, int size, boolean tizedes)
+    {
         String valid = "0123456789";
-        if (tizedes) {
+        
+        if (tizedes)
+        {
             valid += ".";
         }
+        
         text = text.replace(",", ".");
         String result = "";
-        for (int i = 0; i < text.length(); i++) {
-            if (valid.contains(text.substring(i, i + 1))) {
+        
+        for (int i = 0; i < text.length(); i++)
+        {
+            if (valid.contains(text.substring(i, i + 1)))
+            {
                 result += text.substring(i, i + 1);
             }
         }
-        if (size != 0) {
-            if (result.length() > size) {
+        
+        if (size != 0)
+        {
+            if (result.length() > size)
+            {
                 result = result.substring(0, size);
             }
         }
+        
         return result;
     }
-
 }

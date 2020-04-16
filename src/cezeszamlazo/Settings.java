@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package cezeszamlazo;
 
 
@@ -15,30 +11,37 @@ import java.util.Properties;
  *
  * @author Fejlesztés
  */
-public class Settings {
-
+public class Settings
+{
     private static final String propertiesDir = "dat";
     private static final String propertiesFile = "settings.properties";
     
-   public static String getId() {
+   public static String getId()
+   {
        return Settings.get("id");
    }
 
-    public static String get(String name) {
-        try {
+    public static String get(String name)
+    {
+        try
+        {
             check();
             Properties prop = new Properties();
             prop.load(new FileInputStream(getPath()));
 
             return prop.getProperty(name);
-        } catch (IOException ex) {
+        }
+        catch (IOException ex)
+        {
             ex.printStackTrace();
             return "";
         }
     }
 
-    public static void set(String key, String value) {
-        try {
+    public static void set(String key, String value)
+    {
+        try
+        {
             check();
             FileInputStream in = new FileInputStream(getPath());
             Properties props = new Properties();
@@ -49,32 +52,41 @@ public class Settings {
             props.setProperty(key, value);
             props.store(out, null);
             out.close();
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
+        }
+        catch (ArrayIndexOutOfBoundsException | IOException ex)
+        {
             ex.printStackTrace();
         }
     }
 
-    private static void check() {
-        try {
+    private static void check()
+    {
+        try
+        {
             File f = new File(propertiesDir);
-            if (!f.exists()) {
+            
+            if (!f.exists())
+            {
                 System.out.println("MAKEDIR: " + propertiesDir);
                 f.mkdir();
             }
+            
             f = new File(getPath());
-            if (!f.exists()) {
+            
+            if (!f.exists())
+            {
                 System.out.println("CREATENEWFILE: " + getPath());
                 f.createNewFile();
             }
-        } catch (IOException ex) {
+        }
+        catch (IOException ex)
+        {
             ex.printStackTrace();
         }
     }
 
-    private static String getPath() {
+    private static String getPath()
+    {
         return propertiesDir + "/" + propertiesFile;
     }
-
 }

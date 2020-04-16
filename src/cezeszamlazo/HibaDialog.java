@@ -14,18 +14,17 @@ import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
 /**
- *
  * @author adam.papp
  */
-public class HibaDialog extends javax.swing.JDialog {
-
+public class HibaDialog extends javax.swing.JDialog
+{
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
     public static final int RET_OK = 1;
 
-    /** Creates new form HibaDialog */
-    public HibaDialog(String msg, String ok, String cancel) {
+    public HibaDialog(String msg, String ok, String cancel)
+    {
 	initComponents();
 
 	init(msg, ok, cancel);
@@ -52,15 +51,19 @@ public class HibaDialog extends javax.swing.JDialog {
 	InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
 	ActionMap actionMap = getRootPane().getActionMap();
-	actionMap.put(cancelName, new AbstractAction() {
-
-	    public void actionPerformed(ActionEvent e) {
+	
+        actionMap.put(cancelName, new AbstractAction()
+        {
+            @Override
+	    public void actionPerformed(ActionEvent e)
+            {
 		doClose(RET_CANCEL);
 	    }
 	});
     }
 
-    public HibaDialog(Object o, String msg, String ok, String cancel) {
+    public HibaDialog(Object o, String msg, String ok, String cancel)
+    {
 	initComponents();
 
 	init(msg, ok, cancel);
@@ -96,10 +99,13 @@ public class HibaDialog extends javax.swing.JDialog {
 	String cancelName = "cancel";
 	InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-	ActionMap actionMap = getRootPane().getActionMap();
-	actionMap.put(cancelName, new AbstractAction() {
-
-	    public void actionPerformed(ActionEvent e) {
+	
+        ActionMap actionMap = getRootPane().getActionMap();
+	actionMap.put(cancelName, new AbstractAction()
+        {
+            @Override
+	    public void actionPerformed(ActionEvent e)
+            {
 		doClose(RET_CANCEL);
 	    }
 	});
@@ -137,10 +143,11 @@ public class HibaDialog extends javax.swing.JDialog {
             }
         });
 
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(cezeszamlazo.App.class).getContext().getResourceMap(HibaDialog.class);
+        jPanel3.setBackground(resourceMap.getColor("jPanel3.background")); // NOI18N
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel3.setName("jPanel3"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(cezeszamlazo.App.class).getContext().getResourceMap(HibaDialog.class);
         jLabel1.setIcon(resourceMap.getIcon("jLabel1.icon")); // NOI18N
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
@@ -320,56 +327,84 @@ public class HibaDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     private int returnStatus = RET_CANCEL;
 
-    private void init(String msg, String ok, String cancel) {
+    private void init(String msg, String ok, String cancel)
+    {
 	String[] t = msg.split("\n");
 	this.msg1.setText(t[0]);
-	if (t.length == 2) {
+        
+	if (t.length == 2)
+        {
 	    this.msg2.setText(t[1]);
-	} else {
+	}
+        else
+        {
 	    this.msg2.setText("");
 	}
 
-	if (ok.isEmpty()) {
+	if (ok.isEmpty())
+        {
 	    this.ok.setVisible(false);
-	} else {
+	}
+        else
+        {
 	    this.ok.setToolTipText(ok);
 	}
 
-	if (cancel.isEmpty()) {
+	if (cancel.isEmpty())
+        {
 	    this.cancel.setVisible(false);
-	} else {
+	}
+        else
+        {
 	    this.cancel.setToolTipText(cancel);
 	}
     }
 
-    class BackgroundThread extends Thread {
-
-	public BackgroundThread() {
+    class BackgroundThread extends Thread
+    {
+	public BackgroundThread()
+        {
+            
 	}
 
 	@Override
-	public void run() {
-	    for (int j = 0; j < 2; j++) {
-		for (int i = 240; i < 255; i++) {
+	public void run()
+        {
+	    for (int j = 0; j < 2; j++)
+            {
+		for (int i = 240; i < 255; i++)
+                {
 		    String c = "#"
-			    + Integer.toHexString(0x100 | i).substring(1).toUpperCase()
-			    + Integer.toHexString(0x100 | i).substring(1).toUpperCase()
-			    + Integer.toHexString(0x100 | i).substring(1).toUpperCase();
+                        + Integer.toHexString(0x100 | i).substring(1).toUpperCase()
+                        + Integer.toHexString(0x100 | i).substring(1).toUpperCase()
+                        + Integer.toHexString(0x100 | i).substring(1).toUpperCase();
 		    jPanel3.setBackground(Color.decode(c));
-		    try {
+                    
+		    try
+                    {
 			Thread.sleep(5);
-		    } catch (Exception e) {
+		    }
+                    catch (Exception e)
+                    {
+                        
 		    }
 		}
-		for (int i = 255; i >= 240; i--) {
+                
+		for (int i = 255; i >= 240; i--)
+                {
 		    String c = "#"
-			    + Integer.toHexString(0x100 | i).substring(1).toUpperCase()
-			    + Integer.toHexString(0x100 | i).substring(1).toUpperCase()
-			    + Integer.toHexString(0x100 | i).substring(1).toUpperCase();
+                        + Integer.toHexString(0x100 | i).substring(1).toUpperCase()
+                        + Integer.toHexString(0x100 | i).substring(1).toUpperCase()
+                        + Integer.toHexString(0x100 | i).substring(1).toUpperCase();
 		    jPanel3.setBackground(Color.decode(c));
-		    try {
+                    
+		    try
+                    {
 			Thread.sleep(5);
-		    } catch (Exception e) {
+		    }
+                    catch (Exception e)
+                    {
+                        
 		    }
 		}
 	    }

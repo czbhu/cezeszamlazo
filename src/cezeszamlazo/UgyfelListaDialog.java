@@ -14,22 +14,15 @@ import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-public class UgyfelListaDialog extends javax.swing.JDialog {
-
-    /**
-     * A return status code - returned if Cancel button has been pressed
-     */
+public class UgyfelListaDialog extends javax.swing.JDialog
+{
     public static final int RET_CANCEL = 0;
-    /**
-     * A return status code - returned if OK button has been pressed
-     */
     public static final int RET_OK = 1;
-    private String id = "0";
+    
+    private int id = 0;
 
-    /**
-     * Creates new form UgyfelListaDialog
-     */
-    public UgyfelListaDialog() {
+    public UgyfelListaDialog()
+    {
         initComponents();
 
         frissites();
@@ -39,18 +32,18 @@ public class UgyfelListaDialog extends javax.swing.JDialog {
         String cancelName = "cancel";
         InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        
         ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-
-            public void actionPerformed(ActionEvent e) {
+        actionMap.put(cancelName, new AbstractAction()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
                 doClose(RET_CANCEL);
             }
         });
     }
 
-    /**
-     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
-     */
     public int getReturnStatus() {
         return returnStatus;
     }
@@ -124,9 +117,9 @@ public class UgyfelListaDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
-                    .addComponent(kereses, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(kereses, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -142,9 +135,6 @@ public class UgyfelListaDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * Closes the dialog
-     */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
@@ -155,13 +145,16 @@ public class UgyfelListaDialog extends javax.swing.JDialog {
 
     private void listaTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listaTableMouseClicked
         int[] rows = listaTable.getSelectedRows();
-        if (rows.length == 1 && evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1) {
-            id = String.valueOf(listaTable.getValueAt(rows[0], 0));
+        
+        if (rows.length == 1 && evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1)
+        {
+            id = Integer.parseInt(listaTable.getValueAt(rows[0], 0).toString());
             doClose(RET_OK);
         }
     }//GEN-LAST:event_listaTableMouseClicked
 
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
         returnStatus = retStatus;
         setVisible(false);
         dispose();
@@ -174,36 +167,43 @@ public class UgyfelListaDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     private int returnStatus = RET_CANCEL;
 
-    private void frissites() {
+    private void frissites()
+    {
         DefaultTableModel model = (DefaultTableModel) listaTable.getModel();
         String[] header = {"Id", "Név", "Cím", "Telefon"};
         String keresText = EncodeDecode.encode(kereses.getText().replace("'", "\\\'")),
-                whereText = "nev LIKE '%" + keresText + "%' || irsz LIKE '%" + keresText + "%' || varos LIKE '%" + keresText + "%' || utca LIKE '%" + keresText + "%' || telefon LIKE '%" + keresText + "%'";
+                whereText = "name LIKE '%" + keresText + "%' || postalCode LIKE '%" + keresText + "%' || city LIKE '%" + keresText + "%' || street LIKE '%" + keresText + "%' || telNumber LIKE '%" + keresText + "%'";
+        
         Query query = new Query.QueryBuilder()
-                .select("id, "
-                        + "nev, "
-                        + "CONCAT(irsz, IF(irsz = '', '', ', '), varos, ' ', utca), "
-                        + "telefon ")
-                .from("pixi_ugyfel")
-                .where(whereText)
-                .order(" nev, irsz")
-                .build();
+            .select("id, "
+                + "name, "
+                + "CONCAT(postalCode, IF(postalCode = '', '', ', '), city, ' ', street), "
+                + "telNumber ")
+            .from("szamlazo_customers")
+            .where(whereText)
+            .order(" name, postalCode")
+            .build();
         model.setDataVector(App.db.select(query.getQuery()), header);
+        
         DefaultTableRender render = new DefaultTableRender();
         TableColumn col;
         int[] meret = {30, 170, 200, 100};
-        for (int i = 0; i < meret.length; i++) {
+        
+        for (int i = 0; i < meret.length; i++)
+        {
             col = listaTable.getColumnModel().getColumn(i);
             col.setPreferredWidth(meret[i]);
             col.setCellRenderer(render);
         }
     }
 
-    public String getId() {
+    public int getId()
+    {
         return id;
     }
 
-    private void init() {
+    private void init()
+    {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         int x = (screenSize.width - getWidth()) / 2;

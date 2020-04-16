@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <NonVisualComponents>
+    <Menu class="javax.swing.JMenuBar" name="menuBar_Menu">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="menuBar_Menu" noResource="true"/>
+      </Properties>
+      <SubComponents>
+        <Menu class="javax.swing.JMenu" name="menu_File">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="menu_File.text"/>
+            <Property name="name" type="java.lang.String" value="menu_File" noResource="true"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="menuItem_Quit">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="org.jdesktop.application.Application" id="quit" methodName="quit"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="menuItem_Quit.text"/>
+                <Property name="name" type="java.lang.String" value="menuItem_Quit" noResource="true"/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="menu_Help">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="menu_Help.text"/>
+            <Property name="name" type="java.lang.String" value="menu_Help" noResource="true"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="menuItem_About">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="cezeszamlazo.views.NewView" id="showAboutBox" methodName="showAboutBox"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="menuItem_About.text"/>
+                <Property name="name" type="java.lang.String" value="menuItem_About" noResource="true"/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+      </SubComponents>
+    </Menu>
+  </NonVisualComponents>
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[551, 0]"/>
+    </Property>
+    <Property name="name" type="java.lang.String" value="Form" noResource="true"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="menuBar" type="java.lang.String" value="menuBar_Menu"/>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowGainedFocus" listener="java.awt.event.WindowFocusListener" parameters="java.awt.event.WindowEvent" handler="formWindowGainedFocus"/>
+  </Events>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="2"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="button_NewInvoice" pref="277" max="32767" attributes="0"/>
+                  <Component id="button_QueryInvoiceData" pref="277" max="32767" attributes="0"/>
+                  <Component id="button_Invoices" pref="277" max="32767" attributes="0"/>
+                  <Component id="button_NewProForm" pref="277" max="32767" attributes="0"/>
+                  <Component id="button_ProForms" pref="277" max="32767" attributes="0"/>
+                  <Component id="button_NewSketch" pref="277" max="32767" attributes="0"/>
+                  <Component id="button_Sketches" pref="277" max="32767" attributes="0"/>
+                  <Component id="button_Customers" pref="277" max="32767" attributes="0"/>
+                  <Component id="button_Contacts" pref="277" max="32767" attributes="0"/>
+                  <Component id="button_Products" pref="277" max="32767" attributes="0"/>
+                  <Component id="button_Settings" pref="277" max="32767" attributes="0"/>
+                  <Component id="button_Log" pref="277" max="32767" attributes="0"/>
+              </Group>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="panel_Settings" min="-2" max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Component id="button_NewInvoice" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="button_Invoices" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="button_NewProForm" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="button_ProForms" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="button_NewSketch" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="button_Sketches" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="button_Customers" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="button_Contacts" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="button_Products" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="button_Settings" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                      <Component id="button_Log" min="-2" pref="41" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="button_QueryInvoiceData" min="-2" pref="41" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Component id="panel_Settings" max="32767" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Component class="javax.swing.JButton" name="button_NewInvoice">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="button_Invoices.font"/>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="button_NewInvoice.icon"/>
+        <Property name="text" type="java.lang.String" resourceKey="button_NewInvoice.text"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="name" type="java.lang.String" value="button_NewInvoice" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_NewInvoiceActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="button_Invoices">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="button_Invoices.font"/>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="button_Invoices.icon"/>
+        <Property name="text" type="java.lang.String" resourceKey="button_Invoices.text"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="name" type="java.lang.String" value="button_Invoices" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_InvoicesActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="button_NewProForm">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="button_Invoices.font"/>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="button_NewProForm.icon"/>
+        <Property name="text" type="java.lang.String" resourceKey="button_NewProForm.text"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="name" type="java.lang.String" value="button_NewProForm" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_NewProFormActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="button_ProForms">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="button_Invoices.font"/>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="button_ProForms.icon"/>
+        <Property name="text" type="java.lang.String" resourceKey="button_ProForms.text"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="name" type="java.lang.String" value="button_ProForms" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_ProFormsActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="button_NewSketch">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="button_Invoices.font"/>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="button_NewSketch.icon"/>
+        <Property name="text" type="java.lang.String" resourceKey="button_NewSketch.text"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="name" type="java.lang.String" value="button_NewSketch" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_NewSketchActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="button_Sketches">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="button_Invoices.font"/>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="button_Sketches.icon"/>
+        <Property name="text" type="java.lang.String" resourceKey="button_Sketches.text"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="name" type="java.lang.String" value="button_Sketches" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_SketchesActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="button_Customers">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="button_Customers.font"/>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="button_Customers.icon"/>
+        <Property name="text" type="java.lang.String" resourceKey="button_Customers.text"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="name" type="java.lang.String" value="button_Customers" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_CustomersActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="button_Contacts">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="button_Contacts.font"/>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="button_Contacts.icon"/>
+        <Property name="text" type="java.lang.String" resourceKey="button_Contacts.text"/>
+        <Property name="enabled" type="boolean" value="false"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="name" type="java.lang.String" value="button_Contacts" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_ContactsActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="button_Products">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="button_Products.font"/>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="button_Products.icon"/>
+        <Property name="text" type="java.lang.String" resourceKey="button_Products.text"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="name" type="java.lang.String" value="button_Products" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_ProductsActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="button_Settings">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="button_Settings.font"/>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="button_Settings.icon"/>
+        <Property name="text" type="java.lang.String" resourceKey="button_Settings.text"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="name" type="java.lang.String" value="button_Settings" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_SettingsActionPerformed"/>
+      </Events>
+    </Component>
+    <Container class="javax.swing.JPanel" name="panel_Settings">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="panel_Settings" noResource="true"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="button_InvoiceGroups" alignment="0" max="32767" attributes="0"/>
+                      <Component id="button_ProductGroups" max="32767" attributes="0"/>
+                      <Component id="button_Currencies" max="32767" attributes="0"/>
+                      <Component id="button_Vats" max="32767" attributes="0"/>
+                      <Component id="button_VtszTeszor" max="32767" attributes="0"/>
+                      <Component id="button_InvoiceFooterEditor" max="32767" attributes="0"/>
+                      <Component id="button_NewUser" max="32767" attributes="0"/>
+                      <Component id="button_OutstandingPdfEditor" max="32767" attributes="0"/>
+                      <Component id="button_OutstangingEmailEditor" max="32767" attributes="0"/>
+                      <Component id="button_InvoiceEmialEditor" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="button_InvoiceGroups" min="-2" pref="40" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="button_ProductGroups" min="-2" pref="40" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="button_Currencies" min="-2" pref="40" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="button_Vats" min="-2" pref="40" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="button_VtszTeszor" min="-2" pref="40" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                  <Component id="button_NewUser" min="-2" pref="40" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="button_InvoiceFooterEditor" min="-2" pref="40" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
+                  <Component id="button_OutstandingPdfEditor" min="-2" pref="40" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="button_OutstangingEmailEditor" min="-2" pref="40" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="button_InvoiceEmialEditor" min="-2" pref="40" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JButton" name="button_InvoiceGroups">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="button_InvoiceGroups.font"/>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="button_InvoiceGroups.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="button_InvoiceGroups.text"/>
+            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="name" type="java.lang.String" value="button_InvoiceGroups" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_InvoiceGroupsActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="button_ProductGroups">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jButton1.font"/>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="button_ProductGroups.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="button_ProductGroups.text"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="name" type="java.lang.String" value="button_ProductGroups" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_ProductGroupsActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="button_Currencies">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jButton1.font"/>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="button_Currencies.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="button_Currencies.text"/>
+            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="name" type="java.lang.String" value="button_Currencies" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_CurrenciesActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="button_Vats">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="button_Vats.font"/>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="button_Vats.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="button_Vats.text"/>
+            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="name" type="java.lang.String" value="button_Vats" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_VatsActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="button_VtszTeszor">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="button_VtszTeszor.font"/>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="button_VtszTeszor.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="button_VtszTeszor.text"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="name" type="java.lang.String" value="button_VtszTeszor" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_VtszTeszorActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="button_InvoiceFooterEditor">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="button_InvoiceFooterEditor.font"/>
+            <Property name="text" type="java.lang.String" resourceKey="button_InvoiceFooterEditor.text"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="name" type="java.lang.String" value="button_InvoiceFooterEditor" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_InvoiceFooterEditorActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="button_NewUser">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="button_NewUser.font"/>
+            <Property name="text" type="java.lang.String" resourceKey="button_NewUser.text"/>
+            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="name" type="java.lang.String" value="button_NewUser" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_NewUserActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="button_OutstandingPdfEditor">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="button_OutstandingPdfEditor.font"/>
+            <Property name="text" type="java.lang.String" resourceKey="button_OutstandingPdfEditor.text"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="name" type="java.lang.String" value="button_OutstandingPdfEditor" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_OutstandingPdfEditorActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="button_OutstangingEmailEditor">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="button_OutstangingEmailEditor.font"/>
+            <Property name="text" type="java.lang.String" resourceKey="button_OutstangingEmailEditor.text"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="name" type="java.lang.String" value="button_OutstangingEmailEditor" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_OutstangingEmailEditorActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="button_InvoiceEmialEditor">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="button_InvoiceEmialEditor.font"/>
+            <Property name="text" type="java.lang.String" resourceKey="button_InvoiceEmialEditor.text"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="name" type="java.lang.String" value="button_InvoiceEmialEditor" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_InvoiceEmialEditorActionPerformed"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JButton" name="button_Log">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="button_Log.font"/>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="button_Log.icon"/>
+        <Property name="text" type="java.lang.String" resourceKey="button_Log.text"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="name" type="java.lang.String" value="button_Log" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_LogActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="button_QueryInvoiceData">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="button_QueryInvoiceData.font"/>
+        <Property name="text" type="java.lang.String" resourceKey="button_QueryInvoiceData.text"/>
+        <Property name="enabled" type="boolean" value="false"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+        <Property name="name" type="java.lang.String" value="button_QueryInvoiceData" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_QueryInvoiceDataActionPerformed"/>
+      </Events>
+    </Component>
+  </SubComponents>
+</Form>

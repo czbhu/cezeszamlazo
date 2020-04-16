@@ -2,15 +2,13 @@ package cezeszamlazo.ugyfel;
 
 import cezeszamlazo.App;
 
-
-
 /**
  * Ügyfelek létrehozására, betöltésére, módosítására szolgáló osztály.
  *
  * @author Fejlesztés
  */
-public class Ugyfel {
-
+public class Ugyfel
+{
     public static final String TABLE = "pixi_ugyfel";
 
     /**
@@ -53,7 +51,9 @@ public class Ugyfel {
     /**
      * alap konstruktor
      */
-    public Ugyfel() {
+    public Ugyfel()
+    {
+        
     }
 
     /**
@@ -61,9 +61,12 @@ public class Ugyfel {
      *
      * @param id
      */
-    public Ugyfel(int id) {
+    public Ugyfel(int id)
+    {
         Object[][] s = App.db.select("SELECT nev, irsz, varos, utca, adoszam, bankszamlaszam, userid, kedvezmeny FROM " + TABLE + " WHERE id = " + id);
-        if (s.length != 0) {
+        
+        if (s.length != 0)
+        {
             this.id = id;
             this.nev = String.valueOf(s[0][0]);
             this.irsz = String.valueOf(s[0][1]);
@@ -73,7 +76,9 @@ public class Ugyfel {
             this.bankszamlaszam = String.valueOf(s[0][5]);
             this.userid = Integer.parseInt(String.valueOf(s[0][6]));
             this.kedvezmeny = Integer.parseInt(String.valueOf(s[0][7]));
-        } else {
+        }
+        else
+        {
             // minden alapállapotban, azaz új ügyfél
         }
     }
@@ -91,7 +96,8 @@ public class Ugyfel {
      * @param userid
      * @param kedvezmeny 
      */
-    public Ugyfel(int id, String nev, String irsz, String varos, String utca, String adoszam, String bankszamlaszam, int userid, int kedvezmeny) {
+    public Ugyfel(int id, String nev, String irsz, String varos, String utca, String adoszam, String bankszamlaszam, int userid, int kedvezmeny)
+    {
         this.id = id;
         this.nev = nev;
         this.irsz = irsz;
@@ -110,11 +116,16 @@ public class Ugyfel {
      * @param kapcsolattartoId azon kapcsolattartó azonosítója akinek a kedvezményére vagyunk kíváncsiak
      * @return a kedvezmény mértéke
      */
-    public static int getKedvezmeny(int kapcsolattartoId) {
-        Object[][] s = App.db.select("SELECT kedvezmeny FROM " + TABLE + " WHERE id = (SELECT ugyfelid FROM pixi_kapcsolattarto WHERE id = " + kapcsolattartoId + ")");
-        if (s.length != 0) {
+    public static int getKedvezmeny(int kapcsolattartoId)
+    {
+        Object[][] s = App.db.select("SELECT discount FROM " + TABLE + " WHERE id = (SELECT customerID FROM szamlazo_contact WHERE id = " + kapcsolattartoId + ")");
+        
+        if (s.length != 0)
+        {
             return Integer.parseInt(String.valueOf(s[0][0]));
-        } else {
+        }
+        else
+        {
             return 0;
         }
     }
@@ -125,20 +136,28 @@ public class Ugyfel {
      * @param ids a keresett ügyfelek azonosítói
      * @return egy egydimenziós Ugyfel tomb melyben a keresett Ugyfelek vannak betöltve
      */
-    public static Ugyfel[] getUgyfelekArray(int[] ids) {
+    public static Ugyfel[] getUgyfelekArray(int[] ids)
+    {
         String w = "(";
-        for (int i = 0; i < ids.length; i++) {
+        
+        for (int i = 0; i < ids.length; i++)
+        {
             w += ids[i] + ", ";
         }
+        
         w += "0)";
         Object[][] s = App.db.select("SELECT id, nev, irsz, varos, utca, adoszam, bankszamlaszam, userid, kedvezmeny FROM " + TABLE + " WHERE id IN " + w);
-        if (s.length != 0) {
+        
+        if (s.length != 0)
+        {
             Ugyfel[] ugyfelek = new Ugyfel[s.length];
             for (int i = 0; i < s.length; i++) {
                 ugyfelek[i] = new Ugyfel(Integer.parseInt(String.valueOf(s[i][0])), String.valueOf(s[i][1]), String.valueOf(s[i][2]), String.valueOf(s[i][3]), String.valueOf(s[i][4]), String.valueOf(s[i][5]), String.valueOf(s[i][6]), Integer.parseInt(String.valueOf(s[i][7])), Integer.parseInt(String.valueOf(s[i][8])));
             }
             return ugyfelek;
-        } else {
+        }
+        else
+        {
             return null;
         }
     }
@@ -149,23 +168,27 @@ public class Ugyfel {
      * @param ugyfelek az összevonni kívánt ügyfelek
      * @param ugyfel azon ügyfél melybe össze akarjuk vonni
      */
-    public static void csoportositas(Ugyfel[] ugyfelek, Ugyfel ugyfel) {
+    public static void csoportositas(Ugyfel[] ugyfelek, Ugyfel ugyfel)
+    {
         String w = "(";
         String nevek = "";
         // a feltétel legenerálása
-        for (int i = 0; i < ugyfelek.length; i++) {
-            if (ugyfelek[i].getId() != ugyfel.getId()) {
+        for (int i = 0; i < ugyfelek.length; i++)
+        {
+            if (ugyfelek[i].getId() != ugyfel.getId())
+            {
                 w += ugyfelek[i].getId() + ", ";
                 nevek += ugyfelek[i].getNev() + ", ";
             }
         }
+        
         w += "0)";
         // frissíteni az összes olyan kapcsolattartó ügyfél azonosítóját az újra,
         // melyek benne vannak az összevonni kívánt tömbben
-        App.db.insert("UPDATE " + Kapcsolattarto.TABLE + " SET ugyfelid = " + ugyfel.getId() + " WHERE ugyfelid IN " + w, null, 0);
+        App.db.insert("UPDATE " + Kapcsolattarto.TABLE + " SET ugyfelid = " + ugyfel.getId() + " WHERE ugyfelid IN " + w, null);
         // miután át lettek adva az ügyfelek kapcsolattartói ezen ügyfelek végeleges törlése
         App.db.delete("DELETE FROM " + TABLE + " WHERE id IN " + w);
-//        Log.addMsg(0, PixiRendszer.user.getId(), "Ügyfelek csoportosítása", "A következő ügyfelek: " + nevek + " csoportosítása egy ügyféllé: " + ugyfel.toString());
+//      Log.addMsg(0, PixiRendszer.user.getId(), "Ügyfelek csoportosítása", "A következő ügyfelek: " + nevek + " csoportosítása egy ügyféllé: " + ugyfel.toString());
     }
 
     /* GET / SET metódusok */
@@ -247,7 +270,8 @@ public class Ugyfel {
      * ha 'id' nulla akkor insert
      * egyébként update
      */
-    public void mentes() {
+    public void mentes()
+    {
         Object[] o = new Object[8];
         o[0] = nev;
         o[1] = irsz;
@@ -257,19 +281,23 @@ public class Ugyfel {
         o[5] = bankszamlaszam;
         o[6] = userid;
         o[7] = kedvezmeny;
-        if (id == 0) {
+        
+        if (id == 0)
+        {
             o[6] = App.user.getId();
             // új mentése
             id = App.db.insert("INSERT INTO " + TABLE + " (nev, irsz, varos, utca, adoszam, bankszamlaszam, userid, kedvezmeny) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)", o, o.length);
-//            PixiHelper.getInstance().updatePixiUgyfel();
-//            Log.addMsg(0, PixiRendszer.user.getId(), "Új ügyfél létrehozása", toString());
-        } else {
-            // meglévő módosítása
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)", o);
+//          PixiHelper.getInstance().updatePixiUgyfel();
+//          Log.addMsg(0, PixiRendszer.user.getId(), "Új ügyfél létrehozása", toString());
+        }
+        else
+        {
+//           meglévő módosítása
             App.db.insert("UPDATE " + TABLE + " SET nev = ?, irsz = ?, varos = ?, utca = ?, adoszam = ?, bankszamlaszam = ?, userid = ?, kedvezmeny = ? "
-                    + "WHERE id = " + id, o, o.length);
-//            PixiHelper.getInstance().updatePixiUgyfel();
-//            Log.addMsg(0, PixiRendszer.user.getId(), "Ügyfél módosítása", toString());
+                    + "WHERE id = " + id, o);
+//          PixiHelper.getInstance().updatePixiUgyfel();
+//          Log.addMsg(0, PixiRendszer.user.getId(), "Ügyfél módosítása", toString());
         }
     }
 
@@ -277,24 +305,28 @@ public class Ugyfel {
      * Validálás, kötelező nevet megadni.
      * @return a hiba, ha minden rendben akkor üres String
      */
-    public String valid() {
-        if (nev.isEmpty()) {
+    public String valid()
+    {
+        if (nev.isEmpty())
+        {
             return "Nincs név megadva!";
         }
+        
         return "";
     }
 
     /**
      * Ügyfél végleges törlése.
      */
-    public void torles() {
+    public void torles()
+    {
         App.db.delete("DELETE FROM " + TABLE + " WHERE id = " + id);
-//        Log.addMsg(0, PixiRendszer.user.getId(), "Ügyfél törlése", toString());
+//      Log.addMsg(0, PixiRendszer.user.getId(), "Ügyfél törlése", toString());
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "ID:" + id + "; " + nev + "; " + irsz + " " + varos + ", " + utca + "; " + adoszam + "; " + bankszamlaszam + "; " + kedvezmeny + "%";
     }
-
 }

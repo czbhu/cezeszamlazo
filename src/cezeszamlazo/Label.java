@@ -1,12 +1,10 @@
-
 package cezeszamlazo;
 
 /**
- *
  * @author Papp Ádám - Ceze Reklam
  */
-public class Label {
-    
+public class Label
+{
     private String name, id;
 
     public Label(String id, String name)
@@ -30,5 +28,4 @@ public class Label {
     {
         return name;
     }
-    
 }

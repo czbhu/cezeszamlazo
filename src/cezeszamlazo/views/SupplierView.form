@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="2"/>
+    <Property name="name" type="java.lang.String" value="Form" noResource="true"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="2"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="panel_SupplierDatas" alignment="0" max="32767" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="panel_SupplierDatas" alignment="0" max="32767" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JPanel" name="panel_SupplierDatas">
+      <Properties>
+        <Property name="background" type="java.awt.Color" resourceKey="panel_SupplierDatas.background"/>
+        <Property name="name" type="java.lang.String" value="panel_SupplierDatas" noResource="true"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="panel_SupplierAddress" max="32767" attributes="0"/>
+                      <Component id="panel_SupplierName" alignment="0" max="32767" attributes="0"/>
+                      <Component id="panel_SupplierOther" alignment="0" max="32767" attributes="0"/>
+                      <Component id="panel_SupplierInvoiceFooter" alignment="0" max="32767" attributes="0"/>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="0" pref="116" max="32767" attributes="0"/>
+                          <Component id="button_SaveModification" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="button_SaveAsNew" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="button_ExitSupplierView" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="panel_SupplierName" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="panel_SupplierAddress" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="panel_SupplierOther" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="panel_SupplierInvoiceFooter" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="button_ExitSupplierView" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="button_SaveAsNew" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="button_SaveModification" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Container class="javax.swing.JPanel" name="panel_SupplierName">
+          <Properties>
+            <Property name="background" type="java.awt.Color" resourceKey="panel_SupplierName.background"/>
+            <Property name="name" type="java.lang.String" value="panel_SupplierName" noResource="true"/>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="label_SupplierName" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+                  <Component id="panel_SupplierNameText" alignment="0" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="label_SupplierName" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="panel_SupplierNameText" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="label_SupplierName">
+              <Properties>
+                <Property name="foreground" type="java.awt.Color" resourceKey="label_SupplierName.foreground"/>
+                <Property name="text" type="java.lang.String" resourceKey="label_SupplierName.text"/>
+                <Property name="name" type="java.lang.String" value="label_SupplierName" noResource="true"/>
+              </Properties>
+            </Component>
+            <Container class="javax.swing.JPanel" name="panel_SupplierNameText">
+              <Properties>
+                <Property name="background" type="java.awt.Color" resourceKey="panel_SupplierNameText.background"/>
+                <Property name="name" type="java.lang.String" value="panel_SupplierNameText" noResource="true"/>
+              </Properties>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="textField_SupplierName" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="textField_SupplierName" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JTextField" name="textField_SupplierName">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                    <Property name="text" type="java.lang.String" resourceKey="textField_SupplierName.text"/>
+                    <Property name="name" type="java.lang.String" value="textField_SupplierName" noResource="true"/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="panel_SupplierAddress">
+          <Properties>
+            <Property name="background" type="java.awt.Color" resourceKey="panel_SupplierAddress.background"/>
+            <Property name="name" type="java.lang.String" value="panel_SupplierAddress" noResource="true"/>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="label_SupplierAddress" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+                  <Component id="panel_SupplierAddressDatas" alignment="0" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="label_SupplierAddress" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="panel_SupplierAddressDatas" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="label_SupplierAddress">
+              <Properties>
+                <Property name="foreground" type="java.awt.Color" resourceKey="label_SupplierAddress.foreground"/>
+                <Property name="text" type="java.lang.String" resourceKey="label_SupplierAddress.text"/>
+                <Property name="name" type="java.lang.String" value="label_SupplierAddress" noResource="true"/>
+              </Properties>
+            </Component>
+            <Container class="javax.swing.JPanel" name="panel_SupplierAddressDatas">
+              <Properties>
+                <Property name="background" type="java.awt.Color" resourceKey="panel_SupplierAddressDatas.background"/>
+                <Property name="name" type="java.lang.String" value="panel_SupplierAddressDatas" noResource="true"/>
+              </Properties>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="label_houseNumber" max="32767" attributes="0"/>
+                              <Component id="label_PublicPlace" max="32767" attributes="0"/>
+                              <Component id="label_Street" max="32767" attributes="0"/>
+                              <Component id="label_PostalCode" max="32767" attributes="0"/>
+                              <Component id="label_CountryCode" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="textField_CountryCode" max="32767" attributes="0"/>
+                                      <Component id="textField_PostalCode" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="label_Country" max="32767" attributes="0"/>
+                                      <Component id="label_City" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="textField_Country" max="32767" attributes="0"/>
+                                      <Component id="textField_City" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Component id="textField_Street" max="32767" attributes="0"/>
+                              <Component id="textField_PublicPlace" alignment="0" max="32767" attributes="0"/>
+                              <Component id="textField_HouseNumber" alignment="0" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="label_CountryCode" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="textField_CountryCode" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="textField_Country" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="label_Country" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="label_PostalCode" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="textField_PostalCode" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="label_City" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="textField_City" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="label_Street" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="textField_Street" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="label_PublicPlace" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="textField_PublicPlace" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="label_houseNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="textField_HouseNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JLabel" name="label_CountryCode">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="label_CountryCode.text"/>
+                    <Property name="name" type="java.lang.String" value="label_CountryCode" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="textField_CountryCode">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
+                    <Property name="text" type="java.lang.String" resourceKey="textField_CountryCode.text"/>
+                    <Property name="name" type="java.lang.String" value="textField_CountryCode" noResource="true"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="textField_CountryCodeKeyReleased"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JLabel" name="label_Country">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="label_Country.text"/>
+                    <Property name="name" type="java.lang.String" value="label_Country" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="textField_Country">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
+                    <Property name="text" type="java.lang.String" resourceKey="textField_Country.text"/>
+                    <Property name="name" type="java.lang.String" value="textField_Country" noResource="true"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="textField_CountryKeyReleased"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JLabel" name="label_PostalCode">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="label_PostalCode.text"/>
+                    <Property name="name" type="java.lang.String" value="label_PostalCode" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="textField_PostalCode">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
+                    <Property name="text" type="java.lang.String" resourceKey="textField_PostalCode.text"/>
+                    <Property name="name" type="java.lang.String" value="textField_PostalCode" noResource="true"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="textField_PostalCodeKeyReleased"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JLabel" name="label_City">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="label_City.text"/>
+                    <Property name="name" type="java.lang.String" value="label_City" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="textField_City">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
+                    <Property name="text" type="java.lang.String" resourceKey="textField_City.text"/>
+                    <Property name="name" type="java.lang.String" value="textField_City" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="label_Street">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="label_Street.text"/>
+                    <Property name="name" type="java.lang.String" value="label_Street" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="textField_Street">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                    <Property name="text" type="java.lang.String" resourceKey="textField_Street.text"/>
+                    <Property name="name" type="java.lang.String" value="textField_Street" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="label_PublicPlace">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="label_PublicPlace.text"/>
+                    <Property name="name" type="java.lang.String" value="label_PublicPlace" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="textField_PublicPlace">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                    <Property name="text" type="java.lang.String" resourceKey="textField_PublicPlace.text"/>
+                    <Property name="name" type="java.lang.String" value="textField_PublicPlace" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="label_houseNumber">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="label_houseNumber.text"/>
+                    <Property name="name" type="java.lang.String" value="label_houseNumber" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="textField_HouseNumber">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                    <Property name="text" type="java.lang.String" resourceKey="textField_HouseNumber.text"/>
+                    <Property name="name" type="java.lang.String" value="textField_HouseNumber" noResource="true"/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="panel_SupplierOther">
+          <Properties>
+            <Property name="background" type="java.awt.Color" resourceKey="panel_SupplierOther.background"/>
+            <Property name="name" type="java.lang.String" value="panel_SupplierOther" noResource="true"/>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="label_SupplierOther" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+                  <Component id="panel_OtherDatas" alignment="0" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="label_SupplierOther" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="panel_OtherDatas" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="label_SupplierOther">
+              <Properties>
+                <Property name="foreground" type="java.awt.Color" resourceKey="label_SupplierOther.foreground"/>
+                <Property name="text" type="java.lang.String" resourceKey="label_SupplierOther.text"/>
+                <Property name="name" type="java.lang.String" value="label_SupplierOther" noResource="true"/>
+              </Properties>
+            </Component>
+            <Container class="javax.swing.JPanel" name="panel_OtherDatas">
+              <Properties>
+                <Property name="background" type="java.awt.Color" resourceKey="panel_OtherDatas.background"/>
+                <Property name="name" type="java.lang.String" value="panel_OtherDatas" noResource="true"/>
+              </Properties>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="label_Comment" max="32767" attributes="0"/>
+                              <Component id="label_EuTaxNumber" max="32767" attributes="0"/>
+                              <Component id="label_BankAccountNumber" alignment="0" max="32767" attributes="0"/>
+                              <Component id="label_TaxNumber" alignment="0" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Component id="textField_TaxNumber" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="button_QueryTaxpayer" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="textField_BankAccountNumber" max="32767" attributes="0"/>
+                              <Component id="textField_EuTaxNumber" alignment="0" max="32767" attributes="0"/>
+                              <Component id="textField_Comment" alignment="0" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="label_TaxNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="textField_TaxNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="button_QueryTaxpayer" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="label_EuTaxNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="textField_EuTaxNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="label_BankAccountNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="textField_BankAccountNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="label_Comment" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="textField_Comment" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JLabel" name="label_TaxNumber">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="label_TaxNumber.text"/>
+                    <Property name="name" type="java.lang.String" value="label_TaxNumber" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="textField_TaxNumber">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                    <Property name="text" type="java.lang.String" resourceKey="textField_TaxNumber.text"/>
+                    <Property name="name" type="java.lang.String" value="textField_TaxNumber" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="label_EuTaxNumber">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="label_EuTaxNumber.text"/>
+                    <Property name="name" type="java.lang.String" value="label_EuTaxNumber" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="textField_EuTaxNumber">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                    <Property name="text" type="java.lang.String" resourceKey="textField_EuTaxNumber.text"/>
+                    <Property name="name" type="java.lang.String" value="textField_EuTaxNumber" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="label_BankAccountNumber">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="label_BankAccountNumber.text"/>
+                    <Property name="name" type="java.lang.String" value="label_BankAccountNumber" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="textField_BankAccountNumber">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                    <Property name="text" type="java.lang.String" resourceKey="textField_BankAccountNumber.text"/>
+                    <Property name="name" type="java.lang.String" value="textField_BankAccountNumber" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="label_Comment">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="label_Comment.text"/>
+                    <Property name="name" type="java.lang.String" value="label_Comment" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="textField_Comment">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                    <Property name="text" type="java.lang.String" resourceKey="textField_Comment.text"/>
+                    <Property name="name" type="java.lang.String" value="textField_Comment" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="customs.CustomButton" name="button_QueryTaxpayer">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="button_QueryTaxpayer.text"/>
+                    <Property name="name" type="java.lang.String" value="button_QueryTaxpayer" noResource="true"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_QueryTaxpayerActionPerformed"/>
+                  </Events>
+                </Component>
+              </SubComponents>
+            </Container>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="panel_SupplierInvoiceFooter">
+          <Properties>
+            <Property name="background" type="java.awt.Color" resourceKey="panel_SupplierInvoiceFooter.background"/>
+            <Property name="name" type="java.lang.String" value="panel_SupplierInvoiceFooter" noResource="true"/>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="label_SupplierInvoiceFooter" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+                  <Component id="panel_InvoiceFooter" alignment="0" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="label_SupplierInvoiceFooter" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="panel_InvoiceFooter" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="label_SupplierInvoiceFooter">
+              <Properties>
+                <Property name="foreground" type="java.awt.Color" resourceKey="label_SupplierInvoiceFooter.foreground"/>
+                <Property name="text" type="java.lang.String" resourceKey="label_SupplierInvoiceFooter.text"/>
+                <Property name="name" type="java.lang.String" value="label_SupplierInvoiceFooter" noResource="true"/>
+              </Properties>
+            </Component>
+            <Container class="javax.swing.JPanel" name="panel_InvoiceFooter">
+              <Properties>
+                <Property name="background" type="java.awt.Color" resourceKey="panel_InvoiceFooter.background"/>
+                <Property name="name" type="java.lang.String" value="panel_InvoiceFooter" noResource="true"/>
+              </Properties>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="scrollPane_InvoiceFooter" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="scrollPane_InvoiceFooter" min="-2" pref="100" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Container class="javax.swing.JScrollPane" name="scrollPane_InvoiceFooter">
+                  <Properties>
+                    <Property name="name" type="java.lang.String" value="scrollPane_InvoiceFooter" noResource="true"/>
+                  </Properties>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                  <SubComponents>
+                    <Component class="javax.swing.JTextArea" name="textField_InvoiceFooter">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" resourceKey="textField_CountryCode.background"/>
+                        <Property name="columns" type="int" value="20"/>
+                        <Property name="rows" type="int" value="5"/>
+                        <Property name="name" type="java.lang.String" value="textField_InvoiceFooter" noResource="true"/>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
+                </Container>
+              </SubComponents>
+            </Container>
+          </SubComponents>
+        </Container>
+        <Component class="customs.CustomButton" name="button_SaveModification">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="button_SaveModification.text"/>
+            <Property name="name" type="java.lang.String" value="button_SaveModification" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_SaveModificationActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="customs.CustomButton" name="button_SaveAsNew">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="button_SaveAsNew.text"/>
+            <Property name="name" type="java.lang.String" value="button_SaveAsNew" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_SaveAsNewActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="customs.CustomButton" name="button_ExitSupplierView">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="button_ExitSupplierView.text"/>
+            <Property name="name" type="java.lang.String" value="button_ExitSupplierView" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_ExitSupplierViewActionPerformed"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>

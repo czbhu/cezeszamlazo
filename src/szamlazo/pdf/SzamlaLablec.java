@@ -12,20 +12,23 @@ import cezeszamlazo.database.Query;
  *
  * @author szekus
  */
-public class SzamlaLablec {
-
+public class SzamlaLablec
+{
     private static String tableName = "szamlazo_szamla_lablec";
     private static String magicWord = "$CEGNEV";
 
-    public static String getLablecWithCegnev(String cegNev) {
+    public static String getLablecWithCegnev(String cegNev)
+    {
         String result = "";
+        
         Query query = new Query.QueryBuilder()
-                .select("lablec_hun")
-                .from(SzamlaLablec.tableName)
-                .where("id = 1")
-                .order("")
-                .build();
+            .select("lablec_hun")
+            .from(SzamlaLablec.tableName)
+            .where("id = 1")
+            .order("")
+            .build();
         Object[][] select = App.db.select(query.getQuery());
+        
         result = String.valueOf(select[0][0]);
         result = result.replace(SzamlaLablec.magicWord, cegNev);
         result = result.replace("\n", "").replace("\r", "");//remove new lines
@@ -35,13 +38,14 @@ public class SzamlaLablec {
         return result;
     }
 
-    public static String getLablec() {
+    public static String getLablec()
+    {
         String result = "";
         Query query = new Query.QueryBuilder()
-                .select("lablec_hun")
-                .from(SzamlaLablec.tableName)
-                .where("id = 1")
-                .build();
+            .select("lablec_hun")
+            .from(SzamlaLablec.tableName)
+            .where("id = 1")
+            .build();
         Object[][] select = App.db.select(query.getQuery());
         result = String.valueOf(select[0][0]);
         if (result.equals("0")) {
@@ -51,10 +55,11 @@ public class SzamlaLablec {
         return result;
     }
 
-    public static void save(String text) {
+    public static void save(String text)
+    {
         Object[] o = new Object[1];
         o[0] = text;
-        App.db.insert("UPDATE " + SzamlaLablec.tableName + " SET lablec_hun = ? WHERE id = 1", o, 1);
+        App.db.insert("UPDATE " + SzamlaLablec.tableName + " SET lablec_hun = ? WHERE id = 1", o);
     }
 
 }

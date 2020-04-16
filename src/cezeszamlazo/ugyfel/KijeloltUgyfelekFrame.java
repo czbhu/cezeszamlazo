@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cezeszamlazo.ugyfel;
 
 import java.awt.Dimension;
@@ -15,22 +10,17 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-
-public class KijeloltUgyfelekFrame<T extends javax.swing.JFrame> extends javax.swing.JDialog {
-
-    /**
-     * Creates new form UgyfelekFrame
-     */
-    public KijeloltUgyfelekFrame(T parent) {
+public class KijeloltUgyfelekFrame<T extends javax.swing.JFrame> extends javax.swing.JDialog
+{
+    public KijeloltUgyfelekFrame(T parent)
+    {
         initComponents(parent);
-
         init();
     }
     
-    public KijeloltUgyfelekFrame(int x, int y, T parent){
+    public KijeloltUgyfelekFrame(int x, int y, T parent)
+    {
     	initComponents(parent);
-    	
-    	
     	init(x, y);
     }
 
@@ -41,8 +31,8 @@ public class KijeloltUgyfelekFrame<T extends javax.swing.JFrame> extends javax.s
      */
     @SuppressWarnings({ "unchecked", "serial" })
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents(T parent) {
-
+    private void initComponents(T parent)
+    {
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
         select = new javax.swing.JButton();
@@ -118,8 +108,6 @@ public class KijeloltUgyfelekFrame<T extends javax.swing.JFrame> extends javax.s
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-
-
     private T parentFrame;
     
     private javax.swing.JScrollPane jScrollPane1;
@@ -129,60 +117,70 @@ public class KijeloltUgyfelekFrame<T extends javax.swing.JFrame> extends javax.s
     private TableRowSorter<TableModel> sorter;
     
 
-    public void init() {
-        
+    public void init()
+    {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         int x = (screenSize.width - getWidth()) / 2;
         int y = (screenSize.height - getHeight()) / 2;
 
-//        setIconImage(PixiRendszer.img);
+//      setIconImage(PixiRendszer.img);
         setLocation(x, y);
         setTitle("Ügyfelek");
     }
     
-    public void init(int x, int y){
-
-//        setIconImage(PixiRendszer.img);
+    public void init(int x, int y)
+    {
+//      setIconImage(PixiRendszer.img);
         setLocation(x, y);
         setTitle("Kiválasztott Ügyfelek");
     }
 
-    
-    private void selectButtonAction(){
+    private void selectButtonAction()
+    {
+    	ArrayList<Integer> ids = new ArrayList<>();
     	
-    	ArrayList<Integer> ids = new ArrayList<Integer>();
-    	
-    	for(int i = 0; i<table.getRowCount(); i++){
-    		ids.add(Integer.parseInt(String.valueOf(table.getValueAt(i, 0))));
+    	for(int i = 0; i<table.getRowCount(); i++)
+        {
+            ids.add(Integer.parseInt(String.valueOf(table.getValueAt(i, 0))));
     	}
     	
     	if(parentFrame.getClass() == UgyfelekFrame.class)
-    		((UgyfelekFrame) parentFrame).setSelected(ids);
+        {
+            ((UgyfelekFrame) parentFrame).setSelected(ids);
+        }
     	else
-    		((KapcsolattartokFrame) parentFrame).setSelected(ids);
+        {
+            ((KapcsolattartokFrame) parentFrame).setSelected(ids);
+        }
     }
     
-    public void fillUp(Map<Integer, String> data){
+    public void fillUp(Map<Integer, String> data)
+    {
     	clear();
     	for (int i: data.keySet())
-    		add(i, data.get(i));
+        {
+            add(i, data.get(i));
+        }
     }
     
-    public void add(int id, String name){
+    public void add(int id, String name)
+    {
     	model.addRow(new Object[] {id, name});
     }
     
-    public void clear(){
+    public void clear()
+    {
     	model.setRowCount(0);
     }
     
-    public void sortTable(String regex){                                            
+    public void sortTable(String regex)
+    {                                            
         sorter.setRowFilter(RowFilter.regexFilter(regex));
     }  
     
-    public void nyit() {
+    public void nyit()
+    {
         setVisible(true);
     }
-
 }

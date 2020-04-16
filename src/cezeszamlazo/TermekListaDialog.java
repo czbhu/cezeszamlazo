@@ -1,6 +1,7 @@
 package cezeszamlazo;
 
 import cezeszamlazo.database.Query;
+import invoice.InvoiceProduct;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -25,11 +26,10 @@ public class TermekListaDialog extends javax.swing.JDialog {
      */
     public static final int RET_OK = 1;
     private String termek = "", cikkszam = "", mee = "", egysegar = "", vtszTeszor = "", afa = "";
+    InvoiceProduct product;
 
-    /**
-     * Creates new form TermekListaDialog
-     */
-    public TermekListaDialog() {
+    public TermekListaDialog()
+    {
         initComponents();
 
         frissites();
@@ -39,18 +39,18 @@ public class TermekListaDialog extends javax.swing.JDialog {
         String cancelName = "cancel";
         InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        
         ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-
-            public void actionPerformed(ActionEvent e) {
+        actionMap.put(cancelName, new AbstractAction()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
                 doClose(RET_CANCEL);
             }
         });
     }
 
-    /**
-     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
-     */
     public int getReturnStatus() {
         return returnStatus;
     }
@@ -139,34 +139,40 @@ public class TermekListaDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * Closes the dialog
-     */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
 
     private void listaTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listaTableMouseClicked
         int[] rows = listaTable.getSelectedRows();
-        if (rows.length == 1 && evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1) {
+        
+        if (rows.length == 1 && evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1)
+        {
+            int id = Integer.parseInt(listaTable.getValueAt(rows[0], 0).toString());
+            
             Query query = new Query.QueryBuilder()
-                    .select("t.nev, "
-                            + "t.cikkszam, "
-                            + "t.mennyisegi_egyseg, "
-                            + "(SELECT afa from szamlazo_afa WHERE id = t.afaid), "
-                            + "netto_ar, "
-                            + "vtsz_teszor ")
-                    .from("szamlazo_termek t ")
-                    .where("t.id = " + String.valueOf(listaTable.getValueAt(rows[0], 0)))
-                    .order("")
-                    .build();
+                .select(
+                      "t.nev, "
+                    + "t.cikkszam, "
+                    + "t.mennyisegi_egyseg, "
+                    + "(SELECT name from szamlazo_vats WHERE id = t.afaid), "
+                    + "netto_ar, "
+                    + "vtsz_teszor ")
+                .from("szamlazo_termek t")
+                .where("t.id = " + id)
+                .order("")
+                .build();
             Object[][] select = App.db.select(query.getQuery());
+            
             termek = String.valueOf(select[0][0]);
             cikkszam = String.valueOf(select[0][1]);
             mee = String.valueOf(select[0][2]);
             afa = String.valueOf(select[0][3]);
             egysegar = String.valueOf(select[0][4]);
             vtszTeszor = String.valueOf(select[0][5]);
+            
+            //product = new InvoiceProduct(id);
+            
             doClose(RET_OK);
         }
     }//GEN-LAST:event_listaTableMouseClicked
@@ -175,11 +181,13 @@ public class TermekListaDialog extends javax.swing.JDialog {
         frissites();
     }//GEN-LAST:event_keresesKeyReleased
 
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
         returnStatus = retStatus;
         setVisible(false);
         dispose();
     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField kereses;
@@ -187,20 +195,25 @@ public class TermekListaDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     private int returnStatus = RET_CANCEL;
 
-    private void frissites() {
+    private void frissites()
+    {
         DefaultTableModel model = (DefaultTableModel) listaTable.getModel();
         String[] header = {"Id", "Név"};
         String keresText = kereses.getText().replace("'", "\\\'"),
                 whereText = "nev LIKE '%" + keresText + "%'";
+        
         Query query = new Query.QueryBuilder()
-                .select("id, nev")
-                .from("szamlazo_termek")
-                .where(whereText)
-                .build();
+            .select("id, nev")
+            .from("szamlazo_termek")
+            .where(whereText)
+            .build();
         model.setDataVector(App.db.select(query.getQuery()), header);
+        
         TableColumn col;
         int[] meret = {30, 270};
-        for (int i = 0; i < meret.length; i++) {
+        
+        for (int i = 0; i < meret.length; i++)
+        {
             col = listaTable.getColumnModel().getColumn(i);
             col.setPreferredWidth(meret[i]);
         }
@@ -230,7 +243,8 @@ public class TermekListaDialog extends javax.swing.JDialog {
         return cikkszam;
     }
 
-    private void init() {
+    private void init()
+    {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         int x = (screenSize.width - getWidth()) / 2;

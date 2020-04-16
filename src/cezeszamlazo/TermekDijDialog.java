@@ -1,10 +1,14 @@
 package cezeszamlazo;
 
-import cezeszamlazo.controller.TermekDij;
+import cezeszamlazo.views.UserMessage;
+import invoice.ProductFee;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -12,43 +16,70 @@ import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-public class TermekDijDialog extends javax.swing.JDialog {
-
+public class TermekDijDialog extends javax.swing.JDialog
+{
+    private Map <String, String> productFeeMap = new HashMap<>();
+    
+    private boolean comboboxUpdate = false;
+    
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
     public static final int RET_OK = 1;
 
     /** Creates new form TermekDijDialog */
-    public TermekDijDialog() {
+    public TermekDijDialog()
+    {
 	initComponents();
 	
+        UpdateProductFeeTypeComboBox();
+        
 	init();
 
 	// Close the dialog when Esc is pressed
 	String cancelName = "cancel";
 	InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-	ActionMap actionMap = getRootPane().getActionMap();
-	actionMap.put(cancelName, new AbstractAction() {
-
-	    public void actionPerformed(ActionEvent e) {
+	
+        ActionMap actionMap = getRootPane().getActionMap();
+	actionMap.put(cancelName, new AbstractAction()
+        {
+            @Override
+	    public void actionPerformed(ActionEvent e)
+            {
 		doClose(RET_CANCEL);
 	    }
 	});
     }
     
-    public TermekDijDialog(TermekDij td) {
+    public TermekDijDialog(ProductFee fee)
+    {
 	initComponents();
+        
+        UpdateProductFeeTypeComboBox();
 	
-	nev.setText(td.getNev());
-	szelesseg.setText(String.valueOf(td.getSzelesseg()));
-	magassag.setText(String.valueOf(td.getMagassag()));
-	peldany.setText(String.valueOf(td.getPeldany()));
-	egysegSuly.setText(String.valueOf(td.getEgysegsuly()));
-	termekdij.setText(String.valueOf(td.getTermekDij()));
+	nev.setText(fee.getName());
+	//szelesseg.setText(String.valueOf(fee.getSzelesseg()));
+	//magassag.setText(String.valueOf(td.getMagassag()));
+	//peldany.setText(String.valueOf(td.getPeldany()));
+	//egysegSuly.setText(String.valueOf(td.getEgysegsuly()));
+	
+        /*productFeeMap.replace(td.getTipus(), String.valueOf(td.getTermekDij()));
         csk.setText(String.valueOf(td.getCsk()));
         kt.setText(String.valueOf(td.getKt()));
+        
+        for(int i = 0; i < comboBox_productFeeType.getItemCount(); i++)
+        {
+            String productFeeType = comboBox_productFeeType.getItemAt(i).toString();
+            
+            if(td.getTipus().equals(productFeeType))
+            {
+                comboBox_productFeeType.setSelectedIndex(i);
+                break;
+            }
+        }
+        
+        termekdij.setText(productFeeMap.get(comboBox_productFeeType.getSelectedItem().toString()));
 	
 	boolean b = td.getOsszsuly() != 0.0;
 	
@@ -68,23 +99,29 @@ public class TermekDijDialog extends javax.swing.JDialog {
 	
 	szamolAr();
 	
-	init();
+	init();*/
 
 	// Close the dialog when Esc is pressed
 	String cancelName = "cancel";
 	InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        
 	ActionMap actionMap = getRootPane().getActionMap();
-	actionMap.put(cancelName, new AbstractAction() {
-
-	    public void actionPerformed(ActionEvent e) {
+	actionMap.put(cancelName, new AbstractAction()
+        {
+            @Override
+	    public void actionPerformed(ActionEvent e)
+            {
 		doClose(RET_CANCEL);
 	    }
 	});
     }
     
-    public TermekDijDialog(String id) {
+    /*public TermekDijDialog(String id)
+    {
 	initComponents();
+        
+        UpdateProductFeeTypeComboBox();
 	
 	TermekDij td = new TermekDij(id);
 	
@@ -126,18 +163,41 @@ public class TermekDijDialog extends javax.swing.JDialog {
 		doClose(RET_CANCEL);
 	    }
 	});
+    }*/
+    
+    private void UpdateProductFeeTypeComboBox()
+    {
+        comboboxUpdate = true;
+        comboBox_productFeeType.removeAllItems();
+        
+        Object [][] productFeeTypes = ProductFee.getTypes();
+        
+        for(int i = 0; i < productFeeTypes.length; i++)
+        {
+            comboBox_productFeeType.addItem(new Label(productFeeTypes[i][1].toString(), productFeeTypes[i][0].toString()));
+            productFeeMap.put(productFeeTypes[i][0].toString(), productFeeTypes[i][1].toString());
+        }
+        
+        comboboxUpdate = false;
     }
 
-    /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
-    public int getReturnStatus() {
+    public int getReturnStatus()
+    {
 	return returnStatus;
     }
+    
+    private boolean HasCode()
+    {
+        boolean hasCode = true;
+        
+        if(csk.getText().isEmpty() && kt.getText().isEmpty())
+        {
+            hasCode = false;
+        }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
+        return hasCode;
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -172,6 +232,7 @@ public class TermekDijDialog extends javax.swing.JDialog {
         kt = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        comboBox_productFeeType = new javax.swing.JComboBox();
 
         setName("Form"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -275,11 +336,6 @@ public class TermekDijDialog extends javax.swing.JDialog {
         magassag.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         magassag.setText(resourceMap.getString("magassag.text")); // NOI18N
         magassag.setName("magassag"); // NOI18N
-        magassag.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                magassagActionPerformed(evt);
-            }
-        });
         magassag.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 magassagFocusGained(evt);
@@ -370,6 +426,14 @@ public class TermekDijDialog extends javax.swing.JDialog {
             }
         });
 
+        comboBox_productFeeType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Termékdíj típusa" }));
+        comboBox_productFeeType.setName("comboBox_productFeeType"); // NOI18N
+        comboBox_productFeeType.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboBox_productFeeTypeItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -409,27 +473,35 @@ public class TermekDijDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(nev, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(kt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                                    .addComponent(csk, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                                    .addComponent(peldany, javax.swing.GroupLayout.Alignment.LEADING, 0, 1, Short.MAX_VALUE)
-                                    .addComponent(egysegSuly, javax.swing.GroupLayout.Alignment.LEADING, 0, 1, Short.MAX_VALUE)
-                                    .addComponent(termekdij, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE))
+                                .addComponent(peldany, 0, 1, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jButton2)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel9)
-                                    .addComponent(jLabel10)
-                                    .addComponent(jButton1)))
+                                .addComponent(jLabel10))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(szelesseg, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(szelesseg, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel7)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(magassag, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(magassag, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel8)))))
+                                .addComponent(jLabel8))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(kt)
+                                    .addComponent(csk))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(termekdij)
+                                .addGap(6, 6, 6)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(comboBox_productFeeType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(egysegSuly)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel9)))))
                 .addContainerGap())
         );
 
@@ -463,7 +535,8 @@ public class TermekDijDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(termekdij, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
-                    .addComponent(jLabel5))
+                    .addComponent(jLabel5)
+                    .addComponent(comboBox_productFeeType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
@@ -497,7 +570,14 @@ public class TermekDijDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-	doClose(RET_OK);
+	if(HasCode())
+        {
+            doClose(RET_OK);
+        }
+        else
+        {
+            UserMessage message = new UserMessage("Üres mező", "A folytatáshoz meg kell adni a CSK vagy A KT kódot!");
+        }
     }//GEN-LAST:event_okButtonActionPerformed
     
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
@@ -526,13 +606,20 @@ public class TermekDijDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_egysegSulyKeyReleased
 
     private void termekdijKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_termekdijKeyReleased
-	szam(evt);
+	if(!termekdij.getText().isEmpty())
+        {
+            productFeeMap.replace(comboBox_productFeeType.getSelectedItem().toString(), termekdij.getText());
+        }
+        
+        szam(evt);
     }//GEN-LAST:event_termekdijKeyReleased
 
     private void sulyMegadasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sulyMegadasActionPerformed
-	if (sulyMegadas.isSelected()) {
+	if (sulyMegadas.isSelected())
+        {
 	    osszSuly.requestFocus();
 	}
+        
 	osszSuly.setEditable(sulyMegadas.isSelected());
 	osszSuly.setEnabled(sulyMegadas.isSelected());
 	szelesseg.setEditable(!sulyMegadas.isSelected());
@@ -550,43 +637,44 @@ public class TermekDijDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_osszSulyKeyReleased
 
     private void peldanyFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_peldanyFocusGained
-	if (peldany.getText().equalsIgnoreCase("0")) {
+	if (peldany.getText().equalsIgnoreCase("0"))
+        {
 	    peldany.setSelectionStart(0);
 	    peldany.setSelectionEnd(1);
 	}
     }//GEN-LAST:event_peldanyFocusGained
 
     private void szelessegFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_szelessegFocusGained
-	if (szelesseg.getText().equalsIgnoreCase("0")) {
+	if (szelesseg.getText().equalsIgnoreCase("0"))
+        {
 	    szelesseg.setSelectionStart(0);
 	    szelesseg.setSelectionEnd(1);
 	}
     }//GEN-LAST:event_szelessegFocusGained
 
     private void magassagFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_magassagFocusGained
-	if (magassag.getText().equalsIgnoreCase("0")) {
+	if (magassag.getText().equalsIgnoreCase("0"))
+        {
 	    magassag.setSelectionStart(0);
 	    magassag.setSelectionEnd(1);
 	}
     }//GEN-LAST:event_magassagFocusGained
 
     private void egysegSulyFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_egysegSulyFocusGained
-	if (egysegSuly.getText().equalsIgnoreCase("0")) {
+	if (egysegSuly.getText().equalsIgnoreCase("0"))
+        {
 	    egysegSuly.setSelectionStart(0);
 	    egysegSuly.setSelectionEnd(1);
 	}
     }//GEN-LAST:event_egysegSulyFocusGained
 
     private void osszSulyFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_osszSulyFocusGained
-	if (osszSuly.getText().equalsIgnoreCase("0")) {
+	if (osszSuly.getText().equalsIgnoreCase("0"))
+        {
 	    osszSuly.setSelectionStart(0);
 	    osszSuly.setSelectionEnd(1);
 	}
     }//GEN-LAST:event_osszSulyFocusGained
-
-    private void magassagActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_magassagActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_magassagActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         CskKtListaDialog c = new CskKtListaDialog(CskKtListaDialog.CSK);
@@ -601,8 +689,18 @@ public class TermekDijDialog extends javax.swing.JDialog {
             kt.setText(c.getKt());
         }
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void comboBox_productFeeTypeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBox_productFeeTypeItemStateChanged
+        if(!comboboxUpdate && evt.getStateChange() == ItemEvent.SELECTED)
+        {
+            Label l = (Label)comboBox_productFeeType.getSelectedItem();
+            termekdij.setText(productFeeMap.get(comboBox_productFeeType.getSelectedItem().toString()));
+            szamolAr();
+        }
+    }//GEN-LAST:event_comboBox_productFeeTypeItemStateChanged
     
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
 	returnStatus = retStatus;
 	setVisible(false);
 	dispose();
@@ -610,6 +708,7 @@ public class TermekDijDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
+    private javax.swing.JComboBox comboBox_productFeeType;
     private javax.swing.JTextField csk;
     private javax.swing.JTextField egysegSuly;
     private javax.swing.JButton jButton1;
@@ -642,7 +741,8 @@ public class TermekDijDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     private int returnStatus = RET_CANCEL;
     
-    private void init() {
+    private void init()
+    {
 	Toolkit toolkit = Toolkit.getDefaultToolkit();
 	Dimension screenSize = toolkit.getScreenSize();
 	int locX = (screenSize.width - getWidth()) / 2;
@@ -654,75 +754,126 @@ public class TermekDijDialog extends javax.swing.JDialog {
 
 	setLocation(locX, locY);
 	setTitle("Termék díj számítás");
-	
+        
 	setModal(true);
 	setVisible(true);
     }
     
-    private String csakszam(String text, int size, boolean tizedes) {
-	String valid = "0123456789";
-	if (tizedes) {
+    private String csakszam(String text, int size, boolean tizedes)
+    {
+	String valid = "-0123456789";
+	
+        if (tizedes)
+        {
 	    valid += ".";
 	}
+        
 	text = text.replace(",", ".");
 	String result = "";
-	for (int i = 0; i < text.length(); i++) {
-	    if (valid.contains(text.substring(i, i + 1))) {
+	
+        for (int i = 0; i < text.length(); i++)
+        {
+	    if (valid.contains(text.substring(i, i + 1)))
+            {
 		result += text.substring(i, i + 1);
 	    }
 	}
-	if (size != 0) {
-	    if (result.length() > size) {
+        
+	if (size != 0)
+        {
+	    if (result.length() > size)
+            {
 		result = result.substring(0, size);
 	    }
 	}
+        
 	return result;
     }
     
-    private void szam(KeyEvent evt) {
+    private void szam(KeyEvent evt)
+    {
 	JTextField field = (JTextField) evt.getSource();
 	int pos = field.getCaretPosition();
 	field.setText(csakszam(field.getText(), 0, true));
-	try {
+	
+        try
+        {
 	    field.setCaretPosition(pos);
-	} catch (Exception ex) {
 	}
-	if (!field.getText().isEmpty()) {
+        catch (Exception ex)
+        {
+            
+	}
+        
+	if (!field.getText().isEmpty())
+        {
 	    szamolAr();
 	}
     }
     
-    private void szamolAr() {
+    private void szamolAr()
+    {
+        String tipus = comboBox_productFeeType.getSelectedItem().toString();
 	double sz = Double.parseDouble(szelesseg.getText().replace(",", ".")),
-		m = Double.parseDouble(magassag.getText().replace(",", ".")),
-		pld = Double.parseDouble(peldany.getText().replace(",", ".")),
-		td = Double.parseDouble(termekdij.getText().replace(",", ".")),
-		s = Double.parseDouble(egysegSuly.getText().replace(",", "."));
-	TermekDij t = new TermekDij("",
-                sz,
-                m,
-                pld,
-                s,
-                td,
-                (sulyMegadas.isSelected() ? Double.parseDouble(osszSuly.getText().replace(",", ".")) : 0.0),
-                csk.getText(),
-                kt.getText());
-	//System.out.println(t);
-	if (!sulyMegadas.isSelected()) {
+            m = Double.parseDouble(magassag.getText().replace(",", ".")),
+            pld = Double.parseDouble(peldany.getText().replace(",", ".")),
+            td = Double.parseDouble(termekdij.getText().replace(",", ".")),
+            s = Double.parseDouble(egysegSuly.getText().replace(",", "."));
+        
+	/*TermekDij t = new TermekDij
+        (
+            tipus,
+            "",
+            sz,
+            m,
+            pld,
+            s,
+            td,
+            (sulyMegadas.isSelected() ? Double.parseDouble(osszSuly.getText().replace(",", ".")) : 0.0),
+            csk.getText(),
+            kt.getText()
+        );
+
+	if (!sulyMegadas.isSelected())
+        {
 	    osszSuly.setText(String.valueOf(t.getSuly()).replace(".", ","));
 	}
-	osszesen.setText(String.valueOf(t.getOsszTermekDijNetto(false)).replace(".", ",") + " Ft");
+        
+	osszesen.setText(String.valueOf(t.getOsszTermekDijNetto(false)).replace(".", ",") + " Ft");*/
     }
     
-    public TermekDij getTermekDij() {
-	return new TermekDij(nev.getText(),
-		Double.parseDouble(szelesseg.getText().replace(",", ".")),
-		Double.parseDouble(magassag.getText().replace(",", ".")),
-		Double.parseDouble(peldany.getText().replace(",", ".")),
-		Double.parseDouble(egysegSuly.getText().replace(",", ".")),
-		Double.parseDouble(termekdij.getText().replace(",", ".")),
-		(sulyMegadas.isSelected() ? Double.parseDouble(osszSuly.getText().replace(",", ".")) : 0.0),
-                csk.getText(),
-                kt.getText());
-    }
+    /*public TermekDij getTermekDij()
+    {
+	return new TermekDij(
+            nev.getText(),
+            Double.parseDouble(szelesseg.getText().replace(",", ".")),
+            Double.parseDouble(magassag.getText().replace(",", ".")),
+            Double.parseDouble(peldany.getText().replace(",", ".")),
+            Double.parseDouble(egysegSuly.getText().replace(",", ".")),
+            Double.parseDouble(termekdij.getText().replace(",", ".")),
+            (sulyMegadas.isSelected() ? Double.parseDouble(osszSuly.getText().replace(",", ".")) : 0.0),
+            csk.getText(),
+            kt.getText()
+        );
+    }*/
+    
+    /*public TermekDij getTermekDij()
+    {
+        Label tipus = (Label) comboBox_productFeeType.getSelectedItem();
+        
+	return new TermekDij
+        (
+            tipus.getName(),
+            nev.getText(),
+            Double.parseDouble(szelesseg.getText().replace(",", ".")),
+            Double.parseDouble(magassag.getText().replace(",", ".")),
+            Double.parseDouble(peldany.getText().replace(",", ".")),
+            Double.parseDouble(egysegSuly.getText().replace(",", ".")),
+            //Double.parseDouble(termekdij.getText().replace(",", ".")),
+            Double.parseDouble(productFeeMap.get(comboBox_productFeeType.getSelectedItem().toString())),
+            (sulyMegadas.isSelected() ? Double.parseDouble(osszSuly.getText().replace(",", ".")) : 0.0),
+            csk.getText(),
+            kt.getText()
+        );
+    }*/
 }

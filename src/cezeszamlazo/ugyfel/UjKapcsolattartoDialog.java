@@ -41,18 +41,23 @@ public class UjKapcsolattartoDialog extends javax.swing.JDialog {
      */
     private Kapcsolattarto kapcsolattarto;
 
-    public UjKapcsolattartoDialog(int id) {
+    public UjKapcsolattartoDialog(int id)
+    {
         initComponents();
 
         String title = "";
 
-        if (id == 0) {
+        if (id == 0)
+        {
             title = "Új kapcsolattartó";
             kapcsolattarto = new Kapcsolattarto();
-        } else {
+        }
+        else
+        {
             title = "Kapcsolattartó módosítása";
             kapcsolattarto = new Kapcsolattarto(id);
         }
+        
         init(title);
 
         // Close the dialog when Esc is pressed
@@ -276,7 +281,7 @@ public class UjKapcsolattartoDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(okButton)
                     .addComponent(cancelButton))
-                .addGap(24, 24, 24))
+                .addContainerGap())
         );
 
         getRootPane().setDefaultButton(okButton);
@@ -292,9 +297,6 @@ public class UjKapcsolattartoDialog extends javax.swing.JDialog {
         doClose(RET_CANCEL);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    /**
-     * Closes the dialog
-     */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
@@ -313,13 +315,16 @@ public class UjKapcsolattartoDialog extends javax.swing.JDialog {
 
     private void ujUgyfelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ujUgyfelButtonActionPerformed
         UjUgyfelDialog uud = new UjUgyfelDialog();
-        if (uud.getReturnStatus() == UjKapcsolattartoDialog.RET_OK) {
+        
+        if (uud.getReturnStatus() == UjKapcsolattartoDialog.RET_OK)
+        {
             ugyfelComboBoxFrissites(uud.getId());
         }
     }//GEN-LAST:event_ujUgyfelButtonActionPerformed
 
     private void ugyfelComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ugyfelComboBoxActionPerformed
-        if (b) {
+        if (b)
+        {
             Label l = (Label) ugyfelComboBox.getSelectedItem();
             kapcsolattarto.setUgyfelId((int) l.getId());
         }
@@ -348,7 +353,8 @@ public class UjKapcsolattartoDialog extends javax.swing.JDialog {
         kapcsolattarto.setPenzugyes(penzugyesCheckBox.isSelected());
     }//GEN-LAST:event_penzugyesCheckBoxActionPerformed
 
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
         returnStatus = retStatus;
         setVisible(false);
         dispose();
@@ -374,8 +380,8 @@ public class UjKapcsolattartoDialog extends javax.swing.JDialog {
 
     private int returnStatus = RET_CANCEL;
 
-    private void init(String title) {
-
+    private void init(String title)
+    {
         ugyfelComboBoxFrissites(kapcsolattarto.getUgyfelId());
         nevText.setText(kapcsolattarto.getNev());
         telefonText.setText(kapcsolattarto.getTelefon());
@@ -389,51 +395,69 @@ public class UjKapcsolattartoDialog extends javax.swing.JDialog {
         int y = (screenSize.height - getHeight()) / 2;
 
         setModal(true);
-//        setIconImage(PixiRendszer.img);
+//      setIconImage(PixiRendszer.img);
         setLocation(x, y);
         setTitle(title);
         setVisible(true);
     }
 
-    private void ugyfelComboBoxFrissites(int id) {
+    private void ugyfelComboBoxFrissites(int id)
+    {
         b = false;
         ugyfelComboBox.removeAllItems();
         ugyfelComboBox.addItem(new Label(0, "minden ügyfél"));
         String w = "1";
-//        if (PixiRendszer.user.getJogosultsag() == PixiUser.USER) {
-        w = "userid = " + App.user.getId();
-//        }
+        
+//      if (PixiRendszer.user.getJogosultsag() == PixiUser.USER)
+//      {
+            w = "userid = " + App.user.getId();
+//      }
+
         Object[][] s = null;
-        if (w.equalsIgnoreCase("1")) {
-//            System.out.println("w: " + w);
-            s = App.db.select("SELECT id, nev FROM pixi_ugyfel WHERE 1 ORDER BY nev ASC");
-        } else {
-            s = App.db.select("SELECT id, nev FROM pixi_ugyfel WHERE " + w + " ORDER BY nev ASC");
+        
+        if (w.equalsIgnoreCase("1"))
+        {
+            s = App.db.select("SELECT id, name FROM szamlazo_customers WHERE 1 ORDER BY name ASC");
+        }
+        else
+        {
+            s = App.db.select("SELECT id, name FROM szamlazo_customers WHERE " + w + " ORDER BY name ASC");
         }
 
         int index = 0;
-        for (int i = 0; i < s.length; i++) {
+        
+        for (int i = 0; i < s.length; i++)
+        {
             int uid = Integer.parseInt(String.valueOf(s[i][0]));
             ugyfelComboBox.addItem(new Label(uid, String.valueOf(s[i][1])));
-            if (uid == id) {
+            
+            if (uid == id)
+            {
                 index = i + 1;
             }
         }
+        
         b = true;
         ugyfelComboBox.setSelectedIndex(index);
     }
 
-    private void mentes() {
+    private void mentes()
+    {
         String s = kapcsolattarto.valid();
-        if (s.isEmpty()) {
+        
+        if (s.isEmpty())
+        {
             kapcsolattarto.mentes();
             doClose(RET_OK);
-        } else {
+        }
+        else
+        {
             HibaDialog h = new HibaDialog(s, "", "Ok");
         }
     }
 
-    public int getId() {
+    public int getId()
+    {
         return kapcsolattarto.getId();
     }
 }

@@ -23,75 +23,78 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import org.jdesktop.application.Application;
-import cezeszamlazo.controller.Valuta;
 import cezeszamlazo.database.Query;
-import cezeszamlazo.database.SzamlazoConnection;
 import cezeszamlazo.kintlevoseg.KintlevosegLevel;
 import cezeszamlazo.kintlevoseg.KintlevosegLevelHtmlEditor;
 import cezeszamlazo.interfaces.SharedValues;
-import cezeszamlazo.ugyfel.KapcsolattartokFrame;
-import cezeszamlazo.NAVConn;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import cezeszamlazo.model.LogModel;
+import cezeszamlazo.views.ContactsView;
+import cezeszamlazo.views.CustomersView;
+import cezeszamlazo.views.InvoiceSketchesView;
+import cezeszamlazo.views.LogsView;
+import cezeszamlazo.views.ResizeableInvoiceView;
+import cezeszamlazo.views.NewView;
+import controller.Database;
+import controller.DatabaseHost;
+import invoice.Invoice;
 
 /**
  * The application's main frame.
  */
-public class View extends FrameView implements SharedValues {
-
+public class View extends FrameView implements SharedValues
+{
     // frame-ek
     private SzamlaCsoportokFrame szamlaCsoportokFrame;
     private SzamlakFrame szamlakFrame;
+    private DijbekerokFrame dijbekerokFrame;
+    private InvoiceSketchesView sketches;
     private AdatszolgaltatasFrame adatszolgaltatasFrame;
     private TermekCsoportokFrame termekCsoportokFrame;
     private TermekekFrame termekekFrame;
-    private cezeszamlazo.ugyfel.UgyfelekFrame ugyfelekFrame;
+    private CustomersView customersView;
+    private ContactsView contactsView;
     private VtszTeszorFrame vtszTeszorFrame;
-    private SzamlaLablecFrame szamlaLablecFrame;
+    
     // egyéb
     private ResourceMap rm = Application.getInstance(cezeszamlazo.App.class).getContext().getResourceMap(View.class);
-    private boolean b = true;
-    private KapcsolattartokFrame kapcsolattartokFrame;
-    private TimeStamp TimeStamp = new TimeStamp();
 
-    public View(SingleFrameApplication app) {
+    public View(SingleFrameApplication app)
+    {
         super(app);
 
-//        
-//        String dbName = "cezetesztdb";
-//        String dbName = "szamlazo_" + Settings.getId();
-//        
-//        String clientUrl = "jdbc:mysql://localhost/"+dbName
-//                + "?useUnicode=true&characterEncoding=UTF-8";
-//        SzamlazoConnection szamlazoConnection = new SzamlazoConnection(clientUrl, USERNAME, PASSWORD);
-        SzamlazoConnection szamlazoConnection = new SzamlazoConnection(URL, USERNAME, PASSWORD);
-        App.db = new Database(szamlazoConnection);
-        App.db.connect();
+        App.db = new Database(DatabaseHost.Type.ONLINE, DatabaseHost.Host.SZAMLAZO);
+        App.db.Connect();
+        
+        App.pixi = new Database(DatabaseHost.Type.ONLINE, DatabaseHost.Host.PIXI);
+        App.pixi.Connect();
 
         userOlvasas();
-        if (App.user == null) {
+        
+        if (App.user == null)
+        {
             LoginDialog l = new LoginDialog();
-            if (l.getReturnStatus() == 1) {
+            
+            if (l.getReturnStatus() == 1)
+            {
                 userMentes();
-            } else {
+            }
+            else
+            {
                 getApplication().exit();
             }
         }
 
-        if (App.args.length != 0) {
+        if (App.args.length != 0)
+        {
             frissitesKeres();
-            SzamlaDialogOld sz = SzamlaDialogOld.create();
-            if (sz.getReturnStatus() == 0) {
+            
+            ResizeableInvoiceView view = new ResizeableInvoiceView(Invoice.INVOICE);
+            
+            if(view.getReturnStatus() == ResizeableInvoiceView.RET_CANCEL)
+            {
                 System.exit(0);
             }
         }
-
-        Loop loop = new Loop();
-        loop.start();
 
         App.args = new String[0];
 
@@ -101,59 +104,86 @@ public class View extends FrameView implements SharedValues {
         java.net.URL url = ClassLoader.getSystemResource("cezeszamlazo/resources/icon.png");
         java.awt.Image img = toolkit.createImage(url);
         getFrame().setIconImage(img);
+        
+        Dimension screenSize = toolkit.getScreenSize();
+        int x = (screenSize.width - this.getFrame().getWidth()) / 2;
+        int y = (screenSize.height - this.getFrame().getHeight()) / 2;
+        
+        this.getFrame().setLocation(x, y);
 
         beallitasokAlPanel.setVisible(false);
 
-        devizaDialog.setSize(devizaDialog.getPreferredSize().width, devizaDialog.getPreferredSize().height + 30);
-
         ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
-        messageTimer = new Timer(messageTimeout, new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
+        
+        messageTimer = new Timer(messageTimeout, new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
                 statusMessageLabel.setText("");
             }
         });
+        
         messageTimer.setRepeats(false);
         int busyAnimationRate = resourceMap.getInteger("StatusBar.busyAnimationRate");
-        for (int i = 0; i < busyIcons.length; i++) {
+        
+        for (int i = 0; i < busyIcons.length; i++)
+        {
             busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
         }
-        busyIconTimer = new Timer(busyAnimationRate, new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
+        
+        busyIconTimer = new Timer(busyAnimationRate, new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
                 busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
                 statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
             }
         });
+        
         idleIcon = resourceMap.getIcon("StatusBar.idleIcon");
         statusAnimationLabel.setIcon(idleIcon);
         progressBar.setVisible(false);
 
         // connecting action tasks to status bar via TaskMonitor
         TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
-        taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+        
+        taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener()
+        {
+            @Override
+            public void propertyChange(java.beans.PropertyChangeEvent evt)
+            {
                 String propertyName = evt.getPropertyName();
-                if ("started".equals(propertyName)) {
-                    if (!busyIconTimer.isRunning()) {
+                
+                if("started".equals(propertyName))
+                {
+                    if(!busyIconTimer.isRunning())
+                    {
                         statusAnimationLabel.setIcon(busyIcons[0]);
                         busyIconIndex = 0;
                         busyIconTimer.start();
                     }
+                    
                     progressBar.setVisible(true);
                     progressBar.setIndeterminate(true);
-                } else if ("done".equals(propertyName)) {
+                }
+                else if("done".equals(propertyName))
+                {
                     busyIconTimer.stop();
                     statusAnimationLabel.setIcon(idleIcon);
                     progressBar.setVisible(false);
                     progressBar.setValue(0);
-                } else if ("message".equals(propertyName)) {
+                }
+                else if("message".equals(propertyName))
+                {
                     String text = (String) (evt.getNewValue());
                     statusMessageLabel.setText((text == null) ? "" : text);
                     messageTimer.restart();
-                } else if ("progress".equals(propertyName)) {
+                }
+                else if("progress".equals(propertyName))
+                {
                     int value = (Integer) (evt.getNewValue());
                     progressBar.setVisible(true);
                     progressBar.setIndeterminate(false);
@@ -161,16 +191,29 @@ public class View extends FrameView implements SharedValues {
                 }
             }
         });
+        
+        UpdateLogButton();
     }
 
     @Action
-    public void showAboutBox() {
-        if (aboutBox == null) {
+    public void showAboutBox()
+    {
+        if(aboutBox == null)
+        {
             JFrame mainFrame = App.getApplication().getMainFrame();
             aboutBox = new AboutBox(mainFrame);
             aboutBox.setLocationRelativeTo(mainFrame);
         }
+        
         App.getApplication().show(aboutBox);
+    }
+    
+    private void UpdateLogButton()
+    {
+        if(LogModel.isNewLog())
+        {
+            button_Logs.setText("Log (új log)");
+        }
     }
 
     /**
@@ -183,14 +226,18 @@ public class View extends FrameView implements SharedValues {
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel();
-        ugyfelekPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         szamlakPanel = new javax.swing.JPanel();
         SzamlakButton = new javax.swing.JLabel();
-        ujDevizaSzamlaPanel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        ujSzamlaPanel = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
+        ujProFormaPanel = new javax.swing.JPanel();
+        jLabel15 = new javax.swing.JLabel();
+        proFormaPanel = new javax.swing.JPanel();
+        jLabel16 = new javax.swing.JLabel();
+        panel_NewSketch = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        panel_Sketches = new javax.swing.JPanel();
+        jLabel22 = new javax.swing.JLabel();
+        ugyfelekPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
         termekekPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         beallitasokPanel = new javax.swing.JPanel();
@@ -212,16 +259,17 @@ public class View extends FrameView implements SharedValues {
         jLabel18 = new javax.swing.JLabel();
         szamlaLablecPanel2 = new javax.swing.JPanel();
         jLabel19 = new javax.swing.JLabel();
-        szamlaLablecPanel3 = new javax.swing.JPanel();
+        InvoiceEmailEditor = new javax.swing.JPanel();
         jLabel20 = new javax.swing.JLabel();
-        proFormaPanel = new javax.swing.JPanel();
-        jLabel16 = new javax.swing.JLabel();
-        ujProFormaPanel = new javax.swing.JPanel();
-        jLabel15 = new javax.swing.JLabel();
+        szamlaLablecPanel4 = new javax.swing.JPanel();
+        jLabel23 = new javax.swing.JLabel();
         adatszolgaltatasPanel = new javax.swing.JPanel();
         adatszolgaltatas = new javax.swing.JLabel();
         kapocsolattartokPanel = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
+        button_NewInvoice = new javax.swing.JButton();
+        button_Logs = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -232,56 +280,11 @@ public class View extends FrameView implements SharedValues {
         statusMessageLabel = new javax.swing.JLabel();
         statusAnimationLabel = new javax.swing.JLabel();
         progressBar = new javax.swing.JProgressBar();
-        devizaDialog = new javax.swing.JDialog();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        devizaKozeparfolyam = new javax.swing.JTextField();
-        jLabel11 = new javax.swing.JLabel();
-        devizaComboBox = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
-        devizaSzamlaLetrehozasButton = new javax.swing.JButton();
 
+        mainPanel.setMinimumSize(new java.awt.Dimension(600, 700));
         mainPanel.setName("mainPanel"); // NOI18N
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(cezeszamlazo.App.class).getContext().getResourceMap(View.class);
-        ugyfelekPanel.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("ugyfelekPanel.border.lineColor"))); // NOI18N
-        ugyfelekPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        ugyfelekPanel.setFont(resourceMap.getFont("ugyfelekPanel.font")); // NOI18N
-        ugyfelekPanel.setName("ugyfelekPanel"); // NOI18N
-        ugyfelekPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                ugyfelekPanelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                ugyfelekPanelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                ugyfelekPanelMouseExited(evt);
-            }
-        });
-
-        jLabel1.setFont(resourceMap.getFont("jLabel1.font")); // NOI18N
-        jLabel1.setIcon(resourceMap.getIcon("jLabel1.icon")); // NOI18N
-        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
-        jLabel1.setName("jLabel1"); // NOI18N
-
-        javax.swing.GroupLayout ugyfelekPanelLayout = new javax.swing.GroupLayout(ugyfelekPanel);
-        ugyfelekPanel.setLayout(ugyfelekPanelLayout);
-        ugyfelekPanelLayout.setHorizontalGroup(
-            ugyfelekPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ugyfelekPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        ugyfelekPanelLayout.setVerticalGroup(
-            ugyfelekPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ugyfelekPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         szamlakPanel.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("szamlakPanel.border.lineColor"))); // NOI18N
         szamlakPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         szamlakPanel.setName("szamlakPanel"); // NOI18N
@@ -319,77 +322,187 @@ public class View extends FrameView implements SharedValues {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        ujDevizaSzamlaPanel.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("ujDevizaSzamlaPanel.border.lineColor"))); // NOI18N
-        ujDevizaSzamlaPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        ujDevizaSzamlaPanel.setName("ujDevizaSzamlaPanel"); // NOI18N
-        ujDevizaSzamlaPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+        ujProFormaPanel.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("ujProFormaPanel.border.lineColor"))); // NOI18N
+        ujProFormaPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ujProFormaPanel.setName("ujProFormaPanel"); // NOI18N
+        ujProFormaPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                ujDevizaSzamlaPanelMouseClicked(evt);
+                ujProFormaPanelMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                ujDevizaSzamlaPanelMouseEntered(evt);
+                ujProFormaPanelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                ujDevizaSzamlaPanelMouseExited(evt);
+                ujProFormaPanelMouseExited(evt);
             }
         });
 
-        jLabel3.setFont(resourceMap.getFont("jLabel3.font")); // NOI18N
-        jLabel3.setIcon(resourceMap.getIcon("jLabel3.icon")); // NOI18N
-        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
-        jLabel3.setName("jLabel3"); // NOI18N
+        jLabel15.setFont(resourceMap.getFont("jLabel15.font")); // NOI18N
+        jLabel15.setIcon(resourceMap.getIcon("jLabel15.icon")); // NOI18N
+        jLabel15.setText(resourceMap.getString("jLabel15.text")); // NOI18N
+        jLabel15.setName("jLabel15"); // NOI18N
 
-        javax.swing.GroupLayout ujDevizaSzamlaPanelLayout = new javax.swing.GroupLayout(ujDevizaSzamlaPanel);
-        ujDevizaSzamlaPanel.setLayout(ujDevizaSzamlaPanelLayout);
-        ujDevizaSzamlaPanelLayout.setHorizontalGroup(
-            ujDevizaSzamlaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ujDevizaSzamlaPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout ujProFormaPanelLayout = new javax.swing.GroupLayout(ujProFormaPanel);
+        ujProFormaPanel.setLayout(ujProFormaPanelLayout);
+        ujProFormaPanelLayout.setHorizontalGroup(
+            ujProFormaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ujProFormaPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3)
+                .addComponent(jLabel15)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        ujDevizaSzamlaPanelLayout.setVerticalGroup(
-            ujDevizaSzamlaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ujDevizaSzamlaPanelLayout.createSequentialGroup()
+        ujProFormaPanelLayout.setVerticalGroup(
+            ujProFormaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ujProFormaPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3)
+                .addComponent(jLabel15)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        ujSzamlaPanel.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("ujSzamlaPanel.border.lineColor"))); // NOI18N
-        ujSzamlaPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        ujSzamlaPanel.setName("ujSzamlaPanel"); // NOI18N
-        ujSzamlaPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+        proFormaPanel.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("proFormaPanel.border.lineColor"))); // NOI18N
+        proFormaPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        proFormaPanel.setName("proFormaPanel"); // NOI18N
+        proFormaPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                ujSzamlaPanelMouseClicked(evt);
+                proFormaPanelMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                ujSzamlaPanelMouseEntered(evt);
+                proFormaPanelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                ujSzamlaPanelMouseExited(evt);
+                proFormaPanelMouseExited(evt);
             }
         });
 
-        jLabel4.setFont(resourceMap.getFont("jLabel4.font")); // NOI18N
-        jLabel4.setIcon(resourceMap.getIcon("jLabel4.icon")); // NOI18N
-        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
-        jLabel4.setName("jLabel4"); // NOI18N
+        jLabel16.setFont(resourceMap.getFont("jLabel16.font")); // NOI18N
+        jLabel16.setIcon(resourceMap.getIcon("jLabel16.icon")); // NOI18N
+        jLabel16.setText(resourceMap.getString("jLabel16.text")); // NOI18N
+        jLabel16.setName("jLabel16"); // NOI18N
 
-        javax.swing.GroupLayout ujSzamlaPanelLayout = new javax.swing.GroupLayout(ujSzamlaPanel);
-        ujSzamlaPanel.setLayout(ujSzamlaPanelLayout);
-        ujSzamlaPanelLayout.setHorizontalGroup(
-            ujSzamlaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ujSzamlaPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout proFormaPanelLayout = new javax.swing.GroupLayout(proFormaPanel);
+        proFormaPanel.setLayout(proFormaPanelLayout);
+        proFormaPanelLayout.setHorizontalGroup(
+            proFormaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proFormaPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel4)
+                .addComponent(jLabel16)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        ujSzamlaPanelLayout.setVerticalGroup(
-            ujSzamlaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ujSzamlaPanelLayout.createSequentialGroup()
+        proFormaPanelLayout.setVerticalGroup(
+            proFormaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proFormaPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel4)
+                .addComponent(jLabel16)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        panel_NewSketch.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("panel_NewSketch.border.lineColor"))); // NOI18N
+        panel_NewSketch.setName("panel_NewSketch"); // NOI18N
+        panel_NewSketch.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                panel_NewSketchMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                panel_NewSketchMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                panel_NewSketchMouseExited(evt);
+            }
+        });
+
+        jLabel2.setFont(resourceMap.getFont("jLabel2.font")); // NOI18N
+        jLabel2.setIcon(resourceMap.getIcon("jLabel2.icon")); // NOI18N
+        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
+        jLabel2.setName("jLabel2"); // NOI18N
+
+        javax.swing.GroupLayout panel_NewSketchLayout = new javax.swing.GroupLayout(panel_NewSketch);
+        panel_NewSketch.setLayout(panel_NewSketchLayout);
+        panel_NewSketchLayout.setHorizontalGroup(
+            panel_NewSketchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_NewSketchLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        panel_NewSketchLayout.setVerticalGroup(
+            panel_NewSketchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_NewSketchLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        panel_Sketches.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("panel_Sketches.border.lineColor"))); // NOI18N
+        panel_Sketches.setName("panel_Sketches"); // NOI18N
+        panel_Sketches.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                panel_SketchesMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                panel_SketchesMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                panel_SketchesMouseExited(evt);
+            }
+        });
+
+        jLabel22.setFont(resourceMap.getFont("jLabel22.font")); // NOI18N
+        jLabel22.setIcon(resourceMap.getIcon("jLabel22.icon")); // NOI18N
+        jLabel22.setText(resourceMap.getString("jLabel22.text")); // NOI18N
+        jLabel22.setName("jLabel22"); // NOI18N
+
+        javax.swing.GroupLayout panel_SketchesLayout = new javax.swing.GroupLayout(panel_Sketches);
+        panel_Sketches.setLayout(panel_SketchesLayout);
+        panel_SketchesLayout.setHorizontalGroup(
+            panel_SketchesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_SketchesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        panel_SketchesLayout.setVerticalGroup(
+            panel_SketchesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_SketchesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        ugyfelekPanel.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("ugyfelekPanel.border.lineColor"))); // NOI18N
+        ugyfelekPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ugyfelekPanel.setFont(resourceMap.getFont("ugyfelekPanel.font")); // NOI18N
+        ugyfelekPanel.setName("ugyfelekPanel"); // NOI18N
+        ugyfelekPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ugyfelekPanelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                ugyfelekPanelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                ugyfelekPanelMouseExited(evt);
+            }
+        });
+
+        jLabel1.setFont(resourceMap.getFont("jLabel1.font")); // NOI18N
+        jLabel1.setIcon(resourceMap.getIcon("jLabel1.icon")); // NOI18N
+        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
+        jLabel1.setName("jLabel1"); // NOI18N
+
+        javax.swing.GroupLayout ugyfelekPanelLayout = new javax.swing.GroupLayout(ugyfelekPanel);
+        ugyfelekPanel.setLayout(ugyfelekPanelLayout);
+        ugyfelekPanelLayout.setHorizontalGroup(
+            ugyfelekPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ugyfelekPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        ugyfelekPanelLayout.setVerticalGroup(
+            ugyfelekPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ugyfelekPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -470,26 +583,23 @@ public class View extends FrameView implements SharedValues {
 
         beallitasokAlPanel.setBackground(resourceMap.getColor("beallitasokAlPanel.background")); // NOI18N
         beallitasokAlPanel.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("beallitasokAlPanel.border.lineColor"))); // NOI18N
+        beallitasokAlPanel.setMinimumSize(new java.awt.Dimension(180, 580));
         beallitasokAlPanel.setName("beallitasokAlPanel"); // NOI18N
 
         szamlaCsoportokPanel.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("szamlaCsoportokPanel.border.lineColor"))); // NOI18N
         szamlaCsoportokPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        szamlaCsoportokPanel.setEnabled(false);
         szamlaCsoportokPanel.setName("szamlaCsoportokPanel"); // NOI18N
         szamlaCsoportokPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 szamlaCsoportokPanelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                szamlaCsoportokPanelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                szamlaCsoportokPanelMouseExited(evt);
             }
         });
 
         jLabel5.setFont(resourceMap.getFont("jLabel5.font")); // NOI18N
         jLabel5.setIcon(resourceMap.getIcon("jLabel5.icon")); // NOI18N
         jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
+        jLabel5.setEnabled(false);
         jLabel5.setName("jLabel5"); // NOI18N
 
         javax.swing.GroupLayout szamlaCsoportokPanelLayout = new javax.swing.GroupLayout(szamlaCsoportokPanel);
@@ -743,18 +853,18 @@ public class View extends FrameView implements SharedValues {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        szamlaLablecPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("szamlaLablecPanel3.border.lineColor"))); // NOI18N
-        szamlaLablecPanel3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        szamlaLablecPanel3.setName("szamlaLablecPanel3"); // NOI18N
-        szamlaLablecPanel3.addMouseListener(new java.awt.event.MouseAdapter() {
+        InvoiceEmailEditor.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("InvoiceEmailEditor.border.lineColor"))); // NOI18N
+        InvoiceEmailEditor.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        InvoiceEmailEditor.setName("InvoiceEmailEditor"); // NOI18N
+        InvoiceEmailEditor.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                szamlaLablecPanel3MouseClicked(evt);
+                InvoiceEmailEditorMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                szamlaLablecPanel3MouseEntered(evt);
+                InvoiceEmailEditorMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                szamlaLablecPanel3MouseExited(evt);
+                InvoiceEmailEditorMouseExited(evt);
             }
         });
 
@@ -762,20 +872,56 @@ public class View extends FrameView implements SharedValues {
         jLabel20.setText(resourceMap.getString("jLabel20.text")); // NOI18N
         jLabel20.setName("jLabel20"); // NOI18N
 
-        javax.swing.GroupLayout szamlaLablecPanel3Layout = new javax.swing.GroupLayout(szamlaLablecPanel3);
-        szamlaLablecPanel3.setLayout(szamlaLablecPanel3Layout);
-        szamlaLablecPanel3Layout.setHorizontalGroup(
-            szamlaLablecPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(szamlaLablecPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout InvoiceEmailEditorLayout = new javax.swing.GroupLayout(InvoiceEmailEditor);
+        InvoiceEmailEditor.setLayout(InvoiceEmailEditorLayout);
+        InvoiceEmailEditorLayout.setHorizontalGroup(
+            InvoiceEmailEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(InvoiceEmailEditorLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        szamlaLablecPanel3Layout.setVerticalGroup(
-            szamlaLablecPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(szamlaLablecPanel3Layout.createSequentialGroup()
+        InvoiceEmailEditorLayout.setVerticalGroup(
+            InvoiceEmailEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(InvoiceEmailEditorLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel20)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        szamlaLablecPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("szamlaLablecPanel4.border.lineColor"))); // NOI18N
+        szamlaLablecPanel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        szamlaLablecPanel4.setName("szamlaLablecPanel4"); // NOI18N
+        szamlaLablecPanel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                szamlaLablecPanel4MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                szamlaLablecPanel4MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                szamlaLablecPanel4MouseExited(evt);
+            }
+        });
+
+        jLabel23.setFont(resourceMap.getFont("jLabel23.font")); // NOI18N
+        jLabel23.setText(resourceMap.getString("jLabel23.text")); // NOI18N
+        jLabel23.setName("jLabel23"); // NOI18N
+
+        javax.swing.GroupLayout szamlaLablecPanel4Layout = new javax.swing.GroupLayout(szamlaLablecPanel4);
+        szamlaLablecPanel4.setLayout(szamlaLablecPanel4Layout);
+        szamlaLablecPanel4Layout.setHorizontalGroup(
+            szamlaLablecPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(szamlaLablecPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        szamlaLablecPanel4Layout.setVerticalGroup(
+            szamlaLablecPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(szamlaLablecPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel23)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -794,13 +940,14 @@ public class View extends FrameView implements SharedValues {
                     .addComponent(szamlaLablecPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(szamlaLablecPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(szamlaLablecPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(szamlaLablecPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(InvoiceEmailEditor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(szamlaLablecPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         beallitasokAlPanelLayout.setVerticalGroup(
             beallitasokAlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(beallitasokAlPanelLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
+                .addGap(7, 7, 7)
                 .addComponent(szamlaCsoportokPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(termekCsoportokPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -817,83 +964,9 @@ public class View extends FrameView implements SharedValues {
                 .addGap(18, 18, 18)
                 .addComponent(szamlaLablecPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(szamlaLablecPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        proFormaPanel.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("proFormaPanel.border.lineColor"))); // NOI18N
-        proFormaPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        proFormaPanel.setName("proFormaPanel"); // NOI18N
-        proFormaPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                proFormaPanelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                proFormaPanelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                proFormaPanelMouseExited(evt);
-            }
-        });
-
-        jLabel16.setFont(resourceMap.getFont("jLabel16.font")); // NOI18N
-        jLabel16.setIcon(resourceMap.getIcon("jLabel16.icon")); // NOI18N
-        jLabel16.setText(resourceMap.getString("jLabel16.text")); // NOI18N
-        jLabel16.setEnabled(false);
-        jLabel16.setName("jLabel16"); // NOI18N
-
-        javax.swing.GroupLayout proFormaPanelLayout = new javax.swing.GroupLayout(proFormaPanel);
-        proFormaPanel.setLayout(proFormaPanelLayout);
-        proFormaPanelLayout.setHorizontalGroup(
-            proFormaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(proFormaPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel16)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        proFormaPanelLayout.setVerticalGroup(
-            proFormaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(proFormaPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel16)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        ujProFormaPanel.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("ujProFormaPanel.border.lineColor"))); // NOI18N
-        ujProFormaPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        ujProFormaPanel.setName("ujProFormaPanel"); // NOI18N
-        ujProFormaPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                ujProFormaPanelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                ujProFormaPanelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                ujProFormaPanelMouseExited(evt);
-            }
-        });
-
-        jLabel15.setFont(resourceMap.getFont("jLabel15.font")); // NOI18N
-        jLabel15.setIcon(resourceMap.getIcon("jLabel15.icon")); // NOI18N
-        jLabel15.setText(resourceMap.getString("jLabel15.text")); // NOI18N
-        jLabel15.setEnabled(false);
-        jLabel15.setName("jLabel15"); // NOI18N
-
-        javax.swing.GroupLayout ujProFormaPanelLayout = new javax.swing.GroupLayout(ujProFormaPanel);
-        ujProFormaPanel.setLayout(ujProFormaPanelLayout);
-        ujProFormaPanelLayout.setHorizontalGroup(
-            ujProFormaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ujProFormaPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel15)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        ujProFormaPanelLayout.setVerticalGroup(
-            ujProFormaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ujProFormaPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel15)
+                .addComponent(szamlaLablecPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(InvoiceEmailEditor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -903,12 +976,6 @@ public class View extends FrameView implements SharedValues {
         adatszolgaltatasPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 adatszolgaltatasPanelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                adatszolgaltatasPanelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                adatszolgaltatasPanelMouseExited(evt);
             }
         });
 
@@ -949,6 +1016,7 @@ public class View extends FrameView implements SharedValues {
         });
 
         jLabel21.setFont(resourceMap.getFont("jLabel21.font")); // NOI18N
+        jLabel21.setIcon(resourceMap.getIcon("jLabel21.icon")); // NOI18N
         jLabel21.setText(resourceMap.getString("jLabel21.text")); // NOI18N
         jLabel21.setName("jLabel21"); // NOI18N
 
@@ -969,57 +1037,98 @@ public class View extends FrameView implements SharedValues {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        button_NewInvoice.setFont(resourceMap.getFont("button_NewInvoice.font")); // NOI18N
+        button_NewInvoice.setIcon(resourceMap.getIcon("button_NewInvoice.icon")); // NOI18N
+        button_NewInvoice.setText(resourceMap.getString("button_NewInvoice.text")); // NOI18N
+        button_NewInvoice.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        button_NewInvoice.setMaximumSize(new java.awt.Dimension(73, 50));
+        button_NewInvoice.setMinimumSize(new java.awt.Dimension(73, 50));
+        button_NewInvoice.setName("button_NewInvoice"); // NOI18N
+        button_NewInvoice.setPreferredSize(new java.awt.Dimension(73, 50));
+        button_NewInvoice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_NewInvoiceActionPerformed(evt);
+            }
+        });
+
+        button_Logs.setFont(resourceMap.getFont("button_Logs.font")); // NOI18N
+        button_Logs.setText(resourceMap.getString("button_Logs.text")); // NOI18N
+        button_Logs.setName("button_Logs"); // NOI18N
+        button_Logs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_LogsActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
+        jButton1.setName("jButton1"); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(adatszolgaltatasPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(beallitasokPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(termekekPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ugyfelekPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(szamlakPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ujSzamlaPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ujDevizaSzamlaPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(proFormaPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ujProFormaPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(kapocsolattartokPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(beallitasokAlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(85, Short.MAX_VALUE))
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(button_Logs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(adatszolgaltatasPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(beallitasokPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(termekekPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(ugyfelekPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(szamlakPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proFormaPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(ujProFormaPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(kapocsolattartokPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panel_NewSketch, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panel_Sketches, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(button_NewInvoice, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(beallitasokAlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
+                .addGap(164, 164, 164))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+            .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(beallitasokAlPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(174, 174, 174))
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(ujSzamlaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ujDevizaSzamlaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(button_NewInvoice, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(szamlakPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(18, 18, 18)
                         .addComponent(ujProFormaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proFormaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(15, 15, 15)
-                        .addComponent(ugyfelekPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
+                        .addComponent(panel_NewSketch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(panel_Sketches, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(ugyfelekPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(kapocsolattartokPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(18, 18, 18)
                         .addComponent(termekekPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(beallitasokPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(adatszolgaltatasPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(116, 116, 116))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(button_Logs)
+                        .addContainerGap(31, Short.MAX_VALUE))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(beallitasokAlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -1084,101 +1193,10 @@ public class View extends FrameView implements SharedValues {
                 .addGap(3, 3, 3))
         );
 
-        devizaDialog.setModal(true);
-        devizaDialog.setName("devizaDialog"); // NOI18N
-
-        jLabel8.setText(resourceMap.getString("jLabel8.text")); // NOI18N
-        jLabel8.setName("jLabel8"); // NOI18N
-
-        jLabel9.setText(resourceMap.getString("jLabel9.text")); // NOI18N
-        jLabel9.setName("jLabel9"); // NOI18N
-
-        devizaKozeparfolyam.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        devizaKozeparfolyam.setText(resourceMap.getString("devizaKozeparfolyam.text")); // NOI18N
-        devizaKozeparfolyam.setName("devizaKozeparfolyam"); // NOI18N
-
-        jLabel11.setText(resourceMap.getString("jLabel11.text")); // NOI18N
-        jLabel11.setName("jLabel11"); // NOI18N
-
-        devizaComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "deviza" }));
-        devizaComboBox.setName("devizaComboBox"); // NOI18N
-        devizaComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                devizaComboBoxActionPerformed(evt);
-            }
-        });
-
-        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
-        jButton1.setName("jButton1"); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        devizaSzamlaLetrehozasButton.setText(resourceMap.getString("devizaSzamlaLetrehozasButton.text")); // NOI18N
-        devizaSzamlaLetrehozasButton.setName("devizaSzamlaLetrehozasButton"); // NOI18N
-        devizaSzamlaLetrehozasButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                devizaSzamlaLetrehozasButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout devizaDialogLayout = new javax.swing.GroupLayout(devizaDialog.getContentPane());
-        devizaDialog.getContentPane().setLayout(devizaDialogLayout);
-        devizaDialogLayout.setHorizontalGroup(
-            devizaDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(devizaDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(devizaDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel8))
-                .addGap(18, 18, 18)
-                .addGroup(devizaDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(devizaDialogLayout.createSequentialGroup()
-                        .addComponent(devizaKozeparfolyam, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel11))
-                    .addComponent(devizaComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(161, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devizaDialogLayout.createSequentialGroup()
-                .addContainerGap(188, Short.MAX_VALUE)
-                .addComponent(devizaSzamlaLetrehozasButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addContainerGap())
-        );
-        devizaDialogLayout.setVerticalGroup(
-            devizaDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(devizaDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(devizaDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(devizaComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(devizaDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(devizaKozeparfolyam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(devizaDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(devizaSzamlaLetrehozasButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         setComponent(mainPanel);
         setMenuBar(menuBar);
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void ujSzamlaPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ujSzamlaPanelMouseEntered
-        ujSzamlaPanel.setBackground(Color.decode("#ABD043"));
-    }//GEN-LAST:event_ujSzamlaPanelMouseEntered
-
-    private void ujDevizaSzamlaPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ujDevizaSzamlaPanelMouseEntered
-        ujDevizaSzamlaPanel.setBackground(Color.decode("#ABD043"));
-    }//GEN-LAST:event_ujDevizaSzamlaPanelMouseEntered
 
     private void szamlakPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlakPanelMouseEntered
         szamlakPanel.setBackground(Color.decode("#ABD043"));
@@ -1187,14 +1205,6 @@ public class View extends FrameView implements SharedValues {
     private void ugyfelekPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ugyfelekPanelMouseEntered
         ugyfelekPanel.setBackground(Color.decode("#ABD043"));
     }//GEN-LAST:event_ugyfelekPanelMouseEntered
-
-    private void ujSzamlaPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ujSzamlaPanelMouseExited
-        ujSzamlaPanel.setBackground(Color.decode("#F0F0F0"));
-    }//GEN-LAST:event_ujSzamlaPanelMouseExited
-
-    private void ujDevizaSzamlaPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ujDevizaSzamlaPanelMouseExited
-        ujDevizaSzamlaPanel.setBackground(Color.decode("#F0F0F0"));
-    }//GEN-LAST:event_ujDevizaSzamlaPanelMouseExited
 
     private void szamlakPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlakPanelMouseExited
         szamlakPanel.setBackground(Color.decode("#F0F0F0"));
@@ -1205,30 +1215,24 @@ public class View extends FrameView implements SharedValues {
     }//GEN-LAST:event_ugyfelekPanelMouseExited
 
     private void ugyfelekPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ugyfelekPanelMouseClicked
-        if (ugyfelekFrame == null) {
-            ugyfelekFrame = new cezeszamlazo.ugyfel.UgyfelekFrame();
+        if(customersView == null)
+        {
+            customersView = new CustomersView();
         }
-        ugyfelekFrame.nyit();
-
+        
+        customersView.Open();
     }//GEN-LAST:event_ugyfelekPanelMouseClicked
 
     private void szamlakPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlakPanelMouseClicked
         if (szamlakFrame == null)
         {
-            System.out.println("Számlák gomb klikk: " + TimeStamp.getTimeStamp());
             szamlakFrame = new SzamlakFrame();    
         }
+        
         szamlakFrame.nyit();
+        
+        UpdateLogButton();
     }//GEN-LAST:event_szamlakPanelMouseClicked
-
-    private void ujSzamlaPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ujSzamlaPanelMouseClicked
-        SzamlaDialogOld sz = SzamlaDialogOld.createUjszamla("Ft", false, 1.0);
-        if (sz.getReturnStatus() == 1) {
-            if (szamlakFrame != null) {
-                szamlakFrame.frissites();
-            }
-        }
-    }//GEN-LAST:event_ujSzamlaPanelMouseClicked
 
     private void termekekPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_termekekPanelMouseEntered
         termekekPanel.setBackground(Color.decode("#ABD043"));
@@ -1247,75 +1251,26 @@ public class View extends FrameView implements SharedValues {
     }//GEN-LAST:event_beallitasokPanelMouseExited
 
     private void termekekPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_termekekPanelMouseClicked
-        if (termekekFrame == null) {
+        if (termekekFrame == null)
+        {
             termekekFrame = new TermekekFrame();
         }
+        
         termekekFrame.nyit();
     }//GEN-LAST:event_termekekPanelMouseClicked
 
-    private void ujDevizaSzamlaPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ujDevizaSzamlaPanelMouseClicked
-        b = false;
-        devizaComboBox.removeAllItems();
-        devizaComboBox.removeAll();
-        if (devizaComboBox.getItemCount() == 0) {
-            Query query = new Query.QueryBuilder()
-                    .select("valuta, valuta_nev, kozeparfolyam ")
-                    .from("szamlazo_valuta")
-                    .order("id")
-                    .build();
-            Object[][] s = App.db.select(query.getQuery());
-            for (int i = 0; i < s.length; i++) {
-                devizaComboBox.addItem(new Valuta(String.valueOf(s[i][0]), String.valueOf(s[i][1]), Double.parseDouble(String.valueOf(s[i][2]))));
-            }
-        }
-        b = true;
-        devizaComboBox.setSelectedIndex(0);
-        Valuta v = new Valuta(devizaComboBox.getSelectedItem());
-        devizaKozeparfolyam.setText(String.valueOf(v.getKozeparfolyam()));
-        nyit(devizaDialog, "Új deviza számla");
-    }//GEN-LAST:event_ujDevizaSzamlaPanelMouseClicked
-
-    private void devizaComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_devizaComboBoxActionPerformed
-        if (b) {
-            Valuta v = (Valuta) devizaComboBox.getSelectedItem();
-            devizaKozeparfolyam.setText(String.valueOf(v.getKozeparfolyam()));
-        }
-    }//GEN-LAST:event_devizaComboBoxActionPerformed
-
-    private void devizaSzamlaLetrehozasButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_devizaSzamlaLetrehozasButtonActionPerformed
-        Valuta v = (Valuta) devizaComboBox.getSelectedItem();
-
-        SzamlaDialogOld sz = SzamlaDialogOld.createDevizaSzamla(v.getValuta(), true, v.getKozeparfolyam());
-//        SzamlaDialogOld sz = new SzamlaDialogOld(v.getValuta(), true, v.getKozeparfolyam());
-        if (sz.getReturnStatus() == 1) {
-            if (szamlakFrame != null) {
-                szamlakFrame.frissites();
-            }
-        }
-        devizaDialog.setVisible(false);
-    }//GEN-LAST:event_devizaSzamlaLetrehozasButtonActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        devizaDialog.setVisible(false);
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     private void beallitasokPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_beallitasokPanelMouseClicked
         beallitasokAlPanel.setVisible(!beallitasokAlPanel.isVisible());
+        beallitasokAlPanel.setSize(400, 500);
     }//GEN-LAST:event_beallitasokPanelMouseClicked
 
-    private void szamlaCsoportokPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaCsoportokPanelMouseEntered
-        szamlaCsoportokPanel.setBackground(Color.decode("#ABD043"));
-    }//GEN-LAST:event_szamlaCsoportokPanelMouseEntered
-
-    private void szamlaCsoportokPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaCsoportokPanelMouseExited
-        szamlaCsoportokPanel.setBackground(Color.decode("#F0F0F0"));
-    }//GEN-LAST:event_szamlaCsoportokPanelMouseExited
-
     private void szamlaCsoportokPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaCsoportokPanelMouseClicked
-        if (szamlaCsoportokFrame == null) {
+        /*if (szamlaCsoportokFrame == null)
+        {
             szamlaCsoportokFrame = new SzamlaCsoportokFrame();
         }
-        szamlaCsoportokFrame.nyit();
+        
+        szamlaCsoportokFrame.nyit();*/
     }//GEN-LAST:event_szamlaCsoportokPanelMouseClicked
 
     private void termekCsoportokPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_termekCsoportokPanelMouseEntered
@@ -1327,9 +1282,11 @@ public class View extends FrameView implements SharedValues {
     }//GEN-LAST:event_termekCsoportokPanelMouseExited
 
     private void termekCsoportokPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_termekCsoportokPanelMouseClicked
-        if (termekCsoportokFrame == null) {
+        if (termekCsoportokFrame == null)
+        {
             termekCsoportokFrame = new TermekCsoportokFrame();
         }
+        
         termekCsoportokFrame.nyit();
     }//GEN-LAST:event_termekCsoportokPanelMouseClicked
 
@@ -1342,15 +1299,16 @@ public class View extends FrameView implements SharedValues {
     }//GEN-LAST:event_vtszTeszorPanelMouseExited
 
     private void vtszTeszorPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vtszTeszorPanelMouseClicked
-        if (vtszTeszorFrame == null) {
+        if (vtszTeszorFrame == null)
+        {
             vtszTeszorFrame = new VtszTeszorFrame();
         }
+        
         vtszTeszorFrame.nyit();
     }//GEN-LAST:event_vtszTeszorPanelMouseClicked
 
 private void ujProFormaPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ujProFormaPanelMouseClicked
-    UjProFormaDialog sz = new UjProFormaDialog();
-
+    ResizeableInvoiceView view = new ResizeableInvoiceView(Invoice.PROFORMA);
 }//GEN-LAST:event_ujProFormaPanelMouseClicked
 
 private void ujProFormaPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ujProFormaPanelMouseEntered
@@ -1362,11 +1320,8 @@ private void ujProFormaPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FI
 }//GEN-LAST:event_ujProFormaPanelMouseExited
 
 private void proFormaPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proFormaPanelMouseClicked
-// TODO
-    //if (szamlakFrame == null) {
-//            szamlakFrame = new SzamlakFrame();
-//        }
-//        szamlakFrame.nyit();
+    dijbekerokFrame = new DijbekerokFrame();
+    dijbekerokFrame.nyit();
 }//GEN-LAST:event_proFormaPanelMouseClicked
 
 private void proFormaPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proFormaPanelMouseEntered
@@ -1378,19 +1333,13 @@ private void proFormaPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_proFormaPanelMouseExited
 
     private void adatszolgaltatasPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_adatszolgaltatasPanelMouseClicked
-        if (adatszolgaltatasFrame == null) {
+        if (adatszolgaltatasFrame == null)
+        {
             adatszolgaltatasFrame = new AdatszolgaltatasFrame();
         }
+        
         adatszolgaltatasFrame.nyit();
     }//GEN-LAST:event_adatszolgaltatasPanelMouseClicked
-
-    private void adatszolgaltatasPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_adatszolgaltatasPanelMouseEntered
-
-    }//GEN-LAST:event_adatszolgaltatasPanelMouseEntered
-
-    private void adatszolgaltatasPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_adatszolgaltatasPanelMouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_adatszolgaltatasPanelMouseExited
 
     private void szamlaLablecPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaLablecPanelMouseClicked
         SzamlaLablecDialog szamlaLablecDialog = new SzamlaLablecDialog();
@@ -1409,68 +1358,227 @@ private void proFormaPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }//GEN-LAST:event_szamlaLablecPanel1MouseClicked
 
     private void szamlaLablecPanel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaLablecPanel1MouseEntered
-        // TODO add your handling code here:
+        szamlaLablecPanel1.setBackground(Color.decode("#ABD043"));
     }//GEN-LAST:event_szamlaLablecPanel1MouseEntered
 
     private void szamlaLablecPanel1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaLablecPanel1MouseExited
-        // TODO add your handling code here:
+        szamlaLablecPanel1.setBackground(Color.decode("#F0F0F0"));
     }//GEN-LAST:event_szamlaLablecPanel1MouseExited
 
     private void szamlaLablecPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaLablecPanel2MouseClicked
-        KintlevosegLevelHtmlEditor kintlevosegLevelHtmlEditorPDF = KintlevosegLevelHtmlEditor.create(KintlevosegLevel.Type.PDF);
+        KintlevosegLevelHtmlEditor kintlevosegLevelHtmlEditorPDF = KintlevosegLevelHtmlEditor.create(KintlevosegLevel.Type.PDF, true);
         kintlevosegLevelHtmlEditorPDF.run();
     }//GEN-LAST:event_szamlaLablecPanel2MouseClicked
 
     private void szamlaLablecPanel2MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaLablecPanel2MouseEntered
-        // TODO add your handling code here:
+        szamlaLablecPanel2.setBackground(Color.decode("#ABD043"));
     }//GEN-LAST:event_szamlaLablecPanel2MouseEntered
 
     private void szamlaLablecPanel2MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaLablecPanel2MouseExited
-        // TODO add your handling code here:
+        szamlaLablecPanel2.setBackground(Color.decode("#F0F0F0"));
     }//GEN-LAST:event_szamlaLablecPanel2MouseExited
 
-    private void szamlaLablecPanel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaLablecPanel3MouseClicked
-        KintlevosegLevelHtmlEditor kintlevosegLevelHtmlEditorEMAIL = KintlevosegLevelHtmlEditor.create(KintlevosegLevel.Type.EMAIL);
+    private void InvoiceEmailEditorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InvoiceEmailEditorMouseClicked
+        KintlevosegLevelHtmlEditor kintlevosegLevelHtmlEditorEMAIL = KintlevosegLevelHtmlEditor.create(KintlevosegLevel.Type.EMAIL, false);
         kintlevosegLevelHtmlEditorEMAIL.run();
-    }//GEN-LAST:event_szamlaLablecPanel3MouseClicked
+    }//GEN-LAST:event_InvoiceEmailEditorMouseClicked
 
-    private void szamlaLablecPanel3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaLablecPanel3MouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_szamlaLablecPanel3MouseEntered
+    private void InvoiceEmailEditorMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InvoiceEmailEditorMouseEntered
+        InvoiceEmailEditor.setBackground(Color.decode("#ABD043"));
+    }//GEN-LAST:event_InvoiceEmailEditorMouseEntered
 
-    private void szamlaLablecPanel3MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaLablecPanel3MouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_szamlaLablecPanel3MouseExited
+    private void InvoiceEmailEditorMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InvoiceEmailEditorMouseExited
+        InvoiceEmailEditor.setBackground(Color.decode("#F0F0F0"));
+    }//GEN-LAST:event_InvoiceEmailEditorMouseExited
 
     private void kapocsolattartokPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_kapocsolattartokPanelMouseClicked
-       if (kapcsolattartokFrame == null) {
-            kapcsolattartokFrame = new KapcsolattartokFrame();
+        if (contactsView == null)
+        {
+            contactsView = new ContactsView();
         }
-       kapcsolattartokFrame.nyit();
+        
+        contactsView.Open();
     }//GEN-LAST:event_kapocsolattartokPanelMouseClicked
 
     private void kapocsolattartokPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_kapocsolattartokPanelMouseEntered
-        // TODO add your handling code here:
+        kapocsolattartokPanel.setBackground(Color.decode("#ABD043"));
     }//GEN-LAST:event_kapocsolattartokPanelMouseEntered
 
     private void kapocsolattartokPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_kapocsolattartokPanelMouseExited
-        // TODO add your handling code here:
+        kapocsolattartokPanel.setBackground(Color.decode("#F0F0F0"));
     }//GEN-LAST:event_kapocsolattartokPanelMouseExited
 
+    private void szamlaLablecPanel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaLablecPanel4MouseClicked
+        KintlevosegLevelHtmlEditor kintlevosegLevelHtmlEditorEMAIL = KintlevosegLevelHtmlEditor.create(KintlevosegLevel.Type.EMAIL, true);
+        kintlevosegLevelHtmlEditorEMAIL.run();
+    }//GEN-LAST:event_szamlaLablecPanel4MouseClicked
+
+    private void szamlaLablecPanel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaLablecPanel4MouseEntered
+        szamlaLablecPanel4.setBackground(Color.decode("#ABD043"));
+    }//GEN-LAST:event_szamlaLablecPanel4MouseEntered
+
+    private void szamlaLablecPanel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_szamlaLablecPanel4MouseExited
+        szamlaLablecPanel4.setBackground(Color.decode("#F0F0F0"));
+    }//GEN-LAST:event_szamlaLablecPanel4MouseExited
+
+    private void panel_NewSketchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panel_NewSketchMouseClicked
+        ResizeableInvoiceView view = new ResizeableInvoiceView(Invoice.SKETCH);
+    }//GEN-LAST:event_panel_NewSketchMouseClicked
+
+    private void panel_SketchesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panel_SketchesMouseClicked
+        sketches = new InvoiceSketchesView();
+        sketches.Open();
+    }//GEN-LAST:event_panel_SketchesMouseClicked
+
+    private void panel_NewSketchMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panel_NewSketchMouseEntered
+        panel_NewSketch.setBackground(Color.decode("#ABD043"));
+    }//GEN-LAST:event_panel_NewSketchMouseEntered
+
+    private void panel_NewSketchMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panel_NewSketchMouseExited
+        panel_NewSketch.setBackground(Color.decode("#F0F0F0"));
+    }//GEN-LAST:event_panel_NewSketchMouseExited
+
+    private void panel_SketchesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panel_SketchesMouseEntered
+        panel_Sketches.setBackground(Color.decode("#ABD043"));
+    }//GEN-LAST:event_panel_SketchesMouseEntered
+
+    private void panel_SketchesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panel_SketchesMouseExited
+        panel_Sketches.setBackground(Color.decode("#F0F0F0"));
+    }//GEN-LAST:event_panel_SketchesMouseExited
+
+    private void button_NewInvoiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_NewInvoiceActionPerformed
+        ResizeableInvoiceView view = new ResizeableInvoiceView(Invoice.INVOICE);
+        
+        if(view.getReturnStatus() == ResizeableInvoiceView.RET_REOPEN)
+        {
+            button_NewInvoice.doClick();
+        }
+        
+        UpdateLogButton();
+    }//GEN-LAST:event_button_NewInvoiceActionPerformed
+
+    private void button_LogsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LogsActionPerformed
+        LogsView view = new LogsView();
+        button_Logs.setText("Log");
+        //LogModel.addLog(this.getClass().getName(), "Leírás");
+    }//GEN-LAST:event_button_LogsActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        NewView view = new NewView();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    /*
+        JSONObject json = new JSONObject();
+        
+        JSONArray orderIds = new JSONArray();
+        
+        String uniqid = "";
+        
+        String [] orderids = {"D 2019/167", "D 2019/166"};
+        
+        for(int i = 0; i < orderids.length; i++)
+        {
+            orderIds.add(orderids[i]);
+            uniqid += orderids[i];
+        }
+        
+        json.put("orderIDs", orderIds);
+        
+        JSONObject sender = new JSONObject();
+            sender.put("title", "");
+            sender.put("first_name", "Feladó név");
+            sender.put("middle_name", "");
+            sender.put("last_name", "");
+            sender.put("country", "Feladó ország");
+            sender.put("postal_code", "Feladó irsz.");
+            sender.put("city", "Feladó város");
+            sender.put("address", "Feladó cím");
+            sender.put("contact_name", "");
+            sender.put("phone", "");
+            sender.put("email", "sender@gmail.com");
+            sender.put("name", "");
+        json.put("sender", sender);
+        
+        JSONObject consignee = new JSONObject();
+            consignee.put("title", "");
+            consignee.put("first_name", "Címzett név");
+            consignee.put("middle_name", "");
+            consignee.put("last_name", "");
+            consignee.put("country", "Címzett ország");
+            consignee.put("postal_code", "Címzett irsz.");
+            consignee.put("city", "Címzett város");
+            consignee.put("address", "Címzett cím");
+            consignee.put("contact_name", "Címzett neve");
+            consignee.put("phone", "Címzett telefonszám");
+            consignee.put("email", "Címzett email");
+            consignee.put("name", "");
+        json.put("consignee", consignee);
+        
+        SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd");
+        json.put("pickupDate", ft.format(new Date()));
+        
+        json.put("content", "content");
+        
+        json.put("codamount", "codamount");
+        
+        Query query = new Query.QueryBuilder()
+            .select("gls_username, gls_password, gls_senderID")
+            .from("szamlazo_suppliers")
+            .where("serializationID = (SELECT id FROM szamlazo_szamla_sorszam WHERE appellation = 'DEMO')")
+            .build();
+        Object [][] gls_datas = App.db.select(query.getQuery());
+        
+        json.put("username", gls_datas[0][0].toString());
+        json.put("password", gls_datas[0][1].toString());
+        json.put("senderID", gls_datas[0][2].toString());
+        
+        try
+        {
+            HttpClient client = HttpClientFactory.getHttpsClient();
+            
+            //HttpPost request = new HttpPost("http://localhost/GLS/GLS_pre.php");
+            HttpPost request = new HttpPost("http://cezereklam.com/GLS/GLS_pre.php");
+            StringEntity params =new StringEntity("message=" + json.toString(),"UTF-8");
+            request.addHeader("content-type", "application/x-www-form-urlencoded");
+            request.setEntity(params);
+            HttpResponse response = client.execute(request);
+            HttpEntity entity = response.getEntity();
+            //System.err.println(org.apache.http.util.EntityUtils.toString(entity));
+
+            String md5Hex = DigestUtils.md5Hex(uniqid);
+            String fileName = "GLS_" + md5Hex + ".pdf";
+            String fileUrl = System.getProperty("user.dir") + "/src/gls/shippingLabels/" + fileName;
+            
+            String responseString = EntityUtils.toString(response.getEntity());
+            responseString = responseString.split("<Label>")[1].split("</Label>")[0];
+            
+            Base64.decodeToFile(responseString, fileUrl);
+            
+            PdfViewer viewer = new PdfViewer();
+            viewer.openPDF(fileUrl);
+            
+            org.apache.http.util.EntityUtils.consume(entity);
+            
+            request.releaseConnection();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+    */
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel InvoiceEmailEditor;
     private javax.swing.JLabel SzamlakButton;
     private javax.swing.JLabel adatszolgaltatas;
     private javax.swing.JPanel adatszolgaltatasPanel;
     private javax.swing.JPanel beallitasokAlPanel;
     private javax.swing.JPanel beallitasokPanel;
-    private javax.swing.JComboBox devizaComboBox;
-    private javax.swing.JDialog devizaDialog;
-    private javax.swing.JTextField devizaKozeparfolyam;
-    private javax.swing.JButton devizaSzamlaLetrehozasButton;
+    private javax.swing.JButton button_Logs;
+    private javax.swing.JButton button_NewInvoice;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
@@ -1479,20 +1587,21 @@ private void proFormaPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel kapocsolattartokPanel;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JPanel panel_NewSketch;
+    private javax.swing.JPanel panel_Sketches;
     private javax.swing.JPanel proFormaPanel;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JLabel statusAnimationLabel;
@@ -1502,14 +1611,12 @@ private void proFormaPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JPanel szamlaLablecPanel;
     private javax.swing.JPanel szamlaLablecPanel1;
     private javax.swing.JPanel szamlaLablecPanel2;
-    private javax.swing.JPanel szamlaLablecPanel3;
+    private javax.swing.JPanel szamlaLablecPanel4;
     private javax.swing.JPanel szamlakPanel;
     private javax.swing.JPanel termekCsoportokPanel;
     private javax.swing.JPanel termekekPanel;
     private javax.swing.JPanel ugyfelekPanel;
-    private javax.swing.JPanel ujDevizaSzamlaPanel;
     private javax.swing.JPanel ujProFormaPanel;
-    private javax.swing.JPanel ujSzamlaPanel;
     private javax.swing.JPanel vtszTeszorPanel;
     // End of variables declaration//GEN-END:variables
     private final Timer messageTimer;
@@ -1519,81 +1626,112 @@ private void proFormaPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private int busyIconIndex = 0;
     private JDialog aboutBox;
 
-    public void frissitesKeres() {
-        Query query = null;
-        try {
-            System.out.println("Új verzió keresése...");
-            query = new Query.QueryBuilder()
-                    .select("verzio, leiras ")
-                    .from("szamlazo_versions")
-                    .where("1")
-                    .order("id DESC LIMIT 1")
-                    .build();
+    public void frissitesKeres()
+    {
+        try
+        {
+            System.out.println("Új verzió keresése... (View.java/frissitesKeres())");
+            
+            Query query = new Query.QueryBuilder()
+                .select("verzio, leiras")
+                .from("szamlazo_versions")
+                .where("1")
+                .order("id DESC LIMIT 1")
+                .build();
             Object[][] newversion = App.db.select(query.getQuery());
+            
             String newversionString = Functions.getStringFromObject(newversion[0][0]);
-//             if (!String.valueOf(newversion[0][0]).equals(rm.getString("Application.version"))) {
-            if (!newversionString.equals(rm.getString("Application.version"))) {
-                System.out.println("Van új verzió: " + newversionString);
-                if (App.args.length == 0) {
+            //if (!String.valueOf(newversion[0][0]).equals(rm.getString("Application.version"))) {
+            
+            if (!newversionString.equals(rm.getString("Application.version")))
+            {
+                System.out.println("Van új verzió: " + newversionString + " (View.java/frissitesKeres())");
+                
+                if (App.args.length == 0)
+                {
                     // rákérdez a frissítésre
                     FrissitesDialog fd = new FrissitesDialog(String.valueOf(newversion[0][0]), EncodeDecode.decode(String.valueOf(newversion[0][1])));
-                } else {
+                }
+                else
+                {
                     // frissítés a háttérben
                     UpdateDialog u = new UpdateDialog();
                 }
-            } else {
-                System.out.println("Nincs új verzió!");
             }
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println("ArrayIndexOutOfBoundsException váltódott ki!");
-            System.out.println("Exception query: " + query.getQuery());
-            ex.printStackTrace();
+            else
+            {
+                System.out.println("Nincs új verzió! (View.java/frissitesKeres())");
+            }
+        }
+        catch (ArrayIndexOutOfBoundsException ex)
+        {
+            System.out.println("View.java/frissitesKeres()");
+            //System.out.println("Exception query: " + query.getQuery());
+            //ex.printStackTrace();
         }
     }
 
-    private void userMentes() {
-        FileOutputStream fos = null;
-        ObjectOutputStream out = null;
+    private void userMentes()
+    {
+        FileOutputStream fos;
+        ObjectOutputStream out;
         String filename = "dat/userSzamlazo.dat";
 
-        try {
+        try
+        {
             fos = new FileOutputStream(filename);
             out = new ObjectOutputStream(fos);
             out.writeObject(App.user);
             out.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        }
+        catch (IOException ex)
+        {
+            System.err.println("View.java/userMentes()");
+            //ex.printStackTrace();
         }
     }
 
-    private void userOlvasas() {
-        FileInputStream fis = null;
-        ObjectInputStream in = null;
+    private void userOlvasas()
+    {
+        FileInputStream fis;
+        ObjectInputStream in;
 
-        try {
+        try
+        {
             fis = new FileInputStream("dat/userSzamlazo.dat");
-            try {
+            
+            try
+            {
                 in = new ObjectInputStream(fis);
                 App.user = (User) in.readObject();
+                
                 Query query = new Query.QueryBuilder()
-                        .select("id, nev, usernev, jelszo, csoport, ceg ")
-                        .from("szamlazo_users")
-                        .where("usernev = '" + App.user.getUsernev() + "'")
-                        .build();
+                    .select("id, name, username, password, `group`, companyIDs, defaultCompanyID")
+                    .from("szamlazo_users")
+                    .where("username = '" + App.user.getUsernev() + "'")
+                    .build();
                 App.user = new User(App.db.select(query.getQuery()));
+                
                 getFrame().setTitle(getFrame().getTitle() + " - " + EncodeDecode.decode(App.user.getNev()));
                 in.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            } catch (ClassNotFoundException ex) {
-                ex.printStackTrace();
             }
-        } catch (FileNotFoundException ex) {
+            catch (IOException | ClassNotFoundException ex)
+            {
+                System.err.println("View.java/userOlvas()");
+                //ex.printStackTrace();
+            }
+        }
+        catch (FileNotFoundException ex)
+        {
+            System.err.println("View.java/userOlvas()/FileNotFound");
+            //ex.printStackTrace();
         }
     }
 
-    private void nyit(Object dialog, String title) {
-        if (dialog instanceof JDialog) {
+    private void nyit(Object dialog, String title)
+    {
+        if (dialog instanceof JDialog)
+        {
             JDialog d = (JDialog) dialog;
             Dimension appSize = this.getFrame().getSize();
             Point appLocation = this.getFrame().getLocation();
@@ -1602,7 +1740,9 @@ private void proFormaPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             d.setLocation(x, y);
             d.setTitle(title);
             d.setVisible(true);
-        } else if (dialog instanceof JFrame) {
+        }
+        else if (dialog instanceof JFrame)
+        {
             JFrame f = (JFrame) dialog;
             Dimension appSize = this.getFrame().getSize();
             Point appLocation = this.getFrame().getLocation();

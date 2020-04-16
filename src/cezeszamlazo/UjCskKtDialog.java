@@ -1,9 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * UjCskKtDialog.java
  *
  * Created on 2013.01.04., 11:26:02
@@ -24,8 +19,8 @@ import javax.swing.KeyStroke;
  *
  * @author fejlesztes2
  */
-public class UjCskKtDialog extends javax.swing.JDialog {
-
+public class UjCskKtDialog extends javax.swing.JDialog
+{
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
@@ -33,12 +28,13 @@ public class UjCskKtDialog extends javax.swing.JDialog {
     
     private String id = "0";
     
-    public UjCskKtDialog() {
+    public UjCskKtDialog()
+    {
         this("0");
     }
 
-    /** Creates new form UjCskKtDialog */
-    public UjCskKtDialog(String id) {
+    public UjCskKtDialog(String id)
+    {
         initComponents();
         
         this.id = id;
@@ -49,10 +45,13 @@ public class UjCskKtDialog extends javax.swing.JDialog {
         String cancelName = "cancel";
         InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        
         ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-
-            public void actionPerformed(ActionEvent e) {
+        actionMap.put(cancelName, new AbstractAction()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
                 doClose(RET_CANCEL);
             }
         });
@@ -177,20 +176,30 @@ public class UjCskKtDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        if (nev.getText().isEmpty()) {
+        if (nev.getText().isEmpty())
+        {
             HibaDialog h = new HibaDialog("Nincs név megadva!", "", "Ok");
-        } else if (csk.getText().isEmpty() && kt.getText().isEmpty()) {
+        }
+        else if (csk.getText().isEmpty() && kt.getText().isEmpty())
+        {
             HibaDialog h = new HibaDialog("CSK vagy KT kód közül legalább az egyik kötelező!", "", "Ok");
-        } else {
+        }
+        else
+        {
             Object[] o = new Object[3];
             o[0] = nev.getText();
             o[1] = csk.getText();
             o[2] = kt.getText();
-            if (id.equalsIgnoreCase("0")) {
-                App.db.insert("INSERT INTO szamlazo_csk_kt (nev, csk, kt) VALUES (?, ?, ?)", o, o.length);
-            } else {
-                App.db.insert("UPDATE szamlazo_csk_kt SET nev = ?, csk = ?, kt = ? WHERE id = " + id, o, o.length);
+            
+            if (id.equalsIgnoreCase("0"))
+            {
+                App.db.insert("INSERT INTO szamlazo_csk_kt (nev, csk, kt) VALUES (?, ?, ?)", o);
             }
+            else
+            {
+                App.db.insert("UPDATE szamlazo_csk_kt SET nev = ?, csk = ?, kt = ? WHERE id = " + id, o);
+            }
+            
             doClose(RET_OK);
         }
     }//GEN-LAST:event_okButtonActionPerformed
@@ -204,7 +213,8 @@ public class UjCskKtDialog extends javax.swing.JDialog {
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
     
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
         returnStatus = retStatus;
         setVisible(false);
         dispose();
@@ -220,9 +230,11 @@ public class UjCskKtDialog extends javax.swing.JDialog {
     private javax.swing.JTextField nev;
     private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
+    
     private int returnStatus = RET_CANCEL;
     
-    private void init(String title) {
+    private void init(String title)
+    {
 	Toolkit toolkit = Toolkit.getDefaultToolkit();
 	Dimension screenSize = toolkit.getScreenSize();
 	int locX = (screenSize.width - getWidth()) / 2;

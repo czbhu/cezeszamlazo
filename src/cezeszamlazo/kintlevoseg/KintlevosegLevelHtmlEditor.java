@@ -30,44 +30,61 @@ import javafx.scene.control.TextField;
 import javafx.scene.web.WebEngine;
 import netscape.javascript.JSException;
 
-public class KintlevosegLevelHtmlEditor {
-
+public class KintlevosegLevelHtmlEditor
+{
     private static HtmlTableCreateDialog htmlTableCreateDialog;
     private static JFrame frame;
     private StringBuilder htmlText;
     private static KintlevosegLevel kintlevosegLevel;
     private static KintlevosegLevelAttributum kintlevosegLevelAttributum;
     public static Type type;
+    public static boolean isKintlevoseg;   
 
-    private KintlevosegLevelHtmlEditor(Type type) {
+    private KintlevosegLevelHtmlEditor(Type type, boolean isKintlevoseg)
+    {
         this.type = type;
+        this.isKintlevoseg = isKintlevoseg;
     }
 
-    public static KintlevosegLevelHtmlEditor create(Type type) {
-        return new KintlevosegLevelHtmlEditor(type);
+    public static KintlevosegLevelHtmlEditor create(Type type, boolean isKintlevoseg)
+    {
+        return new KintlevosegLevelHtmlEditor(type, isKintlevoseg);
     }
 
-    private static void initAndShowGUI() {
-        frame = new JFrame("Felszólító levél");
+    private static void initAndShowGUI()
+    {
+        if(isKintlevoseg)
+        {
+            frame = new JFrame("Felszólító levél");
+        }
+        else
+        {
+            frame = new JFrame("E-számla");
+        }
+        
         final JFXPanel fxPanel = new JFXPanel();
         frame.add(fxPanel);
         frame.setSize(800, 600);
         frame.setVisible(true);
 
-        Platform.runLater(new Runnable() {
+        Platform.runLater(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 initFX(fxPanel);
             }
         });
     }
 
-    private static void initFX(JFXPanel fxPanel) {
+    private static void initFX(JFXPanel fxPanel)
+    {
         Scene scene = createScene();
         fxPanel.setScene(scene);
     }
 
-    private static Scene createScene() {
+    private static Scene createScene()
+    {
         Scene scene = new Scene(new Group());
 
         VBox root = new VBox();
@@ -83,7 +100,7 @@ public class KintlevosegLevelHtmlEditor {
         WebView webView = (WebView) webNode;
         WebEngine engine = webView.getEngine();
 
-        kintlevosegLevel = KintlevosegLevel.create(KintlevosegLevelHtmlEditor.type);
+        kintlevosegLevel = KintlevosegLevel.create(KintlevosegLevelHtmlEditor.type, isKintlevoseg);
         kintlevosegLevelAttributum = new KintlevosegLevelAttributum();
         TextField subjectTextField = new TextField(kintlevosegLevel.getSubjectFromDb());
 
@@ -191,17 +208,21 @@ public class KintlevosegLevelHtmlEditor {
         return (scene);
     }
 
-    public static void run() {
-        SwingUtilities.invokeLater(new Runnable() {
+    public static void run()
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 initAndShowGUI();
             }
         });
     }
 
     private static String escapeJavaStyleString(String str,
-            boolean escapeSingleQuote, boolean escapeForwardSlash) {
+            boolean escapeSingleQuote, boolean escapeForwardSlash)
+    {
         StringBuilder out = new StringBuilder("");
         if (str == null) {
             return null;
@@ -248,10 +269,14 @@ public class KintlevosegLevelHtmlEditor {
                         }
                         break;
                 }
-            } else {
-                switch (ch) {
+            }
+            else
+            {
+                switch (ch)
+                {
                     case '\'':
-                        if (escapeSingleQuote) {
+                        if (escapeSingleQuote)
+                        {
                             out.append('\\');
                         }
                         out.append('\'');
@@ -265,7 +290,8 @@ public class KintlevosegLevelHtmlEditor {
                         out.append('\\');
                         break;
                     case '/':
-                        if (escapeForwardSlash) {
+                        if (escapeForwardSlash)
+                        {
                             out.append('\\');
                         }
                         out.append('/');

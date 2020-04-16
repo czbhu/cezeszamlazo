@@ -1,14 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cezeszamlazo;
 
-import cezeszamlazo.CalendarDialog;
-import cezeszamlazo.HibaDialog;
-import cezeszamlazo.SzamlaDialogOld;
-import cezeszamlazo.hu.gov.nav.schemas._2013.szamla.GenerateXml;
 import cezeszamlazo.hu.gov.nav.schemas._2013.szamla.GenerateXml;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -18,17 +9,17 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 /**
- *
  * @author GRAFIKA2
  */
-public class AdatszolgaltatasFrame extends javax.swing.JFrame {
-
+public class AdatszolgaltatasFrame extends javax.swing.JFrame
+{
     protected GenerateXml genarateXml;
 
     /**
      * Creates new form AdatszolgaltatasFrame
      */
-    public AdatszolgaltatasFrame() {
+    public AdatszolgaltatasFrame()
+    {
         initComponents();
         init();
         genarateXml = new GenerateXml();
@@ -370,7 +361,7 @@ public class AdatszolgaltatasFrame extends javax.swing.JFrame {
                                 .addComponent(jButton2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jButton1)))))
-                .addGap(10, 10, 10))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -429,11 +420,11 @@ public class AdatszolgaltatasFrame extends javax.swing.JFrame {
                         .addComponent(PPTextFieldEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel22))
                     .addComponent(PPRadioButton))
-                .addGap(31, 31, 31)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton1))
-                .addGap(19, 19, 19))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -441,7 +432,7 @@ public class AdatszolgaltatasFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
@@ -481,7 +472,8 @@ public class AdatszolgaltatasFrame extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         boolean OK = true;
-        if (datumRadioButton.isSelected()) {
+        if (datumRadioButton.isSelected())
+        {
             if (kezdoDatum.getText().equals("")) {
                 HibaDialog h = new HibaDialog("A kezdő dátum nem lehet üres!", "Ok", "");
                 OK = false;
@@ -490,7 +482,9 @@ public class AdatszolgaltatasFrame extends javax.swing.JFrame {
                 OK = false;
             }
 
-        } else if (CZRadioButton.isSelected()) {
+        }
+        else if (CZRadioButton.isSelected())
+        {
             if (CZTextFieldYearBegin.getText().equals("")) {
                 HibaDialog h = new HibaDialog("A kezdő év nem lehet üres!", "Ok", "");
                 OK = false;
@@ -504,7 +498,9 @@ public class AdatszolgaltatasFrame extends javax.swing.JFrame {
                 HibaDialog h = new HibaDialog("A záró szám nem lehet üres!", "Ok", "");
                 OK = false;
             }
-        } else if (MSRadioButton.isSelected()) {
+        }
+        else if (MSRadioButton.isSelected())
+        {
             if (MSTextFieldYearBegin.getText().equals("")) {
                 HibaDialog h = new HibaDialog("A kezdő év nem lehet üres!", "Ok", "");
                 OK = false;
@@ -518,7 +514,9 @@ public class AdatszolgaltatasFrame extends javax.swing.JFrame {
                 HibaDialog h = new HibaDialog("A záró szám nem lehet üres!", "Ok", "");
                 OK = false;
             }
-        } else if (PPRadioButton.isSelected()) {
+        }
+        else if (PPRadioButton.isSelected())
+        {
             if (PPTextFieldYearBegin.getText().equals("")) {
                 HibaDialog h = new HibaDialog("A kezdő év nem lehet üres!", "Ok", "");
                 OK = false;
@@ -533,8 +531,9 @@ public class AdatszolgaltatasFrame extends javax.swing.JFrame {
                 OK = false;
             }
         }
-        if (OK) {
-
+        
+        if (OK)
+        {
             File file = new File("szamlak.xml");
             try {
                 JFileChooser chooser = new JFileChooser();
@@ -614,8 +613,11 @@ public class AdatszolgaltatasFrame extends javax.swing.JFrame {
         setVisible(true);
     }
 
-    private void nyit(Object dialog, String title) {
-        if (dialog instanceof JDialog) {
+    //unused
+    private void nyit(Object dialog, String title)
+    {
+        if (dialog instanceof JDialog)
+        {
             JDialog d = (JDialog) dialog;
             Dimension appSize = getSize();
             Point appLocation = getLocation();
@@ -624,7 +626,9 @@ public class AdatszolgaltatasFrame extends javax.swing.JFrame {
             d.setLocation(x, y);
             d.setTitle(title);
             d.setVisible(true);
-        } else if (dialog instanceof JFrame) {
+        }
+        else if (dialog instanceof JFrame)
+        {
             JFrame f = (JFrame) dialog;
             Dimension appSize = getSize();
             Point appLocation = getLocation();
@@ -682,7 +686,8 @@ public class AdatszolgaltatasFrame extends javax.swing.JFrame {
     private javax.swing.JTextField zaroDatum;
     // End of variables declaration//GEN-END:variables
 
-    private void init() {
+    private void init()
+    {
         datumRadioButton.setSelected(true);
 //        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(cezeszamlazo.App.class).getContext().getResourceMap(SzamlaDialogOld.class);
 //        jLabel24.setIcon(resourceMap.getIcon("calendar_16.png")); // NOI18N

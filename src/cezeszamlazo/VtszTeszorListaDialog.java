@@ -26,10 +26,8 @@ public class VtszTeszorListaDialog extends javax.swing.JDialog {
     public static final int RET_OK = 1;
     private String vtszTeszor = "", afa = "0";
 
-    /**
-     * Creates new form VtszTeszorListaDialog
-     */
-    public VtszTeszorListaDialog() {
+    public VtszTeszorListaDialog()
+    {
         initComponents();
 
         frissites();
@@ -39,6 +37,7 @@ public class VtszTeszorListaDialog extends javax.swing.JDialog {
         String cancelName = "cancel";
         InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        
         ActionMap actionMap = getRootPane().getActionMap();
         actionMap.put(cancelName, new AbstractAction() {
 
@@ -149,7 +148,9 @@ public class VtszTeszorListaDialog extends javax.swing.JDialog {
 
     private void listaTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listaTableMouseClicked
         int[] rows = listaTable.getSelectedRows();
-        if (rows.length == 1 && evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1) {
+        
+        if (rows.length == 1 && evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1)
+        {
             vtszTeszor = String.valueOf(listaTable.getValueAt(rows[0], 1));
             afa = String.valueOf(listaTable.getValueAt(rows[0], 2));
             doClose(RET_OK);
@@ -160,7 +161,8 @@ public class VtszTeszorListaDialog extends javax.swing.JDialog {
         frissites();
     }//GEN-LAST:event_keresesKeyReleased
 
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
         returnStatus = retStatus;
         setVisible(false);
         dispose();
@@ -173,20 +175,25 @@ public class VtszTeszorListaDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     private int returnStatus = RET_CANCEL;
 
-    private void frissites() {
+    private void frissites()
+    {
         DefaultTableModel model = (DefaultTableModel) listaTable.getModel();
         String[] header = {"Név", "VTSZ/TESZOR", "ÁFA"};
         String keresText = kereses.getText().replace("'", "\\\'"),
-                whereText = "v.nev LIKE '%" + keresText + "%' || v.szam LIKE '%" + keresText + "%' || v.afa LIKE '%" + keresText + "%'";
+            whereText = "v.nev LIKE '%" + keresText + "%' || v.szam LIKE '%" + keresText + "%' || v.afa LIKE '%" + keresText + "%'";
+        
         Query query = new Query.QueryBuilder()
-                .select("v.nev, v.szam, (SELECT afa from szamlazo_afa WHERE id = v.afaid) ")
-                .from("szamlazo_vtsz_sablon v ")
-                .where(whereText)
-                .build();
+            .select("v.nev, v.szam, (SELECT vatAmount from szamlazo_vats WHERE id = v.afaid) ")
+            .from("szamlazo_vtsz_sablon v ")
+            .where(whereText)
+            .build();
         model.setDataVector(App.db.select(query.getQuery()), header);
+        
         TableColumn col;
         int[] meret = {270, 100, 100};
-        for (int i = 0; i < meret.length; i++) {
+        
+        for (int i = 0; i < meret.length; i++)
+        {
             col = listaTable.getColumnModel().getColumn(i);
             col.setPreferredWidth(meret[i]);
         }
@@ -200,7 +207,8 @@ public class VtszTeszorListaDialog extends javax.swing.JDialog {
         return afa;
     }
 
-    private void init() {
+    private void init()
+    {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         int x = (screenSize.width - getWidth()) / 2;

@@ -15,11 +15,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 /**
- *
  * @author fejlesztes2
  */
-public class CskKtListaDialog extends javax.swing.JDialog {
-
+public class CskKtListaDialog extends javax.swing.JDialog
+{
     /**
      * A return status code - returned if Cancel button has been pressed
      */
@@ -32,15 +31,14 @@ public class CskKtListaDialog extends javax.swing.JDialog {
 
     private int row = -1;
 
-    /**
-     * Creates new form CskKtListaDialog
-     */
-    public CskKtListaDialog(int tipus) {
+    public CskKtListaDialog(int tipus)
+    {
         initComponents();
 
         String title = "";
 
-        switch (tipus) {
+        switch (tipus)
+        {
             case MIND:
                 title = "CSK/KT kódok";
                 break;
@@ -74,7 +72,8 @@ public class CskKtListaDialog extends javax.swing.JDialog {
     /**
      * @return the return status of this dialog - one of RET_OK or RET_CANCEL
      */
-    public int getReturnStatus() {
+    public int getReturnStatus()
+    {
         return returnStatus;
     }
 
@@ -201,16 +200,20 @@ public class CskKtListaDialog extends javax.swing.JDialog {
 
     private void cskKtTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cskKtTableMouseClicked
         row = cskKtTable.getSelectedRow();
-        if (row >= 0 && evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1) {
+        
+        if (row >= 0 && evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1)
+        {
             doClose(RET_OK);
         }
     }//GEN-LAST:event_cskKtTableMouseClicked
 
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
         returnStatus = retStatus;
         setVisible(false);
         dispose();
     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JTable cskKtTable;
@@ -219,7 +222,8 @@ public class CskKtListaDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     private int returnStatus = RET_CANCEL;
 
-    private void init(String title) {
+    private void init(String title)
+    {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         int locX = (screenSize.width - getWidth()) / 2;
@@ -236,29 +240,36 @@ public class CskKtListaDialog extends javax.swing.JDialog {
         setVisible(true);
     }
 
-    private void frissites(int tipus) {
+    private void frissites(int tipus)
+    {
         DefaultTableModel model = (DefaultTableModel) cskKtTable.getModel();
         String[] header = {"Id", "Név", "CSK", "KT"};
         String whereString = (tipus == CSK ? "csk != ''" : (tipus == KT ? "kt != ''" : "1"));
+        
         Query query = new Query.QueryBuilder()
-                .select("id, nev, csk, kt ")
-                .from("szamlazo_csk_kt")
-                .where(whereString)
-                .build();
+            .select("id, nev, csk, kt ")
+            .from("szamlazo_csk_kt")
+            .where(whereString)
+            .build();
         model.setDataVector(App.db.select(query.getQuery()), header);
+        
         TableColumn col;
         int[] meret = {30, 200, 40, 40};
-        for (int i = 0; i < meret.length; i++) {
+        
+        for (int i = 0; i < meret.length; i++)
+        {
             col = cskKtTable.getColumnModel().getColumn(i);
             col.setPreferredWidth(meret[i]);
         }
     }
 
-    public String getCsk() {
+    public String getCsk()
+    {
         return String.valueOf(cskKtTable.getValueAt(row, 2));
     }
 
-    public String getKt() {
+    public String getKt()
+    {
         return String.valueOf(cskKtTable.getValueAt(row, 3));
     }
 }

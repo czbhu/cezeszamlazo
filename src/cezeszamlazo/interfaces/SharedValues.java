@@ -1,16 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cezeszamlazo.interfaces;
 
 /**
  *
- * @author szekus
+ * @author szekus,Tomy
  */
-public interface SharedValues {
-
+public interface SharedValues
+{
 //    static final String DBPREFIX = "szamlazo";
 
 //     ********** local ********** //
@@ -20,18 +15,44 @@ public interface SharedValues {
 //    static final String HOST = "localhost";
 //    static final String MYSQLHOST = "localhost";
     
-    // ********** demo ********** //
+    // ********** dev ********** // 
     /*
-    static final String URL = "jdbc:mysql://phpmyadmin2.ceze.eu/minta_tabla_szamlazo";
+    static final String URL = "jdbc:mysql://phpmyadmin2.ceze.eu/szamlazo_dev?characterEncoding=UTF8";
     static final String USERNAME = "szamla_demo";
     static final String PASSWORD = "demo";
-    static final String HOST = "phpmyadmin2.ceze.eu";
-    static final String MYSQLHOST = "phpmyadmin2.ceze.eu";
+    
+    //static final String PIXI_URL = "jdbc:mysql://phpmyadmin2.ceze.eu/minta_tabla_szamlazo?characterEncoding=UTF8";
+    //static final String PIXI_USERNAME = "szamla_demo";
+    //static final String PIXI_PASSWORD = "demo";
+    static final String PIXI_URL = "jdbc:mysql://phpmyadmin2.ceze.eu/pixirendszer_dev?characterEncoding=UTF8";
+    static final String PIXI_USERNAME = "szamla_demo";
+    static final String PIXI_PASSWORD = "demo";
     */
-    // ********** online ********** //
-    static final String URL = "jdbc:mysql://phpmyadmin2.ceze.eu/cezetesztdb";
-    static final String USERNAME = "cezeteszt";
-    static final String PASSWORD = "pO8x3ozJQ4AR";
+    // ******** online ********* //
+    
+    static final String URL = "jdbc:mysql://phpmyadmin2.ceze.eu/szamlazo?characterEncoding=UTF8";
+    static final String USERNAME = "szamla_demo";
+    static final String PASSWORD = "demo";
+    
+    static final String PIXI_URL = "jdbc:mysql://phpmyadmin2.ceze.eu/cezetesztdb?characterEncoding=UTF8";
+    static final String PIXI_USERNAME = "szamla_demo";
+    static final String PIXI_PASSWORD = "demo";
+    //static final String PIXI_URL = "jdbc:mysql://phpmyadmin2.ceze.eu/pixirendszer_ceze?characterEncoding=UTF8";
+    //static final String PIXI_USERNAME = "szamla_demo";
+    //static final String PIXI_PASSWORD = "demo";
+    
+    
+    // ******** eht ********* // 
+    /*static final String URL = "jdbc:mysql://phpmyadmin2.ceze.eu/szamlazo_eht?characterEncoding=UTF8";
+    static final String USERNAME = "szamla_demo";
+    static final String PASSWORD = "demo";*/
+    
+    // ******** kiralysport ********* // 
+    /*static final String URL = "jdbc:mysql://phpmyadmin2.ceze.eu/szamlazo_kiralysport?characterEncoding=UTF8";
+    static final String USERNAME = "szamla_demo";
+    static final String PASSWORD = "demo";*/
+
+    
     static final String HOST = "phpmyadmin2.ceze.eu";
     static final String MYSQLHOST = "phpmyadmin2.ceze.eu";
 }

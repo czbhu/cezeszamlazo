@@ -7,12 +7,12 @@ import cezeszamlazo.App;
  *
  * @author Fejlesztés
  */
-public class Kapcsolattarto {
-
+public class Kapcsolattarto
+{
     /**
      * a kapcsolattartók adatbázisbeli táblája
      */
-    public static final String TABLE = "pixi_kapcsolattarto";
+    public static final String TABLE = "szamlazo_contact";
     /**
      * az adatbázisbeli 'hirlevel' státusz
      */
@@ -45,7 +45,9 @@ public class Kapcsolattarto {
 
     private boolean penzugyes = true;
 
-    public Kapcsolattarto() {
+    public Kapcsolattarto()
+    {
+        
     }
 
     /**
@@ -54,9 +56,12 @@ public class Kapcsolattarto {
      *
      * @param id a kapcsolattartó adatbázisbeli azonosítója
      */
-    public Kapcsolattarto(int id) {
+    public Kapcsolattarto(int id)
+    {
         Object[][] s = App.db.select("SELECT ugyfelid, nev, telefon, email, hirlevel, penzugyes FROM " + TABLE + " WHERE id = " + id);
-        if (s.length != 0) {
+        
+        if (s.length != 0)
+        {
             this.id = id;
             this.ugyfelId = Integer.parseInt(String.valueOf(s[0][0]));
             this.nev = String.valueOf(s[0][1]);
@@ -75,8 +80,11 @@ public class Kapcsolattarto {
      * @param nev
      * @param telefon
      * @param email
+     * @param hirlevel
+     * @param penzugyes
      */
-    public Kapcsolattarto(int id, int ugyfelId, String nev, String telefon, String email, boolean hirlevel, boolean penzugyes) {
+    public Kapcsolattarto(int id, int ugyfelId, String nev, String telefon, String email, boolean hirlevel, boolean penzugyes)
+    {
         this.id = id;
         this.ugyfelId = ugyfelId;
         this.nev = nev;
@@ -93,27 +101,36 @@ public class Kapcsolattarto {
      * @param ids a kapcsolattartók azonosítói akikre kíváncsiak vagyunk
      * @return Kapfcsolattarto tömb
      */
-    public static Kapcsolattarto[] getKapcsolattartokArray(int[] ids) {
+    public static Kapcsolattarto[] getKapcsolattartokArray(int[] ids)
+    {
         String w = "(";
-        for (int i = 0; i < ids.length; i++) {
+        
+        for (int i = 0; i < ids.length; i++)
+        {
             w += ids[i] + ", ";
         }
+        
         w += "0)";
         Object[][] s = App.db.select("SELECT id, ugyfelid, nev, telefon, email, hirlevel, penzugyes FROM " + TABLE + " WHERE id IN " + w);
-        if (s.length != 0) {
+        
+        if (s.length != 0)
+        {
             Kapcsolattarto[] kapcsolattartok = new Kapcsolattarto[s.length];
             for (int i = 0; i < s.length; i++) {
                 kapcsolattartok[i] = new Kapcsolattarto(
-                        Integer.parseInt(String.valueOf(s[i][0])),
-                        Integer.parseInt(String.valueOf(s[i][1])),
-                        String.valueOf(s[i][2]),
-                        String.valueOf(s[i][3]),
-                        String.valueOf(s[i][4]),
-                        String.valueOf(s[0][5]).equalsIgnoreCase("1"),
-                        String.valueOf(s[0][6]).equalsIgnoreCase("1"));
+                    Integer.parseInt(String.valueOf(s[i][0])),
+                    Integer.parseInt(String.valueOf(s[i][1])),
+                    String.valueOf(s[i][2]),
+                    String.valueOf(s[i][3]),
+                    String.valueOf(s[i][4]),
+                    String.valueOf(s[0][5]).equalsIgnoreCase("1"),
+                    String.valueOf(s[0][6]).equalsIgnoreCase("1"));
             }
+            
             return kapcsolattartok;
-        } else {
+        }
+        else
+        {
             return null;
         }
     }
@@ -126,18 +143,23 @@ public class Kapcsolattarto {
      * @param kapcsolattartok az összevonni kívánt kapcsolattartók
      * @param kapcsolattarto azon kapcsolattartó akibe össze akarjuk vonni
      */
-    public static void csoportositas(Kapcsolattarto[] kapcsolattartok, Kapcsolattarto kapcsolattarto) {
+    public static void csoportositas(Kapcsolattarto[] kapcsolattartok, Kapcsolattarto kapcsolattarto)
+    {
         String w = "(";
         String nevek = "";
-        for (int i = 0; i < kapcsolattartok.length; i++) {
-            if (kapcsolattartok[i].getId() != kapcsolattarto.getId()) {
+        
+        for (int i = 0; i < kapcsolattartok.length; i++)
+        {
+            if (kapcsolattartok[i].getId() != kapcsolattarto.getId())
+            {
                 w += kapcsolattartok[i].getId() + ", ";
                 nevek += kapcsolattartok[i].getNev() + ", ";
             }
         }
+        
         w += "0)";
         // az ajánlatkérések átadása az új kapcsolattartónak
-        App.db.insert("UPDATE " + "pixi_ajanlatkeresek_adatai" + " SET kapcsolattarto_id = " + kapcsolattarto.getId() + " WHERE kapcsolattarto_id IN " + w, null, 0);
+        App.db.insert("UPDATE " + "pixi_ajanlatkeresek_adatai" + " SET kapcsolattarto_id = " + kapcsolattarto.getId() + " WHERE kapcsolattarto_id IN " + w, null);
         // az összes többi kapcsolattartó törlése, mivel már hozzájuk nem tartozik ajánlatkérés vagy megrendelés
         App.db.delete("DELETE FROM " + TABLE + " WHERE id IN " + w);
         // logolás a műveletről
@@ -205,39 +227,48 @@ public class Kapcsolattarto {
     /**
      * a kapcsolattartó mentése ha az 'id' null akkor INSERT egyébként UPDATE
      */
-    public void mentes() {
+    public void mentes()
+    {
         Object[] o = new Object[6];
-        if (ugyfelId == 0) {
+        
+        if (ugyfelId == 0)
+        {
             Ugyfel uf = new Ugyfel();
             uf.setNev(nev);
             uf.mentes();
             ugyfelId = uf.getId();
         }
+        
         o[0] = ugyfelId;
         o[1] = nev;
         o[2] = telefon;
         o[3] = email;
         o[4] = (hirlevel ? 1 : 0);
         o[5] = (penzugyes ? 1 : 0);
-        if (id == 0) {
+        
+        if (id == 0)
+        {
             // új mentése
             id = App.db.insert("INSERT INTO " + TABLE + " (ugyfelid, nev, telefon, email, hirlevel, penzugyes) "
-                    + "VALUES (?, ?, ?, ?, ?, ?)", o, o.length);
+                    + "VALUES (?, ?, ?, ?, ?, ?)", o);
             // log bejegyzés a létrehozásról
-//            Log.addMsg(0, PixiRendszer.user.getId(), "Új kapcsolattartó létrehozás", toString());
-        } else {
+//          Log.addMsg(0, PixiRendszer.user.getId(), "Új kapcsolattartó létrehozás", toString());
+        }
+        else
+        {
             // meglévő módosítása
             App.db.insert("UPDATE " + TABLE + " SET ugyfelid = ?, nev = ?, telefon = ?, email = ?, hirlevel = ? , penzugyes = ? "
-                    + "WHERE id = " + id, o, o.length);
+                    + "WHERE id = " + id, o);
             // log bejegyzés a módosításról
-//            Log.addMsg(0, PixiRendszer.user.getId(), "Kapcsolattartó módosítása", toString());
+//          Log.addMsg(0, PixiRendszer.user.getId(), "Kapcsolattartó módosítása", toString());
         }
     }
 
     /**
      * a kapcsolattartó végleges törlése
      */
-    public void torles() {
+    public void torles()
+    {
         App.db.delete("DELETE FROM " + TABLE + " WHERE id = " + id);
 //        Log.addMsg(0, PixiRendszer.user.getId(), "Kapcsolattartó törlése", toString());
     }
@@ -247,16 +278,19 @@ public class Kapcsolattarto {
      *
      * @return ha hibás akkor a hibaüzenet, egyébként üres String
      */
-    public String valid() {
-        if (nev.isEmpty()) {
+    public String valid()
+    {
+        if (nev.isEmpty())
+        {
             return "Nincs név megadva!";
         }
+        
         return "";
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "ID:" + id + "; " + nev + "; " + telefon + "; " + email;
     }
-
 }

@@ -14,20 +14,20 @@ import java.util.Set;
  *
  * @author szekus
  */
-public class KintlevosegKapcsolattartokGroup {
+public class KintlevosegKapcsolattartokGroup
+{
 
     private String name;
     private List<String> azonositok;
 
-    private KintlevosegKapcsolattartokGroup() {
-    }
+    private KintlevosegKapcsolattartokGroup(){}
 
-    public static KintlevosegKapcsolattartokGroup create() {
+    public static KintlevosegKapcsolattartokGroup create()
+    {
         KintlevosegKapcsolattartokGroup group = new KintlevosegKapcsolattartokGroup();
         group.name = "";
         group.azonositok = new ArrayList<>();
         return group;
-
     }
 
     public void addToAzonositok(String azonosito) {

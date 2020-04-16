@@ -2,43 +2,305 @@ package cezeszamlazo;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import cezeszamlazo.controller.Afa;
+//import cezeszamlazo.controller.Afa;
 import cezeszamlazo.controller.Functions;
-import cezeszamlazo.controller.Szamla;
-import cezeszamlazo.controller.SzamlaTermek;
-import cezeszamlazo.controller.TermekDij;
 import cezeszamlazo.database.Query;
+import invoice.Afa;
+import invoice.Invoice;
+import invoice.Invoice.InvoiceType;
+import invoice.InvoiceProduct;
+//import cezeszamlazo.model.Invoice;
+//import cezeszamlazo.model.InvoiceProduct;
+//import cezeszamlazo.model.Invoice.InvoiceType;
 
 /**
  *
  * @author adam.papp
  */
-public class SzamlaAdatokDialog extends javax.swing.JDialog {
-
-    /**
-     * A return status code - returned if Cancel button has been pressed
-     */
+public class SzamlaAdatokDialog extends javax.swing.JDialog
+{
     public static final int RET_CANCEL = 0;
-    /**
-     * A return status code - returned if OK button has been pressed
-     */
     public static final int RET_OK = 1;
+    
+    public SzamlaAdatokDialog(int type, InvoiceType invoiceType, String table, String indentifier)
+    {
+        initComponents();
+
+        Invoice invoice = new Invoice(type, invoiceType, table, indentifier);
+        
+        szallito.setText(invoice.getSupplier().getName());
+        szallito.setCaretPosition(0);
+        
+        vevo.setText(invoice.getCustomer().getName());
+        vevo.setCaretPosition(0);
+        
+        String paymentMethod = "";
+        
+        switch(invoice.getCustomer().getPaymentMethod())
+        {
+            case 0:
+                paymentMethod = "Készpénz";
+                break;
+            case 1:
+                paymentMethod = "Átutalás";
+                break;
+            case 2:
+                paymentMethod = "Utánvét";
+                break;
+        }
+        
+        // fejléc
+        Object[] row = new Object[4];
+        row[0] = paymentMethod;
+        row[1] = invoice.getIssueDate();
+        row[2] = invoice.getCompletionDate();
+        row[3] = invoice.getMaturityDate();
+        
+        DefaultTableModel model = (DefaultTableModel) fejlecTable.getModel();
+        model.addRow(row);
+
+        // számla termékek
+        model = (DefaultTableModel) termekekTable.getModel();
+        InvoiceProduct product;
+        row = new Object[9];
+        
+        for (int i = 0; i < invoice.getProducts().Size(); i++)
+        {
+            product = invoice.getProducts().Get(i);
+            row[0] = product.getName();
+            row[1] = product.getVtszTeszor();
+            row[2] = product.getQuantity();
+            row[3] = product.getMeasureOfUnit().getShortName();
+            row[4] = product.getUnitPrice();
+            row[5] = product.getNetPrice(invoice.isForeignCurrency());
+            row[6] = product.getVatLabel();
+            row[7] = product.getVatAmount(invoice.isForeignCurrency());
+            row[8] = product.getGrossPrice(invoice.isForeignCurrency());
+            
+            model.addRow(row);
+            
+            /*if (szt.getTermekDij() != null && !szla.isAtvallal())
+            {
+                TermekDij td = szt.getTermekDij();
+                row[0] = "Környezetvédelmi termékdíj (" + (td.getTermekDij() == 20 ? "csomagolószer" : "reklámpapír") + ")";
+                row[1] = "";
+                row[2] = td.getSuly();
+                row[3] = "kg";
+                row[4] = td.getTermekDij();
+                row[5] = td.getOsszTermekDijNetto(szla.isDeviza());
+                row[6] = 27;
+                row[7] = td.getOsszTermekDijAfaErtek(szla.isDeviza());
+                row[8] = td.getOsszTermekDijBrutto(szla.isDeviza());
+                model.addRow(row);
+            }*/
+        }
+
+        DefaultTableRender render = new DefaultTableRender(new int[]{5, 7, 8}, invoice.getCurrency());
+        TableColumn col;
+        int[] meret = {150, 40, 40, 30, 60, 60, 30, 60, 60};
+        
+        for (int i = 0; i < meret.length; i++)
+        {
+            col = termekekTable.getColumnModel().getColumn(i);
+            col.setPreferredWidth(meret[i]);
+            col.setCellRenderer(render);
+        }
+
+        // áfa összesítő
+        model = (DefaultTableModel) afaTable.getModel();
+        row = new Object[4];
+        double ossz = 0.0;
+        
+        for (Afa a : invoice.getVats(true))
+        {
+            row[0] = a.getAfa() + "%";
+            row[1] = a.getNetto(invoice.isForeignCurrency());
+            row[2] = a.getAfaErtek(invoice.isForeignCurrency());
+            row[3] = a.getBrutto(invoice.isForeignCurrency());
+            ossz += a.getBrutto(invoice.isForeignCurrency());
+            model.addRow(row);
+        }
+        
+        boolean isUtalas = (invoice.getCustomer().getPaymentMethod() == 1);
+        ossz = Functions.kerekit(ossz, isUtalas);
+        render = new DefaultTableRender(new int[]{1, 2, 3}, invoice.getCurrency());
+        
+        for (int i = 0; i < 4; i++)
+        {
+            col = afaTable.getColumnModel().getColumn(i);
+            col.setCellRenderer(render);
+        }
+
+        fizetendoLabel.setText((invoice.getInvoiceType() == InvoiceType.NEW ? "Visszatérítendő" : "Fizetendő") + ": " + EncodeDecode.numberFormat(String.valueOf(ossz), invoice.isForeignCurrency()) + " " + invoice.getCurrency());
+        betuvelLabel.setText("azaz " + betuvel(ossz) + " " + invoice.getCurrency());
+
+        // megjegyzés
+        megjegyzes.setText(invoice.getComment() + "\n" + invoice.getFooter());
+        megjegyzes.setCaretPosition(0);
+
+        // kifizetések
+        render = new DefaultTableRender(new int[]{1}, invoice.getCurrency());
+        model = (DefaultTableModel) kifizetesekTable.getModel();
+        
+        Query query = new Query.QueryBuilder()
+            .select("paymentDate, amountPaid")
+            .from("szamlazo_invoice_payments")
+            .where(" indentifier = '" + invoice.getIndentifier() + "'")
+            .build();
+        model.setDataVector(App.db.select(query.getQuery()),
+                new String[]{"Dátum", "Összeg"});
+        meret = new int[]{100, 500};
+        
+        for (int i = 0; i < meret.length; i++)
+        {
+            col = kifizetesekTable.getColumnModel().getColumn(i);
+            col.setPreferredWidth(meret[i]);
+            col.setCellRenderer(render);
+        }
+
+        init("Száml" + (invoice.getInvoiceType() == InvoiceType.NEW ? "a" : "ával egy tekintet alá eső okirat") + ": " + invoice.getInvoiceNumber());
+    }
 
     /**
-     * Creates new form SzamlaAdatokDialog
-     */
-    public SzamlaAdatokDialog(String azon) {
+     * public SzamlaAdatokDialog(String azon, boolean dijbekero)
+    {
         initComponents();
-        System.out.println(azon);
+        Szamla szla = new Szamla(azon, dijbekero);
+        // szállító
+        szallito.setText(szla.getSzallito().toString());
+        szallito.setCaretPosition(0);
+        // vevő
+        vevo.setText(szla.getVevo().toString());
+        vevo.setCaretPosition(0);
+
+        String fizetesiMod = "";
+
+        switch (szla.getVevo().getFizetesiMod()) {
+            case 0:
+                fizetesiMod = "Készpénz";
+                break;
+            case 1:
+                fizetesiMod = "Átutalás";
+                break;
+            case 2:
+                fizetesiMod = "Utánvét";
+                break;
+        }
+
+        // fejléc
+        Object[] row = new Object[4];
+        row[0] = fizetesiMod;
+        row[1] = szla.getKelt();
+        row[2] = szla.getTeljesites();
+        row[3] = szla.getEsedekesDatum();
+        
+        DefaultTableModel model = (DefaultTableModel) fejlecTable.getModel();
+        model.addRow(row);
+
+        // számla termékek
+        model = (DefaultTableModel) termekekTable.getModel();
+        SzamlaTermek szt;
+        row = new Object[9];
+        for (int i = 0; i < szla.getTermekek().size(); i++) {
+            szt = (SzamlaTermek) szla.getTermekek().get(i);
+            row[0] = szt.getNev();
+            row[1] = szt.getVtszTeszor();
+            row[2] = szt.getMennyiseg();
+            row[3] = szt.getMee();
+            row[4] = szt.getEgysegar();
+            row[5] = szt.getNetto(szla.isDeviza());
+            row[6] = szt.getAfa();
+            row[7] = szt.getAfaErtek(szla.isDeviza());
+            row[8] = szt.getBrutto(szla.isDeviza());
+            model.addRow(row);
+            /*if (szt.getTermekDij() != null && !szla.isAtvallal()) {
+                TermekDij td = szt.getTermekDij();
+                row[0] = "Környezetvédelmi termékdíj (" + (td.getTermekDij() == 20 ? "csomagolószer" : "reklámpapír") + ")";
+                row[1] = "";
+                row[2] = td.getSuly();
+                row[3] = "kg";
+                row[4] = td.getTermekDij();
+                row[5] = td.getOsszTermekDijNetto(szla.isDeviza());
+                row[6] = 27;
+                row[7] = td.getOsszTermekDijAfaErtek(szla.isDeviza());
+                row[8] = td.getOsszTermekDijBrutto(szla.isDeviza());
+                model.addRow(row);
+            }
+        }
+
+        DefaultTableRender render = new DefaultTableRender(new int[]{5, 7, 8}, szla.getValuta());
+        TableColumn col;
+        int[] meret = {150, 40, 40, 30, 60, 60, 30, 60, 60};
+        for (int i = 0; i < meret.length; i++) {
+            col = termekekTable.getColumnModel().getColumn(i);
+            col.setPreferredWidth(meret[i]);
+            col.setCellRenderer(render);
+        }
+
+        // áfa összesítő
+        model = (DefaultTableModel) afaTable.getModel();
+        row = new Object[4];
+        double ossz = 0.0;
+        for (Afa a : szla.getAfak(true)) {
+            row[0] = a.getAfa() + "%";
+            row[1] = a.getNetto(szla.isDeviza());
+            row[2] = a.getAfaErtek(szla.isDeviza());
+            row[3] = a.getBrutto(szla.isDeviza());
+            ossz += a.getBrutto(szla.isDeviza());
+            model.addRow(row);
+        }
+        boolean isUtalas = (szla.getVevo().getFizetesiMod() == 1) ? true : false;
+        ossz = Functions.kerekit(ossz, isUtalas);
+        render = new DefaultTableRender(new int[]{1, 2, 3}, szla.getValuta());
+        for (int i = 0; i < 4; i++) {
+            col = afaTable.getColumnModel().getColumn(i);
+            col.setCellRenderer(render);
+        }
+
+        fizetendoLabel.setText((szla.getTipus() == 2 ? "Visszatérítendő" : "Fizetendő") + ": " + EncodeDecode.numberFormat(String.valueOf(ossz), szla.isDeviza()) + " " + szla.getValuta());
+        betuvelLabel.setText("azaz " + betuvel(ossz) + " " + szla.getValuta());
+
+        // megjegyzés
+        megjegyzes.setText(szla.getMegjegyzes() + "\n" + szla.getLablec());
+        megjegyzes.setCaretPosition(0);
+
+        // kifizetések
+        render = new DefaultTableRender(new int[]{1}, szla.getValuta());
+        model = (DefaultTableModel) kifizetesekTable.getModel();
+        Query query = new Query.QueryBuilder()
+                .select("paymentDate, amountPaid")
+                .from("szamlazo_invoice_payments")
+                .where(" indentifier = '" + szla.getAzon() + "'")
+                .build();
+        model.setDataVector(App.db.select(query.getQuery()),
+                new String[]{"Dátum", "Összeg"});
+        meret = new int[]{100, 500};
+        for (int i = 0; i < meret.length; i++) {
+            col = kifizetesekTable.getColumnModel().getColumn(i);
+            col.setPreferredWidth(meret[i]);
+            col.setCellRenderer(render);
+        }
+
+        init("Száml" + (szla.getTipus() != 2 ? "a" : "ával egy tekintet alá eső okirat") + ": " + szla.getSorszam());
+
+        // Close the dialog when Esc is pressed
+        String cancelName = "cancel";
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        ActionMap actionMap = getRootPane().getActionMap();
+        actionMap.put(cancelName, new AbstractAction() {
+
+            public void actionPerformed(ActionEvent e) {
+                doClose(RET_CANCEL);
+            }
+        });
+    }
+    
+    public SzamlaAdatokDialog(String azon)
+    {
+        initComponents();
         Szamla szla = new Szamla(azon);
 
         // szállító
@@ -67,7 +329,7 @@ public class SzamlaAdatokDialog extends javax.swing.JDialog {
         row[0] = fizetesiMod;
         row[1] = szla.getKelt();
         row[2] = szla.getTeljesites();
-        row[3] = szla.getEsedekesseg();
+        row[3] = szla.getEsedekesDatum();
         DefaultTableModel model = (DefaultTableModel) fejlecTable.getModel();
         model.addRow(row);
 
@@ -168,7 +430,7 @@ public class SzamlaAdatokDialog extends javax.swing.JDialog {
                 doClose(RET_CANCEL);
             }
         });
-    }
+    }*/
 
     /**
      * @return the return status of this dialog - one of RET_OK or RET_CANCEL
@@ -513,11 +775,13 @@ public class SzamlaAdatokDialog extends javax.swing.JDialog {
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
 
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
         returnStatus = retStatus;
         setVisible(false);
         dispose();
     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable afaTable;
     private javax.swing.JLabel betuvelLabel;
@@ -542,7 +806,8 @@ public class SzamlaAdatokDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     private int returnStatus = RET_CANCEL;
 
-    private void init(String title) {
+    private void init(String title)
+    {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         int x = (screenSize.width - getWidth()) / 2;
@@ -559,7 +824,8 @@ public class SzamlaAdatokDialog extends javax.swing.JDialog {
         setVisible(true);
     }
 
-    private String betuvel(double osszeg) {
+    private String betuvel(double osszeg)
+    {
         String result = "";
         int num = (int) Math.floor(osszeg);
         int tizedes = (int) Math.round((osszeg - Math.floor(osszeg)) * 100);
@@ -571,29 +837,44 @@ public class SzamlaAdatokDialog extends javax.swing.JDialog {
         num /= 1000;
         int milliardos = num % 1000;
         num /= 1000;
-        if (milliardos != 0) {
+        
+        if (milliardos != 0)
+        {
             result += azaz(milliardos) + "millárd";
-            if (millios != 0 || szazezres != 0 || ezres != 0) {
+            
+            if (millios != 0 || szazezres != 0 || ezres != 0)
+            {
                 result += "-";
             }
         }
-        if (millios != 0) {
+        
+        if (millios != 0)
+        {
             result += azaz(millios) + "millió";
-            if (szazezres != 0 || ezres != 0) {
+            
+            if (szazezres != 0 || ezres != 0)
+            {
                 result += "-";
             }
         }
-        if (szazezres != 0) {
+        
+        if (szazezres != 0)
+        {
             result += azaz(szazezres) + "ezer";
-            if (ezres != 0 && osszeg > 2000) {
+            
+            if (ezres != 0 && osszeg > 2000)
+            {
                 result += "-";
             }
         }
-        if (ezres != 0) {
+        
+        if (ezres != 0)
+        {
             result += azaz(ezres);
         }
 
-        if (osszeg == 0) {
+        if (osszeg == 0)
+        {
             result = "nulla";
         }
 
@@ -601,13 +882,17 @@ public class SzamlaAdatokDialog extends javax.swing.JDialog {
 //	    result = "nulla";
 //	}
         result = result.substring(0, 1).toUpperCase() + result.substring(1);
-        if (tizedes != 0) {
+        
+        if (tizedes != 0)
+        {
             result += "\\" + tizedes;
         }
+        
         return result;
     }
 
-    private String azaz(int osszeg) {
+    private String azaz(int osszeg)
+    {
         String result = "";
         int sz, t, e;
         String[] egyes = {"", "egy", "kettő", "három", "négy", "öt", "hat", "hét", "nyolc", "kilenc"};
@@ -621,9 +906,11 @@ public class SzamlaAdatokDialog extends javax.swing.JDialog {
         if (sz < 0) {
             sz = sz * -1;
         }
+        
         if (t < 0) {
             t = t * -1;
         }
+        
         if (e < 0) {
             e = e * -1;
         }
@@ -631,15 +918,20 @@ public class SzamlaAdatokDialog extends javax.swing.JDialog {
         if (sz != 0) {
             result += egyes[sz] + "száz";
         }
-        if (t != 0 && e != 0) {
+        
+        if (t != 0 && e != 0)
+        {
             result += tizes1[t] + egyes[e];
-        } else if (t != 0 && e == 0) {
+        }
+        else if (t != 0 && e == 0)
+        {
             result += tizes2[t];
-        } else if (t == 0 && e != 0) {
+        }
+        else if (t == 0 && e != 0)
+        {
             result += egyes[e];
         }
 
         return result;
     }
-
 }

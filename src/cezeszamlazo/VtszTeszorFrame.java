@@ -10,12 +10,10 @@ import javax.swing.table.TableColumn;
  *
  * @author adam.papp
  */
-public class VtszTeszorFrame extends javax.swing.JFrame {
-
-    /**
-     * Creates new form VtszTeszorFrame
-     */
-    public VtszTeszorFrame() {
+public class VtszTeszorFrame extends javax.swing.JFrame
+{
+    public VtszTeszorFrame()
+    {
         initComponents();
 
         init();
@@ -140,7 +138,8 @@ public class VtszTeszorFrame extends javax.swing.JFrame {
     private javax.swing.JTable vtszTable;
     // End of variables declaration//GEN-END:variables
 
-    private void init() {
+    private void init()
+    {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         int x = (screenSize.width - getWidth()) / 2;
@@ -154,34 +153,39 @@ public class VtszTeszorFrame extends javax.swing.JFrame {
         setTitle("VTSZ/TESZOR sablonok");
     }
 
-    private void frissites() {
+    private void frissites()
+    {
         String keresText = EncodeDecode.encode(kereses.getText().replace("'", "\\'"));
-        String whereText = "v.nev LIKE '%" + keresText + "%' || v.szam LIKE '%" + keresText + "%' || a.afa LIKE '%" + keresText + "%'";
+        String whereText = "v.nev LIKE '%" + keresText + "%' || v.szam LIKE '%" + keresText + "%' || a.vatAmount LIKE '%" + keresText + "%'";
         DefaultTableModel model = (DefaultTableModel) vtszTable.getModel();
         String[] header = {"Id", "Név", "VTSZ/TESZOR", "ÁFA"};
+        
         Query query = new Query.QueryBuilder()
-                .select("v.id, "
-                        + "v.nev, "
-                        + "v.szam, "
-                        + "CONCAT(a.afa, '%') ")
-                .from("szamlazo_vtsz_sablon v, szamlazo_afa a ")
-                .where("a.id = v.afaid && (" + whereText + ") ")
-                .order("nev")
-                .build();
+            .select("v.id, "
+                + "v.nev, "
+                + "v.szam, "
+                + "CONCAT(a.vatAmount, '%') ")
+            .from("szamlazo_vtsz_sablon v, szamlazo_vats a ")
+            .where("a.id = v.afaid && (" + whereText + ") ")
+            .order("nev")
+            .build();
         model.setDataVector(App.db.select(query.getQuery()), header);
+        
         int[] meret = {30, 150, 50, 50};
         DefaultTableRender render = new DefaultTableRender();
         TableColumn col;
-        for (int i = 0; i < meret.length; i++) {
+        
+        for (int i = 0; i < meret.length; i++)
+        {
             col = vtszTable.getColumnModel().getColumn(i);
             col.setCellRenderer(render);
             col.setPreferredWidth(meret[i]);
         }
     }
 
-    public void nyit() {
+    public void nyit()
+    {
         frissites();
         setVisible(true);
     }
-
 }

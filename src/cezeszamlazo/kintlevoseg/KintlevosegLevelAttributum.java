@@ -15,8 +15,8 @@ import java.util.List;
  *
  * @author szekus
  */
-public class KintlevosegLevelAttributum {
-
+public class KintlevosegLevelAttributum
+{
     private int id;
     private String name;
     private String refTable;
@@ -97,15 +97,16 @@ public class KintlevosegLevelAttributum {
         return list;
     }
 
-    public KintlevosegLevelAttributum getHtmlAttribute(String attr) {
+    public KintlevosegLevelAttributum getHtmlAttribute(String attr)
+    {
         Query query = new Query.QueryBuilder()
-                .select("*")
-                .from("szamlazo_kintlevoseg_level_attributumok")
-                .where("ref_attr = '" + attr + "'")
-                .build();
-//        System.out.println(query.getQuery());
+            .select("*")
+            .from("szamlazo_kintlevoseg_level_attributumok2")
+            .where("ref_attr = '" + attr + "'")
+            .build();
         Object[][] select = App.db.select(query.getQuery());
-        try {
+        try
+        {
             KintlevosegLevelAttributum kintlevosegLevelAttributum = new KintlevosegLevelAttributum();
             kintlevosegLevelAttributum.setId(Functions.getIntFromObject(select[0][0]));
             kintlevosegLevelAttributum.setName(Functions.getStringFromObject(select[0][1]));
@@ -113,26 +114,30 @@ public class KintlevosegLevelAttributum {
             kintlevosegLevelAttributum.setRefAttr(Functions.getStringFromObject(select[0][3]));
             kintlevosegLevelAttributum.setSqlCommand(Functions.getStringFromObject(select[0][4]));
             return kintlevosegLevelAttributum;
-        } catch (ArrayIndexOutOfBoundsException e) {
+        }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
             e.printStackTrace();
-//            System.out.println(attr);
+            //System.out.println(attr);
         }
         return null;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "id: " + id + "; name: " + name + "; ref_table: " + refTable + "; ref_attr: " + refAttr;
     }
 
-    public List<String> getAllName() {
+    public List<String> getAllName()
+    {
         List<String> list = new ArrayList<>();
         Query query = new Query.QueryBuilder()
-                .select("name")
-                .from("szamlazo_kintlevoseg_level_attributumok")
-                .where("1=1")
-                .order("name")
-                .build();
+            .select("name")
+            .from("szamlazo_kintlevoseg_level_attributumok")
+            .where("1=1")
+            .order("name")
+            .build();
         Object[][] select = App.db.select(query.getQuery());
 
         for (int i = 0; i < select.length; i++) {
@@ -161,5 +166,4 @@ public class KintlevosegLevelAttributum {
 //
 //        return select;
 //    }
-
 }

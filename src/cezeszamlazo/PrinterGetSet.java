@@ -1,20 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cezeszamlazo;
+
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.swing.JComboBox;
 
 /**
  *
  * @author czbhu
  */
-public class PrinterGetSet {
-
+public class PrinterGetSet
+{
     private static String PrinterName = "100";
 
-    public void setPrinterName(String printerName) {
-        System.out.println("SupplierID: " + printerName);
+    public void setPrinterName(String printerName)
+    {
         PrinterName = printerName;
     }
 
@@ -23,4 +22,15 @@ public class PrinterGetSet {
         return this.PrinterName;
     }
     
+    public void fillPrinterCombobox (JComboBox printerCombobox) 
+    {
+        printerCombobox.removeAllItems();
+        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+        for (PrintService printer : printServices)
+        {
+            printerCombobox.addItem(String.valueOf(printer.getName()));
+        }
+        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+        printerCombobox.getModel().setSelectedItem(String.valueOf(service.getName()));
+    }
 }

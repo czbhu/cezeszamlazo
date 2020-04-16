@@ -9,7 +9,8 @@ package cezeszamlazo.model;
  *
  * @author szekus
  */
-public class Client {
+public class Client
+{
     private int id;
     private String name;
     private String databaseName;
@@ -42,8 +43,5 @@ public class Client {
 
     public void setName(String name) {
         this.name = name;
-    }
-    
-    
-    
+    } 
 }

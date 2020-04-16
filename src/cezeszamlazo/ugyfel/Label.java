@@ -9,8 +9,8 @@ package cezeszamlazo.ugyfel;
  *
  * @author szekus
  */
-class Label {
-
+class Label
+{
     private long id;
     private String name;
 

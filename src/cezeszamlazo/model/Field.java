@@ -6,8 +6,8 @@ import cezeszamlazo.controller.Functions;
  *
  * @author szekus
  */
-public class Field {
-
+public class Field
+{
     protected String name;
     protected Object value;
     protected String type;
@@ -18,8 +18,10 @@ public class Field {
         return new Field(name, type);
     }
 
-    private Field(String name, String type) {
-        switch (type) {
+    private Field(String name, String type)
+    {
+        switch (type)
+        {
             case "int":
                 value = 0;
                 break;
@@ -33,6 +35,7 @@ public class Field {
                 value = false;
                 break;
         }
+        
         this.name = name;
         this.type = type;
     }
@@ -57,5 +60,4 @@ public class Field {
     public String toString() {
         return "Name: " + name + ", value: " + value;
     }
-
 }

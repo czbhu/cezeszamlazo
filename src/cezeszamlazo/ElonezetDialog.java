@@ -2,14 +2,11 @@ package cezeszamlazo;
 
 import cezeszamlazo.controller.Functions;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
-import cezeszamlazo.controller.Szamla;
-import cezeszamlazo.controller.SzamlaTermek;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -34,153 +31,179 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
-import cezeszamlazo.controller.TermekDij;
 import cezeszamlazo.database.Query;
 import cezeszamlazo.functions.ElonezetFunctions;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
+import invoice.Invoice;
+import invoice.InvoiceProduct;
+import invoice.MeasureOfUnit;
+import invoice.ProductFee;
+import java.util.ArrayList;
 import javax.print.DocPrintJob;
 import javax.print.PrintService;
 import org.apache.commons.io.IOUtils;
 import szamlazo.pdf.DrawString;
 import szamlazo.pdf.SzamlaLablec;
 
-public class ElonezetDialog extends javax.swing.JDialog {
-
+public class ElonezetDialog extends javax.swing.JDialog
+{
     private ElonezetFunctions elonezetFunctions;
+    private Functions functions;
     public static int ELONEZET = 0, NYOMTATAS = 1, PDF = 2, ATTACMENT = -1;
     private static int N = 25;
-    /**
-     * A return status code - returned if Cancel button has been pressed
-     */
-    public static final int RET_CANCEL = 0;
-    /**
-     * A return status code - returned if OK button has been pressed
-     */
-    public static final int RET_OK = 1;
+
+    public static final int RET_CANCEL = 0, RET_OK = 1;
+    
     private static final int W = 595, H = 842;
     private double scale = 1.4;
-    private Szamla szla;
-    private int peldany = 1, osszPeldany = 3, count = 0;
-    private double osszCsom = 0.0, osszRekl = 0.0;
-    private double[] oNetto = {0, 0, 0, 0},
-            oAfaErtek = {0, 0, 0, 0},
-            oBrutto = {0, 0, 0, 0};
+    private Invoice invoice;
+    private int peldany = 1, osszPeldany = 3, count = 0;//unused
+    private int osszCsom = 0, osszRekl = 0;
+    private double[] 
+        oNetto = {0, 0, 0, 0, 0, 0, 0, 0},
+        oAfaErtek = {0, 0, 0, 0, 0, 0, 0, 0},
+        oBrutto = {0, 0, 0, 0, 0, 0, 0, 0};
     private boolean elonezet = true;
-    private List<SzamlaTermek> szamlaTermekek = new LinkedList<SzamlaTermek>();
-    private List<Component> pages = new LinkedList<Component>();
-    // print
-    private Font sansBoldItalic16 = new Font(Font.SANS_SERIF, Font.BOLD | Font.ITALIC, 16),
-            sansBold11 = new Font(Font.SANS_SERIF, Font.BOLD, 11),
-            sansPlain10 = new Font(Font.SANS_SERIF, Font.PLAIN, 10),
-            sansBold10 = new Font(Font.SANS_SERIF, Font.BOLD, 10),
-            sansBold12 = new Font(Font.SANS_SERIF, Font.BOLD, 12),
-            sansBoldItalic12 = new Font(Font.SANS_SERIF, Font.BOLD | Font.ITALIC, 12),
-            sansPlain9 = new Font(Font.SANS_SERIF, Font.PLAIN, 9),
-            sansPlain8 = new Font(Font.SANS_SERIF, Font.PLAIN, 8),
-            sansPlain12 = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+    
+    private List<InvoiceProduct> invoiceProducts = new LinkedList<>();
+    private List<Component> pages = new LinkedList<>();
+
+    private Font 
+        sansBoldItalic16 = new Font(Font.SANS_SERIF, Font.BOLD | Font.ITALIC, 16),
+        sansBold11 = new Font(Font.SANS_SERIF, Font.BOLD, 11),
+        sansPlain10 = new Font(Font.SANS_SERIF, Font.PLAIN, 10),
+        sansBold10 = new Font(Font.SANS_SERIF, Font.BOLD, 10),
+        sansBold12 = new Font(Font.SANS_SERIF, Font.BOLD, 12),
+        sansBoldItalic12 = new Font(Font.SANS_SERIF, Font.BOLD | Font.ITALIC, 12),
+        sansPlain9 = new Font(Font.SANS_SERIF, Font.PLAIN, 9),
+        sansPlain8 = new Font(Font.SANS_SERIF, Font.PLAIN, 8),
+        sansPlain12 = new Font(Font.SANS_SERIF, Font.PLAIN, 12);//unused
     private int mx = 0, my = 0;
 
-    public ElonezetDialog(Szamla szamla, int tipus) {
-        this(szamla, 1, tipus);
-
+    public ElonezetDialog(Invoice invoice, int previewType)
+    {
+        this(invoice, 1, previewType);
     }
-
-    public ElonezetDialog(String azon, int osszPeldany, int tipus) {
-        this(new Szamla(azon), osszPeldany, tipus);
-    }
-
-    public ElonezetDialog(Szamla szla, int osszPeldany, int tipus) {
+    
+    public ElonezetDialog(Invoice invoice, int osszPeldany, int tipus)
+    {
         initComponents();
-
+        
         this.elonezetFunctions = new ElonezetFunctions();
-
-        this.szla = szla;
+        this.functions = new Functions();
+        this.invoice = invoice;
         this.osszPeldany = osszPeldany;
-        //this.elonezet = !nyomtat;
-
-//        System.out.println("---------");
-//        System.out.println("ÁTVÁLLAL: " + szla.isAtvallal());
-//        System.out.println("---------");
+        
         elonezet = false;
-
+        
         PrinterJob pj = PrinterJob.getPrinterJob();
-        // oldalak számítás kezdés
-
-        int osszPage = 0;
+        
+        // oldalak számításának kezdete
+        int osszPage;
         count = 0;
 
-        for (SzamlaTermek szt : szla.getTermekek()) {
-            //szt.szorozMennyiseg(szla.getTipus() == 2 ? -1 : 1);
-            szamlaTermekek.add(szt);
-            if (szt.getTermekDij() != null && !szla.isAtvallal()) {
-                TermekDij td = szt.getTermekDij();
-                if (td.getTermekDij() == 20) {
-                    osszCsom += td.getOsszTermekDijNetto(szla.isDeviza());
-                } else {
-                    osszRekl += td.getOsszTermekDijNetto(szla.isDeviza());
+        invoiceProducts = new ArrayList<>();
+        
+        for(int i = 0; i < invoice.getProducts().Size(); i++)
+        {
+            InvoiceProduct product = invoice.getProducts().Get(i);
+            invoiceProducts.add(product);
+
+            for(ProductFee fee : product.getProductFees())
+            {
+                switch(fee.getType())
+                {
+                    case ADVERTISING:
+                        osszRekl += fee.getTotalNet(invoice.isForeignCurrency());
+                        break;
+                    case PACKAGING:
+                        osszCsom += fee.getTotalNet(invoice.isForeignCurrency());
+                        break;
                 }
-                if (!szla.isAtvallal()) {
-                    oNetto[3] += td.getOsszTermekDijNetto(szla.isDeviza());
-                    oAfaErtek[3] += td.getOsszTermekDijAfaErtek(szla.isDeviza());
-                    oBrutto[3] += td.getOsszTermekDijBrutto(szla.isDeviza());
-                    szamlaTermekek.add(new SzamlaTermek(
-                            "Környezetvédelmi termékdíj (" + (td.getTermekDij() == 20 ? "csomagolószer" : "reklámpapír") + ")",
-                            "",
-                            "kg",
-                            "27",
-                            "",
-                            String.valueOf(td.getTermekDij()),
-                            String.valueOf(td.getSuly()),
-                            "27%"));
+                
+                if (invoice.getTakeoverType().isEmpty())
+                {
+                    oNetto[3] += fee.getTotalNet(invoice.isForeignCurrency());
+                    oAfaErtek[3] += fee.getTotalVat(invoice.isForeignCurrency());
+                    oBrutto[3] += fee.getTotalGross(invoice.isForeignCurrency());
+                    
+                    MeasureOfUnit mou = new MeasureOfUnit("kg");
+                    
+                    InvoiceProduct prod = new InvoiceProduct(fee.getName(), "", fee.getWeight(), mou, 0, "", fee.getKgPrice(), "27%", 27);
+                    invoiceProducts.add(prod);
                 }
             }
-            switch ((int) szt.getAfa()) {
-                case 0:
-                    oNetto[0] += szt.getNetto(szla.isDeviza());
-                    oAfaErtek[0] += szt.getAfaErtek(szla.isDeviza());
-                    oBrutto[0] += szt.getNetto(szla.isDeviza()) + szt.getAfaErtek(szla.isDeviza());
+            
+            switch (product.getVatLabel())
+            {
+                case "AAM":
+                    oNetto[0] += product.getNetPrice(invoice.isForeignCurrency());
+                    oAfaErtek[0] += product.getVatAmount(invoice.isForeignCurrency());
+                    oBrutto[0] += product.getGrossPrice(invoice.isForeignCurrency());
                     break;
-                case 5:
-                    oNetto[1] += szt.getNetto(szla.isDeviza());
-                    oAfaErtek[1] += szt.getAfaErtek(szla.isDeviza());
-                    oBrutto[1] += szt.getNetto(szla.isDeviza()) + szt.getAfaErtek(szla.isDeviza());
+                case "5%":
+                    oNetto[1] += product.getNetPrice(invoice.isForeignCurrency());
+                    oAfaErtek[1] += product.getVatAmount(invoice.isForeignCurrency());
+                    oBrutto[1] += product.getGrossPrice(invoice.isForeignCurrency());
                     break;
-                case 25:
-                    oNetto[2] += szt.getNetto(szla.isDeviza());
-                    oAfaErtek[2] += szt.getAfaErtek(szla.isDeviza());
-                    oBrutto[2] += szt.getNetto(szla.isDeviza()) + szt.getAfaErtek(szla.isDeviza());
+                case "10%":
+                    oNetto[2] += product.getNetPrice(invoice.isForeignCurrency());
+                    oAfaErtek[2] += product.getVatAmount(invoice.isForeignCurrency());
+                    oBrutto[2] += product.getGrossPrice(invoice.isForeignCurrency());
                     break;
-                case 27:
-                    oNetto[3] += szt.getNetto(szla.isDeviza());
-                    oAfaErtek[3] += szt.getAfaErtek(szla.isDeviza());
-                    oBrutto[3] += szt.getNetto(szla.isDeviza()) + szt.getAfaErtek(szla.isDeviza());
+                case "27%":
+                    oNetto[3] += product.getNetPrice(invoice.isForeignCurrency());
+                    oAfaErtek[3] += product.getVatAmount(invoice.isForeignCurrency());
+                    oBrutto[3] += product.getGrossPrice(invoice.isForeignCurrency());
+                    break;
+                case "Az Áfa törvény hatályán kívüli":
+                    oNetto[4] += product.getNetPrice(invoice.isForeignCurrency());
+                    oAfaErtek[4] += product.getVatAmount(invoice.isForeignCurrency());
+                    oBrutto[4] += product.getGrossPrice(invoice.isForeignCurrency());
+                    break;
+                case "Belföldi fordított adózás":
+                    oNetto[5] += product.getNetPrice(invoice.isForeignCurrency());
+                    oAfaErtek[5] += product.getVatAmount(invoice.isForeignCurrency());
+                    oBrutto[5] += product.getGrossPrice(invoice.isForeignCurrency());
+                    break;
+                case "Áthárított adót tartalmazó különbözet szerinti adózás":
+                    oNetto[6] += product.getNetPrice(invoice.isForeignCurrency());
+                    oAfaErtek[6] += product.getVatAmount(invoice.isForeignCurrency());
+                    oBrutto[6] += product.getGrossPrice(invoice.isForeignCurrency());
+                    break;
+                case "Áthárított adót nem tartalmazó különbözet szerinti adózás":
+                    oNetto[7] += product.getNetPrice(invoice.isForeignCurrency());
+                    oAfaErtek[7] += product.getVatAmount(invoice.isForeignCurrency());
+                    oBrutto[7] += product.getGrossPrice(invoice.isForeignCurrency());
                     break;
             }
         }
 
-        N = N - (szla.getTipus() == 2 ? (1 + (szla.isDeviza() ? 1 : 0)) : 0);
+        N = N - (invoice.getInvoiceType() == Invoice.InvoiceType.STORNO ? (1 + (invoice.isForeignCurrency() ? 1 : 0)) : 0);
 
-        osszPage = (int) Math.ceil(szamlaTermekek.size() / (N * 1.0));
-        if ((osszPage * N) - szamlaTermekek.size() < N / 2) {
+        osszPage = (int) Math.ceil(invoiceProducts.size() / (N * 1.0));
+        
+        if ((osszPage * N) - invoiceProducts.size() < N / 2)
+        {
             // ha az utolsó oldalon N/2-nél több termék van!
             osszPage += 1;
         }
-        //System.out.println("OSSZPAGE: " + osszPage + "  N: " + N);
-        // oldalak számítása vége
+        //System.out.println("OSSZPAGE: " + osszPage + "  N: " + N + " ElonezetDialog.java/ElonezetDialog(Invoice invoice, int osszPeldany, int tipus)");
+        // oldalak számításának vége
+        
         Book book = new Book();
 
         Dimension A4 = new Dimension(W, H);
+        //unused
         Dimension d = new Dimension((int) Math.round(A4.width * scale + (elonezet ? 20 * scale : 0)), (int) Math.round(A4.height * scale + (elonezet ? 20 * scale : 0)));
 
         pages.removeAll(pages);
-        for (int i = 0; i < osszPage; i++) {
+        
+        for (int i = 0; i < osszPage; i++)
+        {
             Component c = new Page(i + 1);
             c.setSize(W - (elonezet ? 0 : 60), H - (elonezet ? 0 : 50));
             pages.add(c);
+            
             PagePrintable printable = new PagePrintable(c);
             PageFormat pageFormat = pj.defaultPage();
             Paper paper = new Paper();
@@ -198,23 +221,28 @@ public class ElonezetDialog extends javax.swing.JDialog {
         // Print the Book.
         pj.setPageable(book);
 
-        // NYOMTATÁS
-        if (tipus == NYOMTATAS) {
+        if (tipus == NYOMTATAS)
+        {
             scale = 1.0;
-            //if (pj.printDialog()) {
-            for (peldany = 1; peldany <= osszPeldany; peldany++) {
-                try {
+
+            for (peldany = 1; peldany <= osszPeldany; peldany++)
+            {
+                try
+                {
                     PrinterGetSet printer = new PrinterGetSet();
                     String printerLabel = printer.getPrinterName();
                     pj.setPrintService(setPrinter(printerLabel));
+                    System.out.println("printlabel:" + printerLabel);
                     pj.print();
-                } catch (Exception PrintException) {
+                }
+                catch (Exception PrintException)
+                {
                     PrintException.printStackTrace();
                 }
             }
-            //}
-        } else if (tipus == ELONEZET) {
-
+        }
+        else if (tipus == ELONEZET)
+        {
             elonezetFrissites();
 
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -227,7 +255,9 @@ public class ElonezetDialog extends javax.swing.JDialog {
             this.setTitle("Előnézet");
             this.setModal(true);
             this.setVisible(true);
-        } else if (tipus == PDF) {
+        }
+        else if (tipus == PDF)
+        {
             elonezetFrissites();
 
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -237,12 +267,13 @@ public class ElonezetDialog extends javax.swing.JDialog {
 
             this.setSize(dim);
 
-            this.szla.setNyomtatva(1);
+            this.invoice.setPrinted(true);
             this.setVisible(true);
             printToPDF();
             doClose(RET_OK);
-        } else if (tipus == ATTACMENT) {
-
+        }
+        else if (tipus == ATTACMENT)
+        {
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
             Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
             int taskBarSize = scnMax.bottom;
@@ -254,32 +285,39 @@ public class ElonezetDialog extends javax.swing.JDialog {
         }
     }
 
-    private PrintService setPrinter(String printerName){
+    private PrintService setPrinter(String printerName)
+    {
         PrintService[] printServices = PrinterJob.lookupPrintServices();
         DocPrintJob docprintjob = null;
-        for (PrintService printer : printServices){
-            if (printer.getName().equalsIgnoreCase(printerName)){
+        
+        for (PrintService printer : printServices)
+        {
+            if (printer.getName().equalsIgnoreCase(printerName))
+            {
                 docprintjob = printer.createPrintJob();
             }
         }
+        
         return docprintjob.getPrintService();
     }
     
-    private void elonezetFrissites() {
+    private void elonezetFrissites()
+    {
         panel.setLayout(new FlowLayout(FlowLayout.CENTER));
         panel.removeAll();
-        for (Component c : pages) {
+        
+        for (Component c : pages)
+        {
             Elonezet e = new Elonezet(c);
             panel.add(e);
         }
+        
         jScrollPane1.setViewportView(panel);
         jScrollPane1.validate();
     }
 
-    /**
-     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
-     */
-    public int getReturnStatus() {
+    public int getReturnStatus()
+    {
         return returnStatus;
     }
 
@@ -338,11 +376,6 @@ public class ElonezetDialog extends javax.swing.JDialog {
                 jScrollPane1MouseWheelMoved(evt);
             }
         });
-        jScrollPane1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                jScrollPane1MouseDragged(evt);
-            }
-        });
 
         panel.setName("panel"); // NOI18N
         jScrollPane1.setViewportView(panel);
@@ -388,9 +421,6 @@ public class ElonezetDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * Closes the dialog
-     */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
@@ -413,19 +443,17 @@ public class ElonezetDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jScrollPane1MouseWheelMoved
 
-    private void jScrollPane1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane1MouseDragged
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jScrollPane1MouseDragged
-
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         printToPDF();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
         returnStatus = retStatus;
         setVisible(false);
         dispose();
     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
@@ -436,7 +464,8 @@ public class ElonezetDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     private int returnStatus = RET_CANCEL;
 
-    private int header(Graphics2D g2d, int page) {
+    private int header(Graphics2D g2d, int page)
+    {
         GlyphVector msg;
         g2d.setColor(Color.decode("#eeeeee"));
         g2d.fillRoundRect(0, 0, mx, 60, 5, 5);
@@ -444,169 +473,255 @@ public class ElonezetDialog extends javax.swing.JDialog {
         g2d.drawRoundRect(0, 0, mx, 60, 5, 5);
         g2d.setFont(sansBoldItalic16);
         String str = "";
-        if (szla.getTipus() == 2) {
+        
+        if (invoice.getInvoiceType() == Invoice.InvoiceType.STORNO)
+        {
             str = "";
-            if (szla.isDeviza()) {
+            
+            if (invoice.isForeignCurrency())
+            {
                 str += " / Cancelled Invoice";
             }
-            /*if (szla.getNyomtatva() == 1) {
-                str += " (Minta)";
-            }*/
+            
             msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "Számlával egy tekintet alá eső okirat" + str);
             g2d.drawGlyphVector(msg, 5, 15);
-        } else {
+        }
+        else
+        {
             str = "";
-            if (szla.isDeviza()) {
+            if (invoice.isForeignCurrency())
+            {
                 str += " / Invoice";
             }
-            /*if (szla.getNyomtatva() == 1) {
-                str += " (Az eredetivel mindenben megegyező hiteles másolat.)";
-            }*/
-            //g2d.drawString("Számla" + str, 5, 15);
-            msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "Számla" + str);
+            
+            String title = "";
+            
+            switch (invoice.getType())
+            {
+                case Invoice.PROFORMA:
+                    title = "Dijbekérő";
+                    break;
+                case Invoice.INVOICE:
+                    switch(invoice.getInvoiceType())
+                    {
+                        case NEW:
+                        case COPY:
+                        case ORIGINAL:
+                            title = "Számla";
+                            break;
+                        case CORRECTION:
+                        case MODIFICATION:
+                        case STORNO:
+                            title = "Számlával egy tekintet alá eső okirat";
+                    }
+                    //title = "Számla";
+                    break;
+                case Invoice.COMPLETION_CERTIFICATE:
+                    title = "Teljesítés igazolás";
+                    break;
+                default:
+                    break;
+            }
+            
+            msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), title + str);
             g2d.drawGlyphVector(msg, 5, 15);
         }
+        
         FontMetrics fm = g2d.getFontMetrics(sansBoldItalic16);
         str = "";
-        if (szla.isDeviza()) {
+        
+        if (invoice.isForeignCurrency())
+        {
             str = "/V";
         }
-        g2d.drawString(szla.getSorszam() + str, mx - fm.stringWidth(szla.getSorszam() + str) - 5, 55);
+        
+        g2d.drawString(invoice.getInvoiceNumber() + str, mx - fm.stringWidth(invoice.getInvoiceNumber() + str) - 5, 55);
         g2d.setFont(sansBold11);
-        /*if (szla.getNyomtatva() == 0) {
-            if (peldany == 1) {
-                g2d.drawString("1. - Eredeti - példány", 5, 40);
-            } else {
-                g2d.drawString(peldany + ". - példány", 5, 40);
-            }
-            g2d.setFont(sansPlain10);
-            g2d.drawString("Ez a számla összesen " + osszPeldany + " példányban került kinyomtatásra.", 5, 55);
-        }*/
+        
         g2d.setFont(sansPlain9);
         fm = g2d.getFontMetrics(sansPlain9);
-        if (page != 1) {
+        
+        if (page != 1)
+        {
             str = "folytatás a(z) " + (page - 1) + ". oldalról";
             g2d.drawString(str, mx - 5 - fm.stringWidth(str), 15);
         }
+        
         g2d.setFont(sansPlain10);
-        if (szla.isDeviza()) {
+        
+        if (invoice.isForeignCurrency())
+        {
             str = " / Invoice No.";
-        } else {
+        }
+        else
+        {
             str = "";
         }
+        
         g2d.drawString("Sorszám" + str, 390 - (str.isEmpty() ? 0 : 70), 55);
         g2d.setFont(sansBold12);
-        if (szla.isDeviza()) {
+        
+        if (invoice.isForeignCurrency())
+        {
             str = " / Sold by";
         }
+        
         g2d.drawString("Szállító" + str, 5, 78);
-        if (szla.isDeviza()) {
+        
+        if (invoice.isForeignCurrency())
+        {
             str = " / Client";
         }
+        
         msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "Vevő" + str);
         g2d.drawGlyphVector(msg, mx / 2 + 5, 78);
         g2d.setFont(sansBoldItalic12);
         fm = g2d.getFontMetrics();
-        g2d.drawString(szla.getSzallito().getNev(), 5, 90);
+        g2d.drawString(invoice.getSupplier().getName(), 5, 90);
 
         int p = 0;
-        if (fm.stringWidth(szla.getVevo().getNev()) > mx / 2 - 10) {
-            String[] reszek = szla.getVevo().getNev().split(" ");
+        
+        if (fm.stringWidth(invoice.getCustomer().getName()) > mx / 2 - 10)
+        {
+            String[] reszek = invoice.getCustomer().getName().split(" ");
             String temp = "";
-            int LineWidth = mx / 2 - 10,
-                    SpaceLeft = LineWidth,
-                    SpaceWidth = fm.stringWidth(" "),
-                    j = 0, pluszSor = 0;
-            for (String s : reszek) {
-                if ((fm.stringWidth(s) + SpaceWidth) > SpaceLeft) {
+            int LineWidth = mx / 2 - 10, SpaceLeft = LineWidth, SpaceWidth = fm.stringWidth(" "), j = 0, pluszSor = 0;
+            
+            for (String s : reszek)
+            {
+                if ((fm.stringWidth(s) + SpaceWidth) > SpaceLeft)
+                {
                     msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), temp);
                     g2d.drawGlyphVector(msg, mx / 2 + 5, 90 + (j + pluszSor) * 10);
                     SpaceLeft = LineWidth - fm.stringWidth(s) - SpaceWidth;
                     temp = s + " ";
                     pluszSor++;
                     p += 10;
-                } else {
+                }
+                else
+                {
                     SpaceLeft = SpaceLeft - (fm.stringWidth(s) + SpaceWidth);
                     temp += s + " ";
                 }
             }
+            
             msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), temp);
             g2d.drawGlyphVector(msg, mx / 2 + 5, 90 + (j + pluszSor) * 10);
             p += 10;
-        } else {
-            msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), szla.getVevo().getNev());
+        }
+        else
+        {
+            msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), invoice.getCustomer().getName());
             g2d.drawGlyphVector(msg, mx / 2 + 5, 90);
             p += 10;
         }
 
         g2d.setFont(sansPlain8);
         fm = g2d.getFontMetrics();
-        g2d.drawString(szla.getSzallito().getIrsz() + " " + szla.getSzallito().getVaros(), 5, 90 + 1 * 10);
-        g2d.drawString(szla.getSzallito().getAddress(), 5, 90 + 2 * 10);
+        
+        int k = 1;
+        g2d.drawString(invoice.getSupplier().getPostalCode() + " " + invoice.getSupplier().getCity(), 5, 90 + k++ * 10);
+        g2d.drawString(invoice.getSupplier().getAddress(), 5, 90 + k++ * 10);
         str = ": ";
-        if (szla.isDeviza()) {
+        
+        if (invoice.isForeignCurrency())
+        {
             str = " / Tax Number: ";
         }
-        g2d.drawString("Adószám" + str + szla.getSzallito().getAdoszam(), 5, 90 + 3 * 10);
+        
+        g2d.drawString("Adószám" + str + invoice.getSupplier().getTaxNumber(), 5, 90 + k++ * 10);
         str = ": ";
-        if (szla.isDeviza()) {
+
+        if(!invoice.getSupplier().getEuTaxNumber().isEmpty())
+        {
+            if(invoice.isForeignCurrency())
+            {
+                str = " / Eu Tax Number: ";
+            }
+            
+            g2d.drawString("EU-adószám" + str + invoice.getSupplier().getEuTaxNumber(), 5, 90 + k++ * 10);
+            str = ": ";
+        }
+        
+        if (invoice.isForeignCurrency())
+        {
             str += " / Bank Account Number: ";
         }
-        g2d.drawString("Bankszámlaszám" + str, 5, 90 + 4 * 10);
-        g2d.drawString(szla.getSzallito().getBankszamlaszam(), 5, 90 + 5 * 10);
-        g2d.drawString(szla.getSzallito().getMegjegyzes(), 5, 90 + 6 * 10);
-
-        msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), (!szla.getVevo().getIrsz().equalsIgnoreCase("0") && !szla.getVevo().getIrsz().isEmpty() ? szla.getVevo().getIrsz() + ", " : "") + szla.getVevo().getVaros());
+        
+        g2d.drawString("Bankszámlaszám" + str, 5, 90 + k++ * 10);
+        g2d.drawString(invoice.getSupplier().getBankAccountNumber(), 5, 90 + k++ * 10);
+        g2d.drawString(invoice.getSupplier().getComment(), 5, 90 + k++ * 10);
+        
+        msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), (!invoice.getCustomer().getAddress().getPostalCode().equalsIgnoreCase("0") && !invoice.getCustomer().getAddress().getPostalCode().isEmpty() ? invoice.getCustomer().getAddress().getPostalCode() + ", " : "") + invoice.getCustomer().getAddress().getCity());
         g2d.drawGlyphVector(msg, mx / 2 + 5, 90 + p);
         p += 10;
 
-        if (fm.stringWidth(szla.getVevo().getAddress()) > mx / 2 - 10) {
-            String[] reszek = szla.getVevo().getAddress().split(" ");
+        if (fm.stringWidth(invoice.getCustomer().getAddressStr()) > mx / 2 - 10)
+        {
+            String[] reszek = invoice.getCustomer().getAddressStr().split(" ");
             String temp = "";
             int LineWidth = mx / 2 - 10,
-                    SpaceLeft = LineWidth,
-                    SpaceWidth = fm.stringWidth(" "),
-                    j = 0, pluszSor = 0;
-            for (String s : reszek) {
-                if ((fm.stringWidth(s) + SpaceWidth) > SpaceLeft) {
+                SpaceLeft = LineWidth,
+                SpaceWidth = fm.stringWidth(" "),
+                j = 0, pluszSor = 0;
+            
+            for (String s : reszek)
+            {
+                if ((fm.stringWidth(s) + SpaceWidth) > SpaceLeft)
+                {
                     msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), temp);
                     g2d.drawGlyphVector(msg, mx / 2 + 5, 90 + p + (j + pluszSor) * 10);
                     SpaceLeft = LineWidth - fm.stringWidth(s) - SpaceWidth;
                     temp = s + " ";
                     pluszSor++;
-                } else {
+                }
+                else
+                {
                     SpaceLeft = SpaceLeft - (fm.stringWidth(s) + SpaceWidth);
                     temp += s + " ";
                 }
             }
+            
             msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), temp);
             g2d.drawGlyphVector(msg, mx / 2 + 5, 90 + p + (j + pluszSor) * 10);
             p += 10 * (pluszSor + 1);
-        } else {
-            msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), szla.getVevo().getAddress());
+        }
+        else
+        {
+            msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), invoice.getCustomer().getAddressStr());
             g2d.drawGlyphVector(msg, mx / 2 + 5, 90 + p);
             p += 10;
         }
-        if (!szla.getVevo().getAdoszam().isEmpty()) {
-            g2d.drawString("Adószám: " + szla.getVevo().getAdoszam(), mx / 2 + 5, 90 + p);
+        
+        if (!invoice.getCustomer().getTaxNumber().isEmpty())
+        {
+            g2d.drawString("Adószám: " + invoice.getCustomer().getTaxNumber(), mx / 2 + 5, 90 + p);
             p += 10;
         }
-        if (!szla.getVevo().getEuAdoszam().isEmpty()) {
-            g2d.drawString("Eu-adószám: " + szla.getVevo().getEuAdoszam(), mx / 2 + 5, 90 + p);
+        
+        if (!invoice.getCustomer().getEuTaxNumber().isEmpty())
+        {
+            g2d.drawString("EU-adószám: " + invoice.getCustomer().getEuTaxNumber(), mx / 2 + 5, 90 + p);
             p += 10;
         }
-        if (szla.getVevo().isSzamlanMegjelenik()) {
-            g2d.drawString("Bankszámlaszám: " + szla.getVevo().getBankszamlaszam(), mx / 2 + 5, 90 + p);
+        
+        if (invoice.getCustomer().getShowInInvoice())
+        {
+            g2d.drawString("Bankszámlaszám: " + invoice.getCustomer().getBankAccountNumber(), mx / 2 + 5, 90 + p);
         }
+        
         g2d.drawLine(0, 65, mx, 65);
         g2d.drawLine(0, 165, mx, 165);
         g2d.drawLine(mx / 2, 65, mx / 2, 165);
         g2d.drawLine(0, 65, 0, 165);
         g2d.drawLine(mx, 65, mx, 165);
         int cs = 0;
-        if (szla.isDeviza()) {
+        
+        if (invoice.isForeignCurrency())
+        {
             cs = 10;
         }
+        
         g2d.setColor(Color.decode("#eeeeee"));
         g2d.fillRoundRect(0, 170, mx, 15 + cs, 5, 5);
         g2d.setColor(Color.BLACK);
@@ -616,114 +731,142 @@ public class ElonezetDialog extends javax.swing.JDialog {
         String[] fejlec1d = {"Method of payment", "Date of fulfilment", "Date of invoice", "Due"};
         int i = 0;
         str = "";
-        if (szla.isDeviza()) {
+        
+        if (invoice.isForeignCurrency())
+        {
             str = "/";
         }
-        for (i = 0; i < 4; i++) {
+        
+        for (i = 0; i < 4; i++)
+        {
             msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), fejlec1[i] + str);
             g2d.drawGlyphVector(msg, 5 + i * mx / 4, 182);
-            if (szla.isDeviza()) {
+            
+            if (invoice.isForeignCurrency())
+            {
                 g2d.drawString(fejlec1d[i], 5 + i * mx / 4, 192);
             }
         }
+        
         str = "";
-        if (szla.isDeviza()) {
-            if (szla.getVevo().getFizetesiMod() == 0) {
-                str = " / Cash";
-            } else if (szla.getVevo().getFizetesiMod() == 1) {
-                str = " / Bank Transfer";
-            } else {
-                str = " / C.O.D.";
-            }
+        
+        switch (invoice.getCustomer().getPaymentMethod())
+        {
+            case 0:
+                str = "Készpénz" + (invoice.isForeignCurrency() ? " / Cash" : "");
+                break;
+            case 1:
+                str = "Átutalás" + (invoice.isForeignCurrency() ? " / Bank Transfer" : "");
+                break;
+            default:
+                str = "Utánvét" + (invoice.isForeignCurrency() ? " / C.O.D." : "");
+                break;
         }
-        if (szla.getVevo().getFizetesiMod() == 0) {
-            str = "Készpénz" + str;
-        } else if (szla.getVevo().getFizetesiMod() == 1) {
-            str = "Átutalás" + str;
-        } else {
-            str = "Utánvét" + str;
-        }
+        
         g2d.drawString(str, 5 + 0 * mx / 4, 200 + cs);
         g2d.setFont(sansPlain10);
-        if (!szla.isDeviza()) {
-            g2d.drawString(elonezetFunctions.dateFormat(szla.getTeljesites()), 5 + 1 * mx / 4, 200 + cs);
-            g2d.drawString(elonezetFunctions.dateFormat(szla.getKelt()), 5 + 2 * mx / 4, 200 + cs);
-            g2d.drawString(elonezetFunctions.dateFormat(szla.getEsedekesseg()), 5 + 3 * mx / 4, 200 + cs);
-        } else {
-            g2d.drawString(elonezetFunctions.dateFormatEn(szla.getTeljesites()), 5 + 1 * mx / 4, 200 + cs);
-            g2d.drawString(elonezetFunctions.dateFormatEn(szla.getKelt()), 5 + 2 * mx / 4, 200 + cs);
-            g2d.drawString(elonezetFunctions.dateFormatEn(szla.getEsedekesseg()), 5 + 3 * mx / 4, 200 + cs);
+        
+        if (!invoice.isForeignCurrency())
+        {
+            g2d.drawString(functions.dateFormat(invoice.getCompletionDate()), 5 + 1 * mx / 4, 200 + cs);
+            g2d.drawString(functions.dateFormat(invoice.getIssueDate()), 5 + 2 * mx / 4, 200 + cs);
+            g2d.drawString(functions.dateFormat(invoice.getMaturityDate()), 5 + 3 * mx / 4, 200 + cs);
+        }
+        else
+        {
+            g2d.drawString(functions.dateFormatEn(invoice.getCompletionDate()), 5 + 1 * mx / 4, 200 + cs);
+            g2d.drawString(functions.dateFormatEn(invoice.getIssueDate()), 5 + 2 * mx / 4, 200 + cs);
+            g2d.drawString(functions.dateFormatEn(invoice.getMaturityDate()), 5 + 3 * mx / 4, 200 + cs);
         }
 
-        if (szla.getTipus() == 2) {
+        if (invoice.getInvoiceType() == Invoice.InvoiceType.STORNO)
+        {
             g2d.setFont(sansBold11);
             fm = g2d.getFontMetrics();
-            String s = "Az okirat a következő számlához tartozik: " + szla.getHelyesbitett()
+            String s = "Az okirat a következő számlához tartozik: " + invoice.getCorrectedInvoice()
                     + " (Teljesítés időpontja: "
-                    + elonezetFunctions.dateFormat(szla.getHelyesbitettTeljesites()) + ")";
+                    + functions.dateFormat(invoice.getCompletionDate()) + ")";
             msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), s);
             g2d.drawGlyphVector(msg, mx / 2 - fm.stringWidth(s) / 2, 220 + cs);
             g2d.drawLine(0, 205 + cs, mx, 205 + cs);
-            if (szla.isDeviza()) {
-                s = "Cancelled invoice of invoice " + szla.getHelyesbitett()
+            
+            if (invoice.isForeignCurrency())
+            {
+                s = "Cancelled invoice of invoice " + invoice.getCorrectedInvoice()
                         + "/V (Date of fulfilment: "
-                        + elonezetFunctions.dateFormatEn(szla.getHelyesbitettTeljesites()) + ")";
+                        + functions.dateFormatEn(invoice.getCompletionDate()) + ")";
                 g2d.drawString(s, mx / 2 - fm.stringWidth(s) / 2, 235 + cs);
                 cs += 15;
             }
+            
             g2d.drawLine(0, 225 + cs, mx, 225 + cs);
             cs += 20;
         }
         return 0;
     }
 
-    private void footer(Graphics2D g2d, int page) {
+    private void footer(Graphics2D g2d, int page)
+    {
         GlyphVector msg;
-//        String lablec = SzamlaLablec.getLablecWithCegnev(szla.getSzallito().getSzamlaLablec());
-        DrawString drawString = new DrawString(szla.getSzallito().getSzamlaLablec(), 80);
-        if (page == pages.size()) {
+        String lablec = SzamlaLablec.getLablecWithCegnev(invoice.getSupplier().getInvoiceFooter());
+        System.out.println(invoice.getSupplier().getInvoiceFooter());
+        DrawString drawString = new DrawString(invoice.getSupplier().getInvoiceFooter(), 80);
+        
+        if (page == pages.size())
+        {
             g2d.setFont(sansPlain10);
             drawString.drawTheString(g2d, my);
         }
         g2d.setFont(sansPlain8);
 
-        if (!szla.isDeviza()) {
-            g2d.drawLine(0, my - 45, mx, my - 45);
-            g2d.drawString("Ez a számla a Ceze Kft. rendszerével készült. http://ceze.hu", 5, my - 35);
-            g2d.drawString("A számla a többször módosított 24/1995 (XI.22) PM rendeletnek megfelel.", 5, my - 25);
-            msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "A bizonylatot nyomtatta: " + App.user.getNev());
-//            msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "A bizonylatot nyomtatta: ");
-            g2d.drawGlyphVector(msg, 5, my - 15);
-        } else {
-            g2d.drawLine(0, my - 55, mx, my - 55);
-            g2d.drawString("Ez a számla a Ceze Kft. rendszerével készült. http://ceze.hu / This invoice was prepared using the program of Ceze Kft. http://ceze.hu", 5, my - 45);
-            g2d.drawString("A számla a többször módosított 24/1995 (XI.22) PM rendeletnek megfelel. /", 5, my - 35);
-            g2d.drawString("The invoice is in compliance with the PM Decree 24/1995 (XI.22) amended with the PM Decree 34/1999 (XII.26).", 5, my - 25);
-            msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "A bizonylatot nyomtatta: " + App.user.getNev());
-            g2d.drawGlyphVector(msg, 5, my - 15);
+        if (!invoice.isForeignCurrency())
+        {
+            g2d.drawLine(0, my - 35, mx, my - 35);
+            g2d.drawString("Ez a számla a Ceze Kft. rendszerével készült. http://ceze.hu", 5, my - 28);
+            g2d.drawString("A számla a többször módosított 24/1995 (XI.22) PM rendeletnek megfelel.", 5, my - 20);
+            //msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "A bizonylatot nyomtatta: " + App.user.getNev());
+            //msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "A bizonylatot nyomtatta: ");
+            //g2d.drawGlyphVector(msg, 5, my - 15);
         }
+        else
+        {
+            g2d.drawLine(0, my - 35, mx, my - 35);
+            g2d.drawString("Ez a számla a Ceze Kft. rendszerével készült. http://ceze.hu / This invoice was prepared using the program of Ceze Kft. http://ceze.hu", 5, my - 28);
+            g2d.drawString("A számla a többször módosított 24/1995 (XI.22) PM rendeletnek megfelel. /", 5, my - 20);
+            g2d.drawString("The invoice is in compliance with the PM Decree 24/1995 (XI.22) amended with the PM Decree 34/1999 (XII.26).", 5, my - 15);
+            //msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "A bizonylatot nyomtatta: " + App.user.getNev());
+            //g2d.drawGlyphVector(msg, 5, my - 15);
+        }
+        
         g2d.drawString(page + ". oldal", mx - 40, my - 15);
 
-//        if (!szla.isDeviza()) {
-//            if (page == pages.size()) {
+//        if (!invoice.getForeignCurrency())
+//        {
+//            if (page == pages.size())
+//            {
 //                g2d.setFont(sansPlain10);
-////                g2d.drawString("A 2014. évi XXII. tv 3.§. (3) bek. szerint kinyilatkozzuk, hogy reklámadó fizetési kötelezettség cégünket nem terheli, ", 5, my - 70);
-////                g2d.drawString("mivel e tevékenység vonatkozásában az adóalapunk a 0,5 milliárd forintot nem éri el.", 5, my - 60);
-////                g2d.drawString("A számla kiegyenlítéséig a szállított áru a Ceze Kft. tulajdonát képezi.", 5, my - 50);
+//                //g2d.drawString("A 2014. évi XXII. tv 3.§. (3) bek. szerint kinyilatkozzuk, hogy reklámadó fizetési kötelezettség cégünket nem terheli, ", 5, my - 70);
+//                //g2d.drawString("mivel e tevékenység vonatkozásában az adóalapunk a 0,5 milliárd forintot nem éri el.", 5, my - 60);
+//                //g2d.drawString("A számla kiegyenlítéséig a szállított áru a Ceze Kft. tulajdonát képezi.", 5, my - 50);
 //            }
+//            
 //            g2d.setFont(sansPlain8);
 //            g2d.drawLine(0, my - 45, mx, my - 45);
 //            g2d.drawString("Ez a számla a Ceze Kft. rendszerével készült. http://ceze.hu", 5, my - 35);
 //            g2d.drawString("A számla a többször módosított 24/1995 (XI.22) PM rendeletnek megfelel.", 5, my - 25);
 //            msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "A bizonylatot nyomtatta: " + App.user.getNev());
 //            g2d.drawGlyphVector(msg, 5, my - 15);
-//        } else {
-//            if (page == pages.size()) {
+//        }
+//        else
+//        {
+//            if (page == pages.size())
+//            {
 //                g2d.setFont(sansPlain10);
-////                g2d.drawString("A 2014. évi XXII. tv 3.§. (3) bek. szerint kinyilatkozzuk, hogy reklámadó fizetési kötelezettség cégünket nem terheli, ", 5, my - 70);
-////                g2d.drawString("mivel e tevékenység vonatkozásában az adóalapunk a 0,5 milliárd forintot nem éri el.", 5, my - 60);
-////                g2d.drawString("A számla kiegyenlítéséig a szállított áru a Ceze Kft. tulajdonát képezi.", 5, my - 50);
+//                //g2d.drawString("A 2014. évi XXII. tv 3.§. (3) bek. szerint kinyilatkozzuk, hogy reklámadó fizetési kötelezettség cégünket nem terheli, ", 5, my - 70);
+//                //g2d.drawString("mivel e tevékenység vonatkozásában az adóalapunk a 0,5 milliárd forintot nem éri el.", 5, my - 60);
+//                //g2d.drawString("A számla kiegyenlítéséig a szállított áru a Ceze Kft. tulajdonát képezi.", 5, my - 50);
 //            }
+//            
 //            g2d.setFont(sansPlain8);
 //            g2d.drawLine(0, my - 55, mx, my - 55);
 //            g2d.drawString("Ez a számla a Ceze Kft. rendszerével készült. http://ceze.hu / This invoice was prepared using the program of Ceze Kft. http://ceze.hu", 5, my - 45);
@@ -732,318 +875,511 @@ public class ElonezetDialog extends javax.swing.JDialog {
 //            msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "A bizonylatot nyomtatta: " + App.user.getNev());
 //            g2d.drawGlyphVector(msg, 5, my - 15);
 //        }
+
     }
 
-    public void content(Graphics2D g2d, int page) {
+    public void content(Graphics2D g2d, int page)
+    {
         FontMetrics fm;
         String str;
         GlyphVector msg;
-//	msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "árvíztűrő tükörfúrógép - ÁRVÍZTŰRŐ TÜKÖRFÚRÓGÉP");
-//	g2d.drawGlyphVector(msg, 0, 0);
+        //msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "árvíztűrő tükörfúrógép - ÁRVÍZTŰRŐ TÜKÖRFÚRÓGÉP");
+        //g2d.drawGlyphVector(msg, 0, 0);
 
-        if (elonezet) {
+        if (elonezet)
+        {
             g2d.translate(10 * scale, 10 * scale);
         }
 
         g2d.setColor(Color.black);
         /* Now we perform our rendering */
 
-        int sor = 10, j = 0, cs = (szla.getTipus() == 2 ? 20 + (szla.isDeviza() ? 25 : 0) : 0), c = 0,
-                n = (N * page < szamlaTermekek.size() ? N * page : szamlaTermekek.size());
+        int sor = 10, j = 0, cs = (invoice.getInvoiceType() == Invoice.InvoiceType.STORNO ? 20 + (invoice.isForeignCurrency() ? 25 : 0) : 0), c = 0,
+            n = (N * page < invoiceProducts.size() ? N * page : invoiceProducts.size());
 
-        if (n <= szamlaTermekek.size()) {
+        if (n <= invoiceProducts.size())
+        {
             g2d.setColor(Color.decode("#eeeeee"));
-            if (szla.isDeviza()) {
+            
+            if (invoice.isForeignCurrency())
+            {
                 g2d.fillRoundRect(0, 210 + cs, mx, 25, 5, 5);
-            } else {
+            }
+            else
+            {
                 g2d.fillRoundRect(0, 210 + cs, mx, 15, 5, 5);
             }
+            
             g2d.setColor(Color.BLACK);
-            if (szla.isDeviza()) {
+            
+            if (invoice.isForeignCurrency())
+            {
                 g2d.drawRoundRect(0, 210 + cs, mx, 25, 5, 5);
-            } else {
+            }
+            else
+            {
                 g2d.drawRoundRect(0, 210 + cs, mx, 15, 5, 5);
             }
+            
             g2d.setFont(sansBold10);
-            String[] fejlec2 = {"Megnevezés", "VTSZ/TESZOR", "Mennyiség Mee", "Egységár", "Nettó", "ÁFA", "ÁFA Érték", "Bruttó"};
+            String[] fejlec2 = {"Megnevezés", "VTSZ/TESZOR", "Mennyiség Mee", "Egységár", "ÁFA", "ÁFA Érték", "Nettó", "Bruttó"};
             String[] fejlec2d = {"Description", "VTSZ/TESZOR Nr.", "Amount Unit", "Unit price", "Net", "VAT", "VAT price", "Gross"};
             fm = g2d.getFontMetrics();
-            int[] foMeret = {90, 70, 80, 65, 65, 30, 65, 65},
-                    ossz = new int[9];
+            int[] foMeret = {90, 60, 85, 65, 40, 70, 55, 65};
+            int[] ossz = new int[9];
+            
             ossz[0] = 0;
-            for (int i = 0; i < 8; i++) {
-                if (i > 0) {
-                    g2d.drawString(fejlec2[i] + (szla.isDeviza() ? "/" : ""), ossz[i] + foMeret[i] - fm.stringWidth(fejlec2[i] + (szla.isDeviza() ? "/" : "")), 220 + cs);
-                    if (szla.isDeviza()) {
+            
+            for (int i = 0; i < 8; i++)
+            {
+                if (i > 0)
+                {
+                    g2d.drawString(fejlec2[i] + (invoice.isForeignCurrency() ? "/" : ""), ossz[i] + foMeret[i] - fm.stringWidth(fejlec2[i] + (invoice.isForeignCurrency() ? "/" : "")), 220 + cs);
+                    
+                    if (invoice.isForeignCurrency())
+                    {
                         g2d.drawString(fejlec2d[i], ossz[i] + foMeret[i] - fm.stringWidth(fejlec2d[i]), 230 + cs);
                     }
-                } else {
+                }
+                else
+                {
                     g2d.drawString(fejlec2[i], 5 + ossz[i], 220 + cs);
-                    if (szla.isDeviza()) {
+                    
+                    if (invoice.isForeignCurrency())
+                    {
                         g2d.drawString(fejlec2d[i], 5 + ossz[i], 230 + cs);
                     }
                 }
+                
                 ossz[i + 1] = ossz[i] + foMeret[i];
             }
+            
             g2d.setFont(sansPlain8);
-            if (szla.isDeviza()) {
+            
+            if (invoice.isForeignCurrency())
+            {
                 cs += 10;
             }
+            
             j = 0;
             sor = 10;
             fm = g2d.getFontMetrics();
-            for (c = N * (page - 1); c < n; c++) {
+            
+            for (c = N * (page - 1); c < n; c++)
+            {
                 count = c;
-                SzamlaTermek szt = szamlaTermekek.get(c);
+
+                InvoiceProduct product = invoiceProducts.get(c);
                 int pluszSor = 0;
-                str = szt.getNev();
-                if (szt.getTermekDij() != null) {
-                    str += " - " + EncodeDecode.numberFormat(String.valueOf(szt.getTermekDij().getSuly()), true) + " kg";
+                str = product.getName();
+                
+                for(ProductFee fee : product.getProductFees())
+                {
+                    str += " - " + EncodeDecode.numberFormat(String.valueOf(fee.getWeight()), true) + " kg";
                 }
+                
                 msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), str);
                 g2d.drawGlyphVector(msg, 5, 240 + j * sor + cs);
                 str = "";
                 j++;
-                if (szla.isAtvallal() && szt.getTermekDij() != null) {
-                    if (!szt.getTermekDij().getCsk().isEmpty()) {
-                        str = "CSK: " + szt.getTermekDij().getCsk();
-                    } else if (!szt.getTermekDij().getKt().isEmpty()) {
-                        str = "KT: " + szt.getTermekDij().getKt();
+                
+                for(ProductFee fee : product.getProductFees())
+                {
+                    switch(fee.getType())
+                    {
+                        case ADVERTISING:
+                            str = "KT: " + fee.getCode();
+                            break;
+                        case PACKAGING:
+                            str = "CSK: " + fee.getCode();
+                            break;
                     }
+                    
                     g2d.drawString(str, 5, 240 + j * sor + cs);
-                } else {
-                    System.out.println("");
-                    System.out.println("Termékdíjas print if else ága!");
-                    System.out.println("");
                 }
-                g2d.drawString(szt.getVtszTeszor(), ossz[2] - fm.stringWidth(szt.getVtszTeszor()), 240 + j * sor + cs);
-                msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), elonezetFunctions.numberFormat(String.valueOf(szt.getMennyiseg()), true) + " " + szt.getMee());
-                g2d.drawGlyphVector(msg, ossz[3] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(szt.getMennyiseg()), true) + " " + szt.getMee()), 240 + j * sor + cs);
-                if (szla.isDeviza() && szla.getKozeparfolyam() != 1.0) {
-                    g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(szt.getEgysegar())) + " " + szla.getValuta(), ossz[4] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(szt.getEgysegar())) + " " + szla.getValuta()), 240 + j * sor + cs);
-                } else {
-                    g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(szt.getEgysegar()), true) + " " + szla.getValuta(), ossz[4] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(szt.getEgysegar()), true) + " " + szla.getValuta()), 240 + j * sor + cs);
+                
+                //g2d.drawString(szt.getVtszTeszor(), ossz[2] - fm.stringWidth(szt.getVtszTeszor()), 240 + j * sor + cs);
+                g2d.drawString(product.getVtszTeszor(), ossz[2] - fm.stringWidth(product.getVtszTeszor())-20, 240 + j * sor + cs);
+
+                msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), elonezetFunctions.numberFormat(String.valueOf(product.getQuantity()), true) + " " + product.getMeasureOfUnit().getShortName());
+                //g2d.drawGlyphVector(msg, ossz[3] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(szt.getMennyiseg()), true) + " " + szt.getMee()), 240 + j * sor + cs);
+                g2d.drawGlyphVector(msg, ossz[3] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(product.getQuantity()), true) + " " + product.getMeasureOfUnit().getShortName())-18, 240 + j * sor + cs);
+                
+                if (invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0)
+                {
+                    g2d.drawString(functions.numberFormat(String.valueOf(product.getUnitPrice())) + " " + invoice.getCurrency(), ossz[4] - fm.stringWidth(functions.numberFormat(String.valueOf(product.getUnitPrice())) + " " + invoice.getCurrency()), 240 + j * sor + cs);
                 }
-                str = elonezetFunctions.numberFormat(String.valueOf(szt.getNetto(szla.isDeviza())), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta();
-                g2d.drawString(str, ossz[5] - fm.stringWidth(str), 240 + j * sor + cs);
-                g2d.drawString(szt.getAfaLabel(), ossz[6] - fm.stringWidth(((int) szt.getAfa()) + "%"), 240 + j * sor + cs);
-                str = elonezetFunctions.numberFormat(String.valueOf(szt.getAfaErtek(szla.isDeviza() && szla.getKozeparfolyam() != 1.0)), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta();
+                else
+                {
+                    g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(product.getUnitPrice()), true) + " " + invoice.getCurrency(), ossz[4] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(product.getUnitPrice()), true) + " " + invoice.getCurrency()), 240 + j * sor + cs);
+                }
+                
+                g2d.drawString(product.getVatLabel(), ossz[5] - fm.stringWidth(String.valueOf((int) product.getVatPercent() - 35)), 230 + j * sor + cs);
+                
+                str = elonezetFunctions.numberFormat(String.valueOf(product.getVatAmount(invoice.isForeignCurrency())), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency();
+                g2d.drawString(str, ossz[6] - fm.stringWidth(str), 240 + j * sor + cs);
+                
+                str = elonezetFunctions.numberFormat(String.valueOf(product.getNetPrice(invoice.isForeignCurrency())), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency();
                 g2d.drawString(str, ossz[7] - fm.stringWidth(str), 240 + j * sor + cs);
-                str = elonezetFunctions.numberFormat(String.valueOf(szt.getBrutto(szla.isDeviza() && szla.getKozeparfolyam() != 1.0)), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta();
+
+                str = elonezetFunctions.numberFormat(String.valueOf(product.getGrossPrice(invoice.isForeignCurrency())), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency();
                 g2d.drawString(str, mx - 5 - fm.stringWidth(str), 240 + j * sor + cs);
                 j++;
-                j += pluszSor;
+                j += pluszSor;                
             }
         }
-        if (n == szamlaTermekek.size() && page == pages.size()) {
-
+        
+        if (n == invoiceProducts.size() && page == pages.size())
+        {
             g2d.drawLine(0, 240 + j * sor - sor / 2 + cs, mx, 240 + j * sor - sor / 2 + cs);
             int m = 0;
 
             m = 250 + j * sor + cs;
             g2d.setColor(Color.decode("#eeeeee"));
-            if (szla.isDeviza()) {
+            
+            if (invoice.isForeignCurrency())
+            {
                 g2d.fillRoundRect(200, m, mx - 200, 25, 5, 5);
-            } else {
+            }
+            else
+            {
                 g2d.fillRoundRect(200, m, mx - 200, 15, 5, 5);
             }
+            
             g2d.setColor(Color.BLACK);
-            if (szla.isDeviza()) {
+            
+            if (invoice.isForeignCurrency())
+            {
                 g2d.drawRoundRect(200, m, mx - 200, 25, 5, 5);
-            } else {
+            }
+            else
+            {
                 g2d.drawRoundRect(200, m, mx - 200, 15, 5, 5);
             }
+            
             g2d.setFont(sansBold10);
             String[] fejlec3 = {"ÁFA", "Nettó ár", "ÁFA érték", "Bruttó ár"};
             String[] fejlec3d = {"VAT", "Net", "VAT price", "Gross"};
             int[] meret2 = new int[5];
-            for (int i = 0; i < 5; i++) {
+            
+            for (int i = 0; i < 5; i++)
+            {
                 meret2[i] = i * (mx - 150) / 4 + 150 - 5;
             }
+            
             fm = g2d.getFontMetrics();
-            for (int i = 0; i < 4; i++) {
-                g2d.drawString(fejlec3[i] + (szla.isDeviza() ? "/" : ""), meret2[i + 1] - fm.stringWidth(fejlec3[i] + (szla.isDeviza() ? "/" : "")), m + 10);
-                if (szla.isDeviza()) {
+            
+            for (int i = 0; i < 4; i++)
+            {
+                g2d.drawString(fejlec3[i] + (invoice.isForeignCurrency() ? "/" : ""), meret2[i + 1] - fm.stringWidth(fejlec3[i] + (invoice.isForeignCurrency() ? "/" : "")), m + 10);
+                
+                if (invoice.isForeignCurrency())
+                {
                     g2d.drawString(fejlec3d[i], meret2[i + 1] - fm.stringWidth(fejlec3d[i]), m + 20);
                 }
             }
+            
             g2d.setFont(sansPlain10);
-            if (szla.isDeviza()) {
+            
+            if (invoice.isForeignCurrency())
+            {
                 m += 10;
             }
+            
             fm = g2d.getFontMetrics();
             j = 3;
-            for (int i = 0; i < oNetto.length; i++) {
-                if (oNetto[i] != 0) {
-                    String afa = (i == 0 ? "AAM" : (i == 1 ? "5%" : (i == 2 ? "25%" : "27%"))); //Ezt itt át kell nézni, hogy DB-ből vegye az értékeket!!!
-                    double nn = 0.0;
-                    boolean isUtalas = ((szla.getVevo().getFizetesiMod() == 1) ? true : false);
-                    if (isUtalas) {
+            
+            for (int i = 0; i < oNetto.length; i++)
+            {
+                if (oNetto[i] != 0)
+                {
+                    String afa = "";
+                    
+                    //Ezt itt át kell nézni, hogy DB-ből vegye az értékeket!!!
+                    switch(i)
+                    {
+                        case 0:
+                            afa = "AAM";
+                            break;
+                        case 1:
+                            afa = "5%";
+                           break;
+                        case 2:
+                            afa = "10%";
+                           break;
+                        case 3:
+                            afa = "27%";
+                            break;
+                        case 4:
+                            afa = "Az Áfa törvény hatályán kívüli";
+                            break;
+                        case 5:
+                            afa = "Belföldi fordított adózás";
+                            break;
+                        case 6:
+                            afa = "Áthárított adót tartalmazó különbözet szerinti adózás";
+                            break;
+                        case 7:
+                            afa = "Áthárított adót nem tartalmazó különbözet szerinti adózás";
+                            break;
+                    }
+                    
+                    double nn;
+                    boolean isUtalas = ((invoice.getCustomer().getPaymentMethod() == 1));
+                    
+                    if (isUtalas)
+                    {
                         nn = oNetto[i];
-                    } else {
-                        nn = (szla.isDeviza() && szla.getKozeparfolyam() != 1.0 ? oNetto[i] : Math.round(oNetto[i]));
+                    }
+                    else
+                    {
+                        nn = (invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0 ? oNetto[i] : Math.round(oNetto[i]));
                     }
 
-                    double aa = (szla.isDeviza() && szla.getKozeparfolyam() != 1.0 ? oAfaErtek[i] : Math.round(oAfaErtek[i]));
-                    double bb = (szla.isDeviza() && szla.getKozeparfolyam() != 1.0 ? oBrutto[i] : Math.round(oBrutto[i]));
-                    g2d.drawString(afa , meret2[1] - fm.stringWidth(afa + "%"), m + j * sor);
-                    g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(nn), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta(), meret2[2] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(nn), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta()), m + j * sor);
-                    g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(aa), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta(), meret2[3] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(aa), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta()), m + j * sor);
-                    g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(bb), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta(), meret2[4] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(bb), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta()), m + j * sor);
+                    double aa = (invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0 ? oAfaErtek[i] : Math.round(oAfaErtek[i]));
+                    double bb = (invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0 ? oBrutto[i] : Math.round(oBrutto[i]));
+                    
+                    g2d.drawString(afa , meret2[1] - fm.stringWidth(afa + "%")+30, m + j * sor);
+                    g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(nn), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency(), meret2[2] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(nn), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency()), m + j * sor);
+                    g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(aa), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency(), meret2[3] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(aa), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency()), m + j * sor);
+                    g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(bb), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency(), meret2[4] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(bb), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency()), m + j * sor);
                     j++;
                 }
             }
+            
             g2d.drawLine(200, m + j * sor, mx, m + j * sor);
             j++;
             g2d.setFont(sansBold11);
             fm = g2d.getFontMetrics();
             g2d.drawString("Összesen", meret2[1] - fm.stringWidth("Összesen"), m + j * sor);
-            g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(szla.isDeviza() && szla.getKozeparfolyam() != 1.0 ? oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3] : Math.round(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3])), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta(),
-                    meret2[4] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(szla.isDeviza() && szla.getKozeparfolyam() != 1.0 ? oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3] : Math.round(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3])), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta()),
-                    m + j * sor);
+            g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0 ? oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3] + oBrutto[4] + oBrutto[5] + oBrutto[6] + oBrutto[7] : Math.round(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3] + oBrutto[4] + oBrutto[5] + oBrutto[6] + oBrutto[7])), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency(),
+                meret2[4] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0 ? oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3] + oBrutto[4] + oBrutto[5] + oBrutto[6] + oBrutto[7] : Math.round(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3] + oBrutto[4] + oBrutto[5] + oBrutto[6] + oBrutto[7])), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency()),
+                m + j * sor);
             g2d.setFont(sansPlain10);
             fm = g2d.getFontMetrics();
 
-            double nn = 0.0;
-            boolean isUtalas = ((szla.getVevo().getFizetesiMod() == 1) ? true : false);
-            if (isUtalas) {
-                nn = oNetto[0] + oNetto[1] + oNetto[2] + oNetto[3];
-            } else {
-                nn = (szla.isDeviza() && szla.getKozeparfolyam() != 1.0
-                        ? oNetto[0] + oNetto[1] + oNetto[2] + oNetto[3]
-                        : Math.round(oNetto[0]) + Math.round(oNetto[1]) + Math.round(oNetto[2]) + Math.round(oNetto[3]));
+            double nn;
+            boolean isUtalas = ((invoice.getCustomer().getPaymentMethod() == 1));
+            
+            if (isUtalas)
+            {
+                nn = oNetto[0] + oNetto[1] + oNetto[2] + oNetto[3] + oNetto[4] + oNetto[5] + oNetto[6] + oNetto[7];
             }
-            double aa = (szla.isDeviza() && szla.getKozeparfolyam() != 1.0
-                    ? oAfaErtek[0] + oAfaErtek[1] + oAfaErtek[2] + oAfaErtek[3]
-                    : Math.round(oAfaErtek[0]) + Math.round(oAfaErtek[1]) + Math.round(oAfaErtek[2]) + Math.round(oAfaErtek[3]));
-            g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(nn), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta(),
-                    meret2[2] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(nn), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta()),
+            else
+            {
+                nn = (invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0
+                    ? oNetto[0] + oNetto[1] + oNetto[2] + oNetto[3] + oNetto[4] + oNetto[5] + oNetto[6] + oNetto[7]
+                    : Math.round(oNetto[0]) + Math.round(oNetto[1]) + Math.round(oNetto[2]) + Math.round(oNetto[3]) + Math.round(oNetto[4]) + Math.round(oNetto[5]) + Math.round(oNetto[6]) + Math.round(oNetto[7]));
+            }
+            
+            double aa = (invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0
+                    ? oAfaErtek[0] + oAfaErtek[1] + oAfaErtek[2] + oAfaErtek[3] + oAfaErtek[4] + oAfaErtek[5] + oAfaErtek[6] + oAfaErtek[7]
+                    : Math.round(oAfaErtek[0]) + Math.round(oAfaErtek[1]) + Math.round(oAfaErtek[2]) + Math.round(oAfaErtek[3]) + Math.round(oAfaErtek[4]) + Math.round(oAfaErtek[5]) + Math.round(oAfaErtek[6]) + Math.round(oAfaErtek[7]));
+            g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(nn), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency(),
+                    meret2[2] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(nn), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency()),
                     m + j * sor);
-            g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(aa), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta(),
-                    meret2[3] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(aa), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta()),
+            g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(aa), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency(),
+                    meret2[3] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(aa), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency()),
                     m + j * sor);
             j += 2;
 
+            //áfa érték forintban, deviza számla esetén
+            g2d.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 8));
+            
+            if(invoice.isForeignCurrency())
+            {
+                g2d.drawString(elonezetFunctions.numberFormat(String.valueOf(aa * invoice.getCentralParity()), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " HUF", 
+                    meret2[3] - fm.stringWidth(elonezetFunctions.numberFormat(String.valueOf(aa), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency()),
+                    (m + j * sor) - 13);
+            }
+            
             g2d.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 
             fm = g2d.getFontMetrics();
-            if (szla.getTipus() == 2) {
+            
+            if (invoice.getInvoiceType() == Invoice.InvoiceType.STORNO)
+            {
                 str = ": ";
-                if (szla.isDeviza()) {
+                
+                if (invoice.isForeignCurrency())
+                {
                     str = " / Refund: ";
                 }
-                msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "Visszatérítend\u0151 összeg" + str + elonezetFunctions.numberFormat(String.valueOf(String.valueOf(szla.isDeviza() && szla.getKozeparfolyam() != 1.0 ? Math.abs(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3]) : Math.abs(Math.round(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3])))), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta() + ",");
-                g2d.drawGlyphVector(msg, mx - fm.stringWidth("Visszatérítend\u0151 összeg" + str + elonezetFunctions.numberFormat(String.valueOf(szla.isDeviza() && szla.getKozeparfolyam() != 1.0 ? Math.abs(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3]) : Math.abs(Math.round(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3]))), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta() + ","), m + j * sor);
-            } else {
+                
+                msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "Visszatérítend\u0151 összeg" + str + elonezetFunctions.numberFormat(String.valueOf(String.valueOf(invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0 ? Math.abs(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3]) : Math.abs(Math.round(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3])))), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency() + ",");
+                g2d.drawGlyphVector(msg, mx - fm.stringWidth("Visszatérítend\u0151 összeg" + str + elonezetFunctions.numberFormat(String.valueOf(invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0 ? Math.abs(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3]) : Math.abs(Math.round(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3]))), invoice.isForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency() + ","), m + j * sor);
+            }
+            else
+            {
                 str = ": ";
-                if (szla.isDeviza()) {
+                
+                if (invoice.isForeignCurrency())
+                {
                     str = " / Total: ";
                 }
-                isUtalas = ((szla.getVevo().getFizetesiMod() == 1) ? true : false);
-                double ossz = Functions.kerekit(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3], isUtalas);
-                msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "Fizetend\u0151 összeg" + str + elonezetFunctions.numberFormat(String.valueOf(szla.isDeviza() && szla.getKozeparfolyam() != 1.0 ? ossz : Math.round(ossz)), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta() + ",");
-                g2d.drawGlyphVector(msg, mx - fm.stringWidth("Fizetend\u0151 összeg" + str + elonezetFunctions.numberFormat(String.valueOf(szla.isDeviza() && szla.getKozeparfolyam() != 1.0 ? ossz : Math.round(ossz)), szla.isDeviza() && szla.getKozeparfolyam() != 1.0) + " " + szla.getValuta() + ","), m + j * sor);
+                
+                isUtalas = ((invoice.getPaymentMethod() == 1));
+                
+                System.err.println("oAfaErtek: " + (oAfaErtek[0] + oAfaErtek[1] + oAfaErtek[2] + oAfaErtek[3] + oAfaErtek[4] + oAfaErtek[5] + oAfaErtek[6] + oAfaErtek[7]));
+                System.err.println("Invoice.getTotalVat(): " + invoice.getTotalVat());
+                
+                //System.err.println("oNetto: " + (oNetto[0] + oNetto[1] + oNetto[2] + oNetto[3] + oNetto[4] + oNetto[5] + oNetto[6] + oNetto[7]));
+                //System.err.println("Invoice.getTotalNet(): " + invoice.getTotalNet());
+                
+                //System.err.println("oBrutto: " + (oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3] + oBrutto[4] + oBrutto[5] + oBrutto[6] + oBrutto[7]));
+                //System.err.println("Invoice.getTotal(): " + invoice.getTotal());
+                
+                int ossz = Functions.kerekit(invoice.getTotal(), isUtalas);
+                //double ossz = Functions.kerekit(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3] + oBrutto[4] + oBrutto[5] + oBrutto[6] + oBrutto[7], isUtalas);
+                msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "Fizetend\u0151 összeg" + str + elonezetFunctions.numberFormat((invoice.isForeignCurrency() ? String.valueOf(invoice.getTotal()) : String.valueOf(ossz)), invoice.isForeignCurrency()) + " " + invoice.getCurrency() + ",");
+                //msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "Fizetend\u0151 összeg" + str + elonezetFunctions.numberFormat(String.valueOf(invoice.getForeignCurrency() && invoice.getCentralParity() != 1.0 ? ossz : Math.round(ossz)), invoice.getForeignCurrency() && invoice.getCentralParity() != 1.0) + " " + invoice.getCurrency() + ",");
+                g2d.drawGlyphVector(msg, mx - fm.stringWidth("Fizetend\u0151 összeg" + str + elonezetFunctions.numberFormat(String.valueOf(ossz), invoice.isForeignCurrency()) + " " + invoice.getCurrency() + ","), m + j * sor);
             }
+            
             g2d.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
             j += 2;
 
             Query query = new Query.QueryBuilder()
-                    .select("valuta_nev")
-                    .from("szamlazo_valuta")
-                    .where("valuta = '" + (szla.getValuta().equalsIgnoreCase("Ft") ? "HUF" : szla.getValuta()) + "'")
-                    .build();
+                .select("currencyName")
+                .from("szamlazo_valuta")
+                .where("currency = '" + (invoice.getCurrency().equalsIgnoreCase("Ft") ? "HUF" : invoice.getCurrency()) + "'")
+                .build();
             Object[][] sl = App.db.select(query.getQuery());
+            
             str = String.valueOf(sl[0][0]);
-            if (szla.isDeviza() && szla.getKozeparfolyam() != 1.0) {
-                msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "azaz " + elonezetFunctions.betuvel(Math.abs(Math.round((oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3]) * 100.0) / 100.0)) + " " + str + ".");
+            
+            /*if (invoice.getForeignCurrency() && invoice.getCentralParity() != 1.0)
+            {*/
+                //msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "azaz " + elonezetFunctions.betuvel((invoice.getForeignCurrency() ? invoice.getRefund() : Functions.kerekit(invoice.getRefund(), isUtalas))) + " " + str + ".");
+                msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "azaz " + functions.betuvel((invoice.isForeignCurrency() ? invoice.getRefund() : Functions.kerekit(invoice.getRefund(), isUtalas))) + " " + str + ".");
                 g2d.drawGlyphVector(msg, 5, m + j * sor);
-            } else {
-                msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "azaz " + elonezetFunctions.betuvel(Math.round(Math.abs(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3]))) + " " + str + ".");
+            /*}
+            else
+            {
+                msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "azaz " + elonezetFunctions.betuvel(Math.round(Math.abs(oBrutto[0] + oBrutto[1] + oBrutto[2] + oBrutto[3] + oBrutto[4] + oBrutto[5] + oBrutto[6] + oBrutto[7]))) + " " + str + ".");
                 g2d.drawGlyphVector(msg, 5, m + j * sor);
-            }
-            if (szla.isDeviza()) {
+            }*/
+            
+            if (invoice.isForeignCurrency())
+            {
                 j++;
                 g2d.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
-                g2d.drawString("(Árfolyam / Exchange rate: " + elonezetFunctions.numberFormat(String.valueOf(szla.getKozeparfolyam())) + " Ft/" + szla.getValuta() + ")", 5, m + j * sor + 5);
+                g2d.drawString("(Árfolyam / Exchange rate: " + functions.numberFormat(String.valueOf(invoice.getCentralParity())) + " Ft/" + invoice.getCurrency() + ")", 5, m + j * sor + 5);
             }
+            
             j += 2;
             g2d.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-            if (osszCsom != 0.0) {
-                g2d.drawString("A csomagolószer termékdíj összege a bruttó árból: "
-                        + elonezetFunctions.numberFormat(String.valueOf(osszCsom), false) + " Ft", 5, m + j * sor + 5);
-                sor++;
+            
+            if(invoice.getTakeoverType().isEmpty())
+            {
+                if (osszCsom != 0.0)
+                {
+                    g2d.drawString("A csomagolószer termékdíj összege a bruttó árból: "
+                            + elonezetFunctions.numberFormat(String.valueOf(osszCsom), false) + " Ft", 5, m + j * sor + 5);
+                    sor++;
+                }
+
+                if (osszRekl != 0.0)
+                {
+                    g2d.drawString("A reklámpapír termékdíj összege a bruttó árból: "
+                            + elonezetFunctions.numberFormat(String.valueOf(osszRekl), false) + " Ft", 5, m + j * sor + 5);
+                    sor++;
+                }
             }
-            if (osszRekl != 0.0) {
-                g2d.drawString("A reklámpapír termékdíj összege a bruttó árból: "
-                        + elonezetFunctions.numberFormat(String.valueOf(osszRekl), false) + " Ft", 5, m + j * sor + 5);
-                sor++;
-            }
+            
             sor++;
             g2d.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-            if (!szla.getMegjegyzes().isEmpty()) {
+            
+            if (!invoice.getComment().isEmpty())
+            {
                 g2d.setFont(sansPlain10);
-                szla.setMegjegyzes(szla.getMegjegyzes().replace("\t", "  "));
+                invoice.setComment(invoice.getComment().replace("\t", "  "));
                 g2d.drawString("Megjegyzés:", 5, m + j * sor);
                 j += 2;
-                String[] temp = szla.getMegjegyzes().split("\\n");
+                String[] temp = invoice.getComment().split("\\n");
                 g2d.setFont(sansPlain8);
                 fm = g2d.getFontMetrics();
-                for (String s : temp) {
-                    if (fm.stringWidth(s) < mx - 10) {
+                
+                for (String s : temp)
+                {
+                    if (fm.stringWidth(s) < mx - 10)
+                    {
                         msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), s);
                         g2d.drawGlyphVector(msg, 5, m + j * sor);
-                    } else {
+                    }
+                    else
+                    {
                         String[] reszek = s.split(" ");
                         int LineWidth = mx - 10;
                         int SpaceLeft = LineWidth;
                         int SpaceWidth = fm.stringWidth(" ");
                         String r = "";
-                        for (String s2 : reszek) {
-                            if ((fm.stringWidth(s2) + SpaceWidth) > SpaceLeft) {
+                        
+                        for (String s2 : reszek)
+                        {
+                            if ((fm.stringWidth(s2) + SpaceWidth) > SpaceLeft)
+                            {
                                 msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), r);
                                 g2d.drawGlyphVector(msg, 5, m + j * sor);
                                 SpaceLeft = LineWidth - fm.stringWidth(s2) - SpaceWidth;
                                 r = s2 + " ";
                                 j++;
-                            } else {
+                            }
+                            else
+                            {
                                 SpaceLeft = SpaceLeft - (fm.stringWidth(s2) + SpaceWidth);
                                 r += s2 + " ";
                             }
                         }
+                        
                         msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), r);
                         g2d.drawGlyphVector(msg, 5, m + j * sor);
                     }
+                    
                     j++;
                 }
             }
+            
             j += 2;
-            if (!szla.getLablec().isEmpty()) {
+            
+            if (!invoice.getFooter().isEmpty())
+            {
                 g2d.setFont(sansPlain10);
-                String[] temp = szla.getLablec().split("\\n");
+                String[] temp = invoice.getFooter().split("\\n");
                 g2d.setFont(sansPlain8);
                 fm = g2d.getFontMetrics();
-                for (String s : temp) {
-                    if (fm.stringWidth(s) < mx - 10) {
+                for (String s : temp)
+                {
+                    if (fm.stringWidth(s) < mx - 10)
+                    {
                         msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), s);
                         g2d.drawGlyphVector(msg, 5, m + j * sor);
-                    } else {
+                    }
+                    else
+                    {
                         String[] reszek = s.split(" ");
                         int LineWidth = mx - 10;
                         int SpaceLeft = LineWidth;
                         int SpaceWidth = fm.stringWidth(" ");
                         String r = "";
-                        for (String s2 : reszek) {
-                            if ((fm.stringWidth(s2) + SpaceWidth) > SpaceLeft) {
+                        
+                        for (String s2 : reszek)
+                        {
+                            if ((fm.stringWidth(s2) + SpaceWidth) > SpaceLeft)
+                            {
                                 msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), r);
                                 g2d.drawGlyphVector(msg, 5, m + j * sor);
                                 SpaceLeft = LineWidth - fm.stringWidth(s2) - SpaceWidth;
                                 r = s2 + " ";
                                 j++;
-                            } else {
+                            }
+                            else
+                            {
                                 SpaceLeft = SpaceLeft - (fm.stringWidth(s2) + SpaceWidth);
                                 r += s2 + " ";
                             }
                         }
+                        
                         msg = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), r);
                         g2d.drawGlyphVector(msg, 5, m + j * sor);
                     }
@@ -1052,8 +1388,9 @@ public class ElonezetDialog extends javax.swing.JDialog {
             }
         }
     }
-
-    public String createPDF() {
+    
+    public String createPDF()
+    {
         File kintlevosegDir = new File("dokumentumok/csatolmanyok/kintlevoseg");
 
         if (!kintlevosegDir.exists()) {
@@ -1063,9 +1400,11 @@ public class ElonezetDialog extends javax.swing.JDialog {
                 se.printStackTrace();
             }
         }
-        File file = new File(kintlevosegDir + "/szamla_" + szla.getSorszam().replace(" ", "_").replace("/", "_") + ".pdf");
-        try {
-            if (file != null) {
+        File file = new File(kintlevosegDir + "/szamla_" + invoice.getInvoiceNumber().replace(" ", "_").replace("/", "_") + ".pdf");
+        try
+        {
+            if (file != null)
+            {
                 scale = 1.0;
                 Document document = new Document(PageSize.A4, 20, 20, 20, 20);
                 try {
@@ -1118,17 +1457,24 @@ public class ElonezetDialog extends javax.swing.JDialog {
         return file.getAbsolutePath();
     }
 
-    public void printToPDF() {
-        File file = new File("szamla_" + szla.getSorszam().replace(" ", "_").replace("/", "_") + ".pdf");
-        try {
+    public void printToPDF()
+    {
+        File file = new File("szamla_" + invoice.getInvoiceNumber().replace(" ", "_").replace("/", "_") + ".pdf");
+        
+        try
+        {
             JFileChooser chooser = new JFileChooser();
             chooser.setSelectedFile(file);
             chooser.showOpenDialog(null);
             File curFile = chooser.getSelectedFile();
-            if (curFile != null) {
+            
+            if (curFile != null)
+            {
                 scale = 1.0;
                 Document document = new Document(PageSize.A4, 20, 20, 20, 20);
-                try {
+                
+                try
+                {
                     PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(curFile.getAbsoluteFile()));
                     document.open();
                     PageFormat pf = new PageFormat();
@@ -1151,38 +1497,53 @@ public class ElonezetDialog extends javax.swing.JDialog {
 //                            //                            = FontFactory.getFont("c:\\windows\\fonts\\arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 10);
                     PdfContentByte contentByte = writer.getDirectContent();
                     boolean first = true;
-                    for (Component p : pages) {
+                    
+                    for (Component p : pages)
+                    {
                         PdfTemplate template = contentByte.createTemplate(pageImageableWidth, pageImageableHeight);
                         Graphics2D g2 = template.createGraphics(pageImageableWidth, pageImageableHeight);
                         p.print(g2);
                         g2.dispose();
-                        if (first) {
+                        
+                        if (first)
+                        {
                             first = false;
-                        } else {
+                        }
+                        else
+                        {
                             document.newPage();
                         }
+                        
                         template.setFontAndSize(baseFont, 12);
                         contentByte.addTemplate(template, 30, 20);
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     e.printStackTrace();
-                } finally {
-                    if (document.isOpen()) {
+                }
+                finally
+                {
+                    if (document.isOpen())
+                    {
                         document.close();
                     }
                 }
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             HibaDialog h = new HibaDialog("Sikertelen mentés!", "Ok", "");
         }
     }
 
-    class Elonezet extends JPanel {
-
+    class Elonezet extends JPanel
+    {
         public final Dimension A4 = new Dimension(W, H);
         private Component c;
 
-        public Elonezet(Component c) {
+        public Elonezet(Component c)
+        {
             this.c = c;
             //Dimension size = new Dimension((int) Math.round(A4.width * scale), (int) Math.round(A4.height * scale));
             Dimension size = new Dimension((int) Math.round(A4.width * scale + (elonezet ? 20 * scale : 0)), (int) Math.round(A4.height * scale + (elonezet ? 20 * scale : 0)));
@@ -1195,7 +1556,8 @@ public class ElonezetDialog extends javax.swing.JDialog {
         }
 
         @Override
-        public void paintComponent(Graphics g) {
+        public void paintComponent(Graphics g)
+        {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setBackground(Color.WHITE);
             g2d.clearRect(0, 0, getWidth(), getHeight());
@@ -1208,24 +1570,30 @@ public class ElonezetDialog extends javax.swing.JDialog {
              g2d.drawLine(0, 0, mx, my);
              g2d.drawLine(mx, 0, 0, my);
              */
-            if (szla != null) {
+            if (invoice != null)
+            {
                 c.paint(g2d);
-            } else {
+            }
+            else
+            {
                 // Hiba!!
                 //paint(g2d, pf, scale);
             }
         }
     }
 
-    class Page extends JComponent implements Printable {
-
+    class Page extends JComponent implements Printable
+    {
         private int page = 0;
 
-        public Page(int page) {
+        public Page(int page)
+        {
             this.page = page;
         }
 
-        public void paintComponent(Graphics g) {
+        @Override
+        public void paintComponent(Graphics g)
+        {
             Graphics2D g2d = (Graphics2D) g;
             mx = getWidth();
             my = getHeight();
@@ -1236,24 +1604,31 @@ public class ElonezetDialog extends javax.swing.JDialog {
             header(g2d, page);
         }
 
-        public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
-            if (pageIndex != 0) {
+        @Override
+        public int print(Graphics g, PageFormat pageFormat, int pageIndex)
+        {
+            if (pageIndex != 0)
+            {
                 return NO_SUCH_PAGE;
             }
+            
             paintComponent(g);
             return PAGE_EXISTS;
         }
     }
 
-    class PagePrintable implements Printable {
-
+    class PagePrintable implements Printable
+    {
         private Component mComponent;
 
-        public PagePrintable(Component c) {
+        public PagePrintable(Component c)
+        {
             mComponent = c;
         }
 
-        public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
+        @Override
+        public int print(Graphics g, PageFormat pageFormat, int pageIndex)
+        {
             Graphics2D g2 = (Graphics2D) g;
             g2.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
             mComponent.paint(g2);

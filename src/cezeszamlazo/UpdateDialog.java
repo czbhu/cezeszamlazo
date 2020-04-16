@@ -1,7 +1,5 @@
 package cezeszamlazo;
 
-import cezeszamlazo.App;
-import cezeszamlazo.Updater;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -13,15 +11,15 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
-public class UpdateDialog extends javax.swing.JDialog {
-
+public class UpdateDialog extends javax.swing.JDialog
+{
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
     public static final int RET_OK = 1;
 
-    /** Creates new form UpdateDialog */
-    public UpdateDialog() {
+    public UpdateDialog()
+    {
 	initComponents();
 
 	Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -46,7 +44,8 @@ public class UpdateDialog extends javax.swing.JDialog {
 	String cancelName = "cancel";
 	InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-	ActionMap actionMap = getRootPane().getActionMap();
+	
+        ActionMap actionMap = getRootPane().getActionMap();
 	actionMap.put(cancelName, new AbstractAction() {
 
 	    public void actionPerformed(ActionEvent e) {
@@ -97,52 +96,71 @@ public class UpdateDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /** Closes the dialog */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
 	doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
 
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
 	returnStatus = retStatus;
 	setVisible(false);
 	dispose();
     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
     private int returnStatus = RET_CANCEL;
 
-    class UpdateThread extends Thread {
-
-	public UpdateThread() {
+    class UpdateThread extends Thread
+    {
+	public UpdateThread()
+        {
 	    start();
 	}
 
 	@Override
-	public void run() {
+	public void run()
+        {
 	    Updater u = new Updater();
 	    u.update();
-//	    while (u.getStatus() < 100) {
-//		setTitle("Frissítés - " + u.getStatus() + "%");
-//		try {
-//		    Thread.sleep(10);
-//		} catch (InterruptedException ex) {
-//		}
-//	    }
-	    try {
+            
+            /*while (u.getStatus() < 100)
+            {
+		setTitle("Frissítés - " + u.getStatus() + "%");
+		
+                try
+                {
+		    Thread.sleep(10);
+		}
+                catch (InterruptedException ex)
+                {
+		}
+	    }*/
+
+	    try
+            {
 		String keres = "";
-		if (App.args.length > 0) {
-		    for (int i = 0; i < App.args.length; i++) {
+                
+		if (App.args.length > 0)
+                {
+		    for (int i = 0; i < App.args.length; i++)
+                    {
 			keres += " " + App.args[i];
 		    }
 		}
+                
 		String cmd = "cmd /c java -jar " + System.getProperty("user.dir") + "\\CezeSzamlazo.jar" + keres;
 		cmd = "cmd /c java -jar " + System.getProperty("user.dir") + "\\InvoiceStarter.jar" + keres;
-		System.out.println(cmd);
+		
+                System.out.println(cmd + " (UpdateDialog.java/UpdateThread())");
 		Runtime.getRuntime().exec(cmd);
-	    } catch (IOException ex) {
+	    }
+            catch (IOException ex)
+            {
 		ex.printStackTrace();
 	    }
+            
 	    App.getApplication().exit();
 	    setVisible(false);
 	}

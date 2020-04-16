@@ -1,6 +1,7 @@
 package cezeszamlazo;
 
 import cezeszamlazo.database.Query;
+import cezeszamlazo.model.PopupTimer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -10,12 +11,12 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-public class TermekekFrame extends javax.swing.JFrame {
-
-    /**
-     * Creates new form TermekekFrame
-     */
-    public TermekekFrame() {
+public class TermekekFrame extends javax.swing.JFrame
+{
+    private PopupTimer popupTimer;
+    
+    public TermekekFrame()
+    {
         initComponents();
 
         init();
@@ -129,6 +130,9 @@ public class TermekekFrame extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 termekekTableMouseClicked(evt);
             }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                termekekTableMousePressed(evt);
+            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 termekekTableMouseReleased(evt);
             }
@@ -224,21 +228,40 @@ public class TermekekFrame extends javax.swing.JFrame {
         torol();
     }//GEN-LAST:event_torlesMenuItemActionPerformed
 
+    private void ShowPopupMenu(MouseEvent evt)
+    {
+        JTable source = (JTable) evt.getSource();
+        int row = source.rowAtPoint(evt.getPoint());
+        int column = source.columnAtPoint(evt.getPoint());
+
+        if (!source.isRowSelected(row)) {
+            source.changeSelection(row, column, false, false);
+        }
+
+        megnyitasMenuItem.setVisible(source.getSelectedRows().length == 1);
+
+        termekekPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+    }
+    
     private void termekekTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_termekekTableMouseReleased
-        if (evt.isPopupTrigger()) {
-            JTable source = (JTable) evt.getSource();
-            int row = source.rowAtPoint(evt.getPoint());
-            int column = source.columnAtPoint(evt.getPoint());
-
-            if (!source.isRowSelected(row)) {
-                source.changeSelection(row, column, false, false);
+        if (evt.isPopupTrigger())
+        {
+            ShowPopupMenu(evt);
+        }
+        else
+        {
+            if(popupTimer.Stop())
+            {
+                ShowPopupMenu(evt);
+                popupTimer.setStart(0);
             }
-
-            megnyitasMenuItem.setVisible(source.getSelectedRows().length == 1);
-
-            termekekPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_termekekTableMouseReleased
+
+    private void termekekTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_termekekTableMousePressed
+        popupTimer = new PopupTimer();
+        popupTimer.Start();
+    }//GEN-LAST:event_termekekTableMousePressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -251,7 +274,8 @@ public class TermekekFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem torlesMenuItem;
     // End of variables declaration//GEN-END:variables
 
-    private void init() {
+    private void init()
+    {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         int x = (screenSize.width - getWidth()) / 2;
@@ -265,54 +289,69 @@ public class TermekekFrame extends javax.swing.JFrame {
         setTitle("Termékek");
     }
 
-    private void frissites() {
+    private void frissites()
+    {
         DefaultTableModel model = (DefaultTableModel) termekekTable.getModel();
         String[] header = {"Id", "Név", "Cikkszám", "ÁFA", "VTSZ/TESZOR", "Nettó", "Bruttó"};
         int[] meret = {50, 200, 100, 50, 80, 70, 70};
         String keresText = EncodeDecode.encode(kereses.getText().replace("'", "\\'"));
         String whereText = "t.nev LIKE '%" + keresText + "%' || t.cikkszam LIKE '%" + keresText + "%' || t.vtsz_teszor LIKE '%" + keresText + "%' || t.id = '" + keresText + "'";
+        
         Query query = new Query.QueryBuilder()
-                .select("t.id, "
-                        + "t.nev, "
-                        + "t.cikkszam, "
-                        + "a.afa, "
-                        + "t.vtsz_teszor, "
-                        + "t.netto_ar, "
-                        + "ROUND(t.netto_ar + t.netto_ar * (a.afa / 100)) ")
-                .from("szamlazo_termek t, szamlazo_afa a ")
-                .where("(" + whereText + ") && t.afaid = a.id ")
-                .order("nev ASC")
-                .build();
+            .select("t.id, "
+                + "t.nev, "
+                + "t.cikkszam, "
+                + "a.vatAmount, "
+                + "t.vtsz_teszor, "
+                + "t.netto_ar, "
+                + "ROUND(t.netto_ar + t.netto_ar * (a.vatAmount / 100)) ")
+            .from("szamlazo_termek t, szamlazo_vats a ")
+            .where("(" + whereText + ") && t.afaid = a.id ")
+            .order("nev ASC")
+            .build();
         model.setDataVector(App.db.select(query.getQuery()), header);
 
         TableColumn col;
         DefaultTableRender render = new DefaultTableRender(new int[]{5, 6});
-        for (int i = 0; i < meret.length; i++) {
+        
+        for (int i = 0; i < meret.length; i++)
+        {
             col = termekekTable.getColumnModel().getColumn(i);
             col.setPreferredWidth(meret[i]);
             col.setCellRenderer(render);
         }
     }
 
-    private void torol() {
+    private void torol()
+    {
         int[] rows = termekekTable.getSelectedRows();
-        if (rows.length > 0) {
+        
+        if (rows.length > 0)
+        {
             HibaDialog h = new HibaDialog(this, "Biztosan törlöd a kiválaszott " + (rows.length == 1 ? "sort" : "sorokat") + "?", "Igen", "Nem");
-            if (h.getReturnStatus() == 1) {
+            
+            if (h.getReturnStatus() == 1)
+            {
                 String keres = "(";
-                for (int i = 0; i < rows.length; i++) {
+                
+                for (int i = 0; i < rows.length; i++)
+                {
                     keres += String.valueOf(termekekTable.getValueAt(rows[i], 0)) + ", ";
                 }
+                
                 keres += "0)";
                 App.db.delete("DELETE FROM szamlazo_termek WHERE id IN " + keres);
                 frissites();
             }
-        } else {
+        }
+        else
+        {
             HibaDialog h = new HibaDialog(this, "Nincs sor kiválasztva!", "Ok", "");
         }
     }
 
-    public void nyit() {
+    public void nyit()
+    {
         frissites();
         setVisible(true);
     }

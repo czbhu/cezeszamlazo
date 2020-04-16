@@ -8,10 +8,10 @@ import java.awt.event.MouseEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-public class SzamlaCsoportokFrame extends javax.swing.JFrame {
-
-    /** Creates new form SzamlaCsoportokFrame */
-    public SzamlaCsoportokFrame() {
+public class SzamlaCsoportokFrame extends javax.swing.JFrame
+{
+    public SzamlaCsoportokFrame()
+    {
 	initComponents();
 	
 	init();
@@ -154,16 +154,22 @@ public class SzamlaCsoportokFrame extends javax.swing.JFrame {
 
     private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
 	UjCsoportDialog cs = new UjCsoportDialog("0", true);
-	if (cs.getReturnStatus() == 1) {
+        
+	if (cs.getReturnStatus() == 1)
+        {
 	    frissites();
 	}
     }//GEN-LAST:event_jPanel1MouseClicked
 
     private void csoportokTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_csoportokTableMouseClicked
 	int row = csoportokTable.getSelectedRow();
-	if (row >= 0 && evt.getClickCount() == 2 &&evt.getButton() == MouseEvent.BUTTON1) {
+        
+	if (row >= 0 && evt.getClickCount() == 2 &&evt.getButton() == MouseEvent.BUTTON1)
+        {
 	    UjCsoportDialog cs = new UjCsoportDialog(String.valueOf(csoportokTable.getValueAt(row, 0)), true);
-	    if (cs.getReturnStatus() == 1) {
+            
+	    if (cs.getReturnStatus() == 1)
+            {
 		frissites();
 	    }
 	}
@@ -177,7 +183,8 @@ public class SzamlaCsoportokFrame extends javax.swing.JFrame {
     private javax.swing.JTextField kereses;
     // End of variables declaration//GEN-END:variables
 
-    private void init() {
+    private void init()
+    {
 	Toolkit toolkit = Toolkit.getDefaultToolkit();
 	Dimension screenSize = toolkit.getScreenSize();
 	int x = (screenSize.width - getWidth()) / 2;
@@ -191,33 +198,36 @@ public class SzamlaCsoportokFrame extends javax.swing.JFrame {
 	setTitle("Számla csoportok");
     }
     
-    private void frissites() {
+    private void frissites()
+    {
 	String keresText = EncodeDecode.encode(kereses.getText().replace("'", "\\'"));
 	String whereText = "nev LIKE '%" + keresText + "%' || leiras LIKE '%" + keresText + "%'";
 	DefaultTableModel model = (DefaultTableModel) csoportokTable.getModel();
 	String[] header = {"Id", "Név", "Leírás"};
         
         Query query = new Query.QueryBuilder()
-                .select("id, nev, leiras ")
-                .from("szamlazo_szamla_csoportok")
-                .where(whereText)
-                .order("nev")
-                .build();
+            .select("id, nev, leiras ")
+            .from("szamlazo_szamla_csoportok")
+            .where(whereText)
+            .order("nev")
+            .build();
         
 	model.setDataVector(App.db.select(query.getQuery()), header);
 	int[] meret = {30, 70, 200};
 	DefaultTableRender render = new DefaultTableRender();
 	TableColumn col;
-	for (int i = 0; i < meret.length; i++) {
+        
+	for (int i = 0; i < meret.length; i++)
+        {
 	    col = csoportokTable.getColumnModel().getColumn(i);
 	    col.setCellRenderer(render);
 	    col.setPreferredWidth(meret[i]);
 	}
     }
     
-    public void nyit() {
+    public void nyit()
+    {
 	frissites();
 	setVisible(true);
     }
-    
 }

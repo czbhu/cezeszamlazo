@@ -28,6 +28,7 @@
         <MenuItem class="javax.swing.JMenuItem" name="modositoMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="modositoMenuItem.text"/>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="modositoMenuItem" noResource="true"/>
           </Properties>
           <Events>
@@ -37,6 +38,7 @@
         <MenuItem class="javax.swing.JMenuItem" name="helyesbitoMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="helyesbitoMenuItem.text"/>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="helyesbitoMenuItem" noResource="true"/>
           </Properties>
           <Events>
@@ -57,15 +59,6 @@
             <Property name="name" type="java.lang.String" value="jSeparator2" noResource="true"/>
           </Properties>
         </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="reSendMenuItem">
-          <Properties>
-            <Property name="text" type="java.lang.String" resourceKey="reSendMenuItem.text"/>
-            <Property name="name" type="java.lang.String" value="reSendMenuItem" noResource="true"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reSendMenuItemActionPerformed"/>
-          </Events>
-        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="statusRefreshMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="statusRefreshMenuItem.text"/>
@@ -91,6 +84,24 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nyomtatasMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="menuItem_GLS">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="menuItem_GLS.text"/>
+            <Property name="name" type="java.lang.String" value="menuItem_GLS" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItem_GLSActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="szamlaKuldesEmailMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="szamlaKuldesEmailMenuItem.text"/>
+            <Property name="name" type="java.lang.String" value="szamlaKuldesEmailMenuItem" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="szamlaKuldesEmailMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
@@ -189,8 +200,10 @@
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="252" max="32767" attributes="0"/>
-                          <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="printerComboBox" pref="222" max="32767" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="printingPanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -210,9 +223,10 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="jPanel3" alignment="0" max="32767" attributes="1"/>
+                      <Component id="printingPanel" alignment="0" max="32767" attributes="1"/>
                       <Component id="jPanel4" alignment="0" max="32767" attributes="1"/>
                       <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
+                      <Component id="printerComboBox" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -243,6 +257,7 @@
         </Component>
         <Container class="javax.swing.JPanel" name="jPanel2">
           <Properties>
+            <Property name="background" type="java.awt.Color" resourceKey="jPanel2.background"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder>
@@ -250,7 +265,6 @@
                 </LineBorder>
               </Border>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" resourceKey="jPanel2.toolTipText"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
               <Color id="Hand Cursor"/>
             </Property>
@@ -288,25 +302,24 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="jPanel3">
+        <Container class="javax.swing.JPanel" name="printingPanel">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder>
-                  <Property name="color" resourceKey="jPanel3.border.lineColor"/>
+                  <Color PropertyName="color" type="null"/>
                 </LineBorder>
               </Border>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" resourceKey="jPanel3.toolTipText"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
               <Color id="Hand Cursor"/>
             </Property>
-            <Property name="name" type="java.lang.String" value="jPanel3" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="printingPanel" noResource="true"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jPanel3MouseClicked"/>
-            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jPanel3MouseEntered"/>
-            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jPanel3MouseExited"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="printingPanelMouseClicked"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="printingPanelMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="printingPanelMouseExited"/>
           </Events>
 
           <Layout>
@@ -329,7 +342,6 @@
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="jLabel5.icon"/>
-                <Property name="text" type="java.lang.String" resourceKey="jLabel5.text"/>
                 <Property name="name" type="java.lang.String" value="jLabel5" noResource="true"/>
               </Properties>
             </Component>
@@ -344,7 +356,6 @@
                 </LineBorder>
               </Border>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" resourceKey="jPanel4.toolTipText"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
               <Color id="Hand Cursor"/>
             </Property>
@@ -376,12 +387,30 @@
             <Component class="javax.swing.JLabel" name="jLabel6">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="jLabel6.icon"/>
-                <Property name="text" type="java.lang.String" resourceKey="jLabel6.text"/>
                 <Property name="name" type="java.lang.String" value="jLabel6" noResource="true"/>
               </Properties>
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JComboBox" name="printerComboBox">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="4">
+                <StringItem index="0" value="Item 1"/>
+                <StringItem index="1" value="Item 2"/>
+                <StringItem index="2" value="Item 3"/>
+                <StringItem index="3" value="Item 4"/>
+              </StringArray>
+            </Property>
+            <Property name="name" type="java.lang.String" value="printerComboBox" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="printerComboBoxItemStateChanged"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JDialog" name="reszletesKeresesDialog">
@@ -395,12 +424,12 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jPanel11" alignment="0" pref="468" max="32767" attributes="0"/>
-                      <Component id="jPanel5" alignment="0" pref="468" max="32767" attributes="0"/>
-                      <Component id="jPanel10" alignment="0" pref="468" max="32767" attributes="0"/>
-                      <Component id="jPanel7" alignment="1" pref="468" max="32767" attributes="0"/>
-                      <Component id="jPanel9" alignment="0" pref="468" max="32767" attributes="0"/>
-                      <Component id="jPanel8" alignment="1" pref="468" max="32767" attributes="0"/>
+                      <Component id="jPanel11" alignment="0" pref="387" max="32767" attributes="0"/>
+                      <Component id="jPanel5" alignment="0" pref="387" max="32767" attributes="0"/>
+                      <Component id="jPanel10" alignment="0" pref="387" max="32767" attributes="0"/>
+                      <Component id="jPanel7" alignment="1" pref="387" max="32767" attributes="0"/>
+                      <Component id="jPanel9" alignment="0" pref="387" max="32767" attributes="0"/>
+                      <Component id="jPanel8" alignment="1" pref="387" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="DetailedSearchToDefaultButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -462,15 +491,13 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="kintlevosegCheckBoxInAdvancedSearch" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="normal" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="helyesbito" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="helyesbitett" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -479,7 +506,6 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="kintlevosegCheckBoxInAdvancedSearch" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="normal" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="helyesbito" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="helyesbitett" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -490,16 +516,6 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JCheckBox" name="kintlevosegCheckBoxInAdvancedSearch">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" resourceKey="kintlevosegCheckBoxInAdvancedSearch.text"/>
-                <Property name="name" type="java.lang.String" value="kintlevosegCheckBoxInAdvancedSearch" noResource="true"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="kintlevosegCheckBoxInAdvancedSearchActionPerformed"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JCheckBox" name="normal">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
@@ -543,6 +559,9 @@
               <Dimension value="[575, 146]"/>
             </Property>
           </Properties>
+          <AccessibilityProperties>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" resourceKey="jPanel7.AccessibleContext.accessibleName"/>
+          </AccessibilityProperties>
 
           <Layout>
             <DimensionLayout dim="0">
@@ -560,7 +579,7 @@
                       <Component id="keltIgCal" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="121" max="32767" attributes="0"/>
+                      <EmptySpace pref="40" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -585,11 +604,9 @@
           <SubComponents>
             <Component class="javax.swing.JTextField" name="keltTol">
               <Properties>
-                <Property name="editable" type="boolean" value="false"/>
                 <Property name="background" type="java.awt.Color" resourceKey="keltTol.background"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" resourceKey="keltTol.text"/>
-                <Property name="disabledTextColor" type="java.awt.Color" resourceKey="keltTol.disabledTextColor"/>
                 <Property name="name" type="java.lang.String" value="keltTol" noResource="true"/>
               </Properties>
             </Component>
@@ -608,6 +625,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="jLabel7.icon"/>
                 <Property name="text" type="java.lang.String" resourceKey="jLabel7.text"/>
                 <Property name="name" type="java.lang.String" value="jLabel7" noResource="true"/>
               </Properties>
@@ -615,10 +633,8 @@
             <Component class="javax.swing.JTextField" name="keltIg">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
-                <Property name="background" type="java.awt.Color" resourceKey="keltIg.background"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" resourceKey="keltIg.text"/>
-                <Property name="disabledTextColor" type="java.awt.Color" resourceKey="keltIg.disabledTextColor"/>
                 <Property name="name" type="java.lang.String" value="keltIg" noResource="true"/>
               </Properties>
             </Component>
@@ -680,7 +696,7 @@
                       <Component id="teljesitesIgCal" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="117" max="32767" attributes="0"/>
+                      <EmptySpace pref="36" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -724,10 +740,7 @@
             <Component class="javax.swing.JTextField" name="teljesitesIg">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
-                <Property name="background" type="java.awt.Color" resourceKey="teljesitesIg.background"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" resourceKey="teljesitesIg.text"/>
-                <Property name="disabledTextColor" type="java.awt.Color" resourceKey="teljesitesIg.disabledTextColor"/>
                 <Property name="name" type="java.lang.String" value="teljesitesIg" noResource="true"/>
               </Properties>
             </Component>
@@ -752,15 +765,12 @@
             <Component class="javax.swing.JTextField" name="teljesitesTol">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
-                <Property name="background" type="java.awt.Color" resourceKey="teljesitesTol.background"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" resourceKey="teljesitesTol.text"/>
-                <Property name="disabledTextColor" type="java.awt.Color" resourceKey="teljesitesTol.disabledTextColor"/>
                 <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="true" type="code"/>
                 </Property>
                 <Property name="name" type="java.lang.String" value="teljesitesTol" noResource="true"/>
-                <Property name="selectedTextColor" type="java.awt.Color" resourceKey="teljesitesTol.selectedTextColor"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -802,7 +812,7 @@
                       <Component id="esedekessegIgCal" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="98" max="32767" attributes="0"/>
+                      <EmptySpace pref="17" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -846,10 +856,7 @@
             <Component class="javax.swing.JTextField" name="esedekessegIg">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
-                <Property name="background" type="java.awt.Color" resourceKey="esedekessegIg.background"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" resourceKey="esedekessegIg.text"/>
-                <Property name="disabledTextColor" type="java.awt.Color" resourceKey="esedekessegIg.disabledTextColor"/>
                 <Property name="name" type="java.lang.String" value="esedekessegIg" noResource="true"/>
               </Properties>
             </Component>
@@ -874,10 +881,8 @@
             <Component class="javax.swing.JTextField" name="esedekessegTol">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
-                <Property name="background" type="java.awt.Color" resourceKey="esedekessegTol.background"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" resourceKey="esedekessegTol.text"/>
-                <Property name="disabledTextColor" type="java.awt.Color" resourceKey="esedekessegTol.disabledTextColor"/>
                 <Property name="name" type="java.lang.String" value="esedekessegTol" noResource="true"/>
               </Properties>
             </Component>
@@ -920,7 +925,7 @@
                       <Component id="kifizetesIgCal" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="121" max="32767" attributes="0"/>
+                      <EmptySpace pref="40" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -964,10 +969,7 @@
             <Component class="javax.swing.JTextField" name="kifizetesIg">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
-                <Property name="background" type="java.awt.Color" resourceKey="kifizetesIg.background"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" resourceKey="kifizetesIg.text"/>
-                <Property name="disabledTextColor" type="java.awt.Color" resourceKey="kifizetesIg.disabledTextColor"/>
                 <Property name="name" type="java.lang.String" value="kifizetesIg" noResource="true"/>
               </Properties>
             </Component>
@@ -992,10 +994,8 @@
             <Component class="javax.swing.JTextField" name="kifizetesTol">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
-                <Property name="background" type="java.awt.Color" resourceKey="kifizetesTol.background"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" resourceKey="kifizetesTol.text"/>
-                <Property name="disabledTextColor" type="java.awt.Color" resourceKey="kifizetesTol.disabledTextColor"/>
                 <Property name="name" type="java.lang.String" value="kifizetesTol" noResource="true"/>
               </Properties>
             </Component>
@@ -1003,7 +1003,7 @@
         </Container>
         <Component class="javax.swing.JButton" name="DetailedSearchButton">
           <Properties>
-            <Property name="font" type="java.awt.Font" resourceKey="DetailedSearchButton.font"/>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="DetailedSearchButton.icon"/>
             <Property name="text" type="java.lang.String" resourceKey="DetailedSearchButton.text"/>
             <Property name="name" type="java.lang.String" value="DetailedSearchButton" noResource="true"/>
           </Properties>
@@ -1051,7 +1051,7 @@
                       <Component id="atutalasCheckBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="utanvetCheckBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="219" max="32767" attributes="0"/>
+                      <EmptySpace pref="138" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1120,13 +1120,16 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="sumScrollPane" alignment="0" pref="880" max="32767" attributes="0"/>
-                  <Component id="szamlaScrollPane" alignment="0" pref="880" max="32767" attributes="0"/>
+                  <Component id="sumScrollPane" alignment="0" max="32767" attributes="0"/>
+                  <Component id="szamlaScrollPane" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="kereses" max="32767" attributes="0"/>
+                      <Component id="kereses" pref="423" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="nemNyomtatottCheckBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="nemNyomtatottCheckBox" max="32767" attributes="0"/>
+                          <Component id="comboBox_Sort" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="EasySearchComboBox" min="-2" pref="127" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel1" min="-2" pref="141" max="-2" attributes="0"/>
@@ -1141,18 +1144,24 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="jPanel1" min="0" max="32767" attributes="1"/>
-                  <Component id="sorszamozas" alignment="0" max="32767" attributes="1"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="kereses" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
-                      <Component id="nemNyomtatottCheckBox" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                      <Component id="EasySearchComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="jPanel1" min="0" max="32767" attributes="1"/>
+                      <Component id="sorszamozas" alignment="0" max="32767" attributes="1"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="kereses" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="EasySearchComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Component id="comboBox_Sort" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="nemNyomtatottCheckBox" min="-2" pref="14" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="szamlaScrollPane" pref="377" max="32767" attributes="0"/>
+              <Component id="szamlaScrollPane" pref="369" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="sumScrollPane" min="-2" pref="85" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -1177,8 +1186,6 @@
     </Component>
     <Component class="javax.swing.JTextField" name="kereses">
       <Properties>
-        <Property name="font" type="java.awt.Font" resourceKey="kereses.font"/>
-        <Property name="text" type="java.lang.String" resourceKey="kereses.text"/>
         <Property name="name" type="java.lang.String" value="kereses" noResource="true"/>
       </Properties>
       <Events>
@@ -1192,155 +1199,157 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="szamlakTable">
+        <Component class="javax.swing.JTable" name="table_Invoices">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="21" rowCount="0">
-                <Column editable="false" title="Title 1" type="java.lang.Object"/>
-                <Column editable="false" title="Title 2" type="java.lang.Object"/>
-                <Column editable="false" title="Title 3" type="java.lang.Object"/>
-                <Column editable="false" title="Title 4" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="true" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
-                <Column editable="false" title="null" type="java.lang.Object"/>
+              <Table columnCount="22" rowCount="0">
+                <Column editable="false" title="Sorsz&#xe1;m" type="java.lang.Object"/>
+                <Column editable="false" title="Vev&#x151;" type="java.lang.Object"/>
+                <Column editable="false" title="Kelt" type="java.lang.Object"/>
+                <Column editable="false" title="Nett&#xf3;" type="java.lang.Object"/>
+                <Column editable="false" title="&#xc1;fa &#xe9;rt&#xe9;k" type="java.lang.Object"/>
+                <Column editable="false" title="Brutt&#xf3;" type="java.lang.Object"/>
+                <Column editable="false" title="Fizetend&#x151;" type="java.lang.Object"/>
+                <Column editable="true" title="Fennmarad&#xf3;" type="java.lang.Object"/>
+                <Column editable="false" title="Esed&#xe9;kess&#xe9;g" type="java.lang.Object"/>
+                <Column editable="false" title="Teljes&#xed;t&#xe9;s" type="java.lang.Object"/>
+                <Column editable="false" title="Kifizet&#xe9;s" type="java.lang.Object"/>
+                <Column editable="false" title="K&#xe9;sedelem" type="java.lang.Object"/>
+                <Column editable="false" title="Becs&#xfc;lt kamat" type="java.lang.Object"/>
+                <Column editable="false" title="Fizet&#xe9;si m&#xf3;d" type="java.lang.Object"/>
+                <Column editable="false" title="Megjegyz&#xe9;s" type="java.lang.Object"/>
+                <Column editable="false" title="Csoport" type="java.lang.Object"/>
+                <Column editable="false" title="Valuta" type="java.lang.Object"/>
+                <Column editable="false" title="K&#xf6;z&#xe9;p&#xe1;rfolyam" type="java.lang.Object"/>
+                <Column editable="false" title="Azonos&#xed;t&#xf3;" type="java.lang.Object"/>
+                <Column editable="false" title="Teljes&#xed;t&#xe9;s igazol&#xe1;s sorsz&#xe1;ma" type="java.lang.Object"/>
+                <Column editable="false" title="Teljes&#xed;t&#xe9;s igazol&#xe1;s kelte" type="java.lang.Object"/>
+                <Column editable="true" title="NAV st&#xe1;tusz" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="autoResizeMode" type="int" value="0"/>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="0">
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title0"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title1"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title2"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title3"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title4"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title5"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title6"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title7"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title8"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title9"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title10"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title11"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title12"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title13"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title14"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title15"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title16"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title17"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title18"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title19"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="szamlakTable.columnModel.title20"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
               </TableColumnModel>
             </Property>
-            <Property name="name" type="java.lang.String" value="szamlakTable" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="table_Invoices" noResource="true"/>
             <Property name="rowHeight" type="int" value="20"/>
             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
               <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="mouseDragged" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="szamlakTableMouseDragged"/>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="szamlakTableMouseClicked"/>
-            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="szamlakTableMouseReleased"/>
-            <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="szamlakTableComponentResized"/>
-            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="szamlakTableKeyReleased"/>
+            <EventHandler event="mouseDragged" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="table_InvoicesMouseDragged"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="table_InvoicesMouseClicked"/>
+            <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="table_InvoicesMousePressed"/>
+            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="table_InvoicesMouseReleased"/>
+            <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="table_InvoicesComponentResized"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="table_InvoicesKeyReleased"/>
           </Events>
         </Component>
       </SubComponents>
@@ -1384,97 +1393,97 @@
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="0">
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title0"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title1"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title2"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title3"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title4"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title5"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title6"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title7"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title8"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title9"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title10"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title11"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title12"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title13"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title14"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title15"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title16"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title17"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title resourceKey="sumTable.columnModel.title18"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
@@ -1563,6 +1572,25 @@
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="EasySearchComboBoxItemStateChanged"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="comboBox_Sort">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="4">
+            <StringItem index="0" value="Item 1"/>
+            <StringItem index="1" value="Item 2"/>
+            <StringItem index="2" value="Item 3"/>
+            <StringItem index="3" value="Item 4"/>
+          </StringArray>
+        </Property>
+        <Property name="name" type="java.lang.String" value="comboBox_Sort" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="comboBox_SortItemStateChanged"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

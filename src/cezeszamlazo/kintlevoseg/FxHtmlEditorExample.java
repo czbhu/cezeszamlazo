@@ -36,7 +36,8 @@ public class FxHtmlEditorExample extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) throws Exception
+    {
         Scene scene = new Scene(new Group());
 
         VBox root = new VBox();
@@ -51,7 +52,7 @@ public class FxHtmlEditorExample extends Application {
         // Set the Width of the HTMLEditor
         htmlEditor.setPrefWidth(600);
 
-        kintlevosegLevel = KintlevosegLevel.create(KintlevosegLevel.Type.PDF);
+        //kintlevosegLevel = KintlevosegLevel.create(KintlevosegLevel.Type.PDF);
 
         htmlEditor.setHtmlText(kintlevosegLevel.getHtmlStringFromDb().toString());
 
@@ -64,13 +65,10 @@ public class FxHtmlEditorExample extends Application {
             }
         });
 
-        
-
         root.getChildren().addAll(htmlEditor, saveButton);
         scene.setRoot(root);
 
         stage.setScene(scene);
         stage.show();
     }
-
 }

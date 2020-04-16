@@ -43,10 +43,8 @@ public class KapcsolattartoCsoportositasDialog extends javax.swing.JDialog {
     
     private int actual = 0;
 
-    /**
-     * Creates new form UjUgyfelDialog
-     */
-    public KapcsolattartoCsoportositasDialog(int[] ids) {
+    public KapcsolattartoCsoportositasDialog(int[] ids)
+    {
         initComponents();
         
         this.kapcsolattartok = Kapcsolattarto.getKapcsolattartokArray(ids);
@@ -297,9 +295,11 @@ public class KapcsolattartoCsoportositasDialog extends javax.swing.JDialog {
 
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         actual++;
-        if (actual > kapcsolattartok.length - 1) {
+        if (actual > kapcsolattartok.length - 1)
+        {
             actual = 0;
         }
+        
         kitolt();
     }//GEN-LAST:event_nextButtonActionPerformed
 
@@ -325,8 +325,8 @@ public class KapcsolattartoCsoportositasDialog extends javax.swing.JDialog {
 
     private int returnStatus = RET_CANCEL;
 
-    private void init() {
-
+    private void init()
+    {
         kitolt();
 
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -341,7 +341,8 @@ public class KapcsolattartoCsoportositasDialog extends javax.swing.JDialog {
         setVisible(true);
     }
     
-    private void kitolt() {
+    private void kitolt()
+    {
         countLabel.setText((actual + 1) + "/" + kapcsolattartok.length);
         
         nevText.setText(kapcsolattartok[actual].getNev());
@@ -349,18 +350,24 @@ public class KapcsolattartoCsoportositasDialog extends javax.swing.JDialog {
         emailText.setText(kapcsolattartok[actual].getEmail());
     }
     
-    private void mentes() {
+    private void mentes()
+    {
         String s = kapcsolattartok[actual].valid();
-        if (s.isEmpty()) {
+        
+        if (s.isEmpty())
+        {
             kapcsolattartok[actual].mentes();
             Kapcsolattarto.csoportositas(kapcsolattartok, kapcsolattartok[actual]);
             doClose(RET_OK);
-        } else {
+        }
+        else
+        {
             HibaDialog h = new HibaDialog(s, "", "Ok");
         }
     }
     
-    public int getId() {
+    public int getId()
+    {
         return kapcsolattartok[actual].getId();
     }
 }

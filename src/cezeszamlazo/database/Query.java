@@ -1,16 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cezeszamlazo.database;
 
 /**
  *
  * @author szekus
  */
-public class Query {
-
+public class Query
+{
     String query;
     private String select;
     private String from;
@@ -19,9 +14,8 @@ public class Query {
     private String update;
     private String set;
 
-   
-    public static class QueryBuilder {
-
+    public static class QueryBuilder
+    {
         Query query;
         private String select = "";
         private String from = "";
@@ -69,18 +63,18 @@ public class Query {
 
             return this;
         }
+        
         public Query query(String queryString) {
             return new Query(queryString);
         }
-        
 
         public Query build() {
             return new Query(this);
         }
-
     }
 
-    private Query(QueryBuilder queryBuilder) {
+    private Query(QueryBuilder queryBuilder)
+    {
         select = queryBuilder.select;
         from = queryBuilder.from;
         where = queryBuilder.where;
@@ -113,5 +107,4 @@ public class Query {
     public String toString() {
         return query;
     }
-
 }

@@ -390,9 +390,9 @@ public class UjTermekDialog extends javax.swing.JDialog {
             o[7] = netto.getText();
             if (id.equalsIgnoreCase("0")) {
                 App.db.insert("INSERT INTO szamlazo_termek (nev, cikkszam, mennyisegi_egyseg, suly, afaid, vtsz_teszor, csoportok, netto_ar) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)", o, o.length);
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)", o);
             } else {
-                App.db.insert("UPDATE szamlazo_termek SET nev = ?, cikkszam = ?, mennyisegi_egyseg = ?, suly = ?, afaid = ?, vtsz_teszor = ?, csoportok = ?, netto_ar = ? WHERE id = " + id, o, o.length);
+                App.db.insert("UPDATE szamlazo_termek SET nev = ?, cikkszam = ?, mennyisegi_egyseg = ?, suly = ?, afaid = ?, vtsz_teszor = ?, csoportok = ?, netto_ar = ? WHERE id = " + id, o);
             }
             doClose(RET_OK);
         }
@@ -492,12 +492,14 @@ public class UjTermekDialog extends javax.swing.JDialog {
 
     private void afaFrissites(String aid) {
         int j = 0;
+        
         Query query = new Query.QueryBuilder()
-                .select("id, afa ")
-                .from("szamlazo_afa")
-                .order("afa DESC")
-                .build();
+            .select("id, vatAmount")
+            .from("szamlazo_vats")
+            .order("vatAmount DESC")
+            .build();
         Object[][] s = App.db.select(query.getQuery());
+        
         afa.removeAll();
         afa.removeAllItems();
         for (int i = 0; i < s.length; i++) {

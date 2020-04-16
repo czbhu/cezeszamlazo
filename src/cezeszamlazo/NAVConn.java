@@ -1,17 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cezeszamlazo;
 
 /**
- *
- * @author Balázs
+ * @author Balázs,Tomy
  */
 
 import cezeszamlazo.database.Query;
-import java.io.File;
+import cezeszamlazo.views.UserMessage;
+import com.sun.security.sasl.Provider;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -70,7 +65,7 @@ public class NAVConn
     //Trust Certs
     public void trustCertificates() throws Exception
     {
-        Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+        Security.addProvider(new Provider());
         TrustManager[] trustAllCerts = new TrustManager[]
         {
             new X509TrustManager()
@@ -129,22 +124,26 @@ public class NAVConn
         outputStream.writeBytes(s);
         outputStream.flush();
         outputStream.close();
+        
         if (request.getResponseCode() != 200)
         {
             Logger("Print:" + request.getResponseCode() + "" + request.getResponseMessage(), true);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getErrorStream()));
             StringBuilder content = new StringBuilder();
             String line;
+            
             while ((line = bufferedReader.readLine()) != null)
             {
                 content.append(line + "\n");
             }
+            
             bufferedReader.close();
             byte[] contentbytes = content.toString().getBytes("UTF-8");
             String s2 = new String(contentbytes, "UTF-8");
             WriteXml(s2);
             data = s2;
         }
+        
         /*
         get responde from the server to xml
         */
@@ -154,10 +153,12 @@ public class NAVConn
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
             StringBuilder content = new StringBuilder();
             String line;
+            
             while ((line = bufferedReader.readLine()) != null)
             {
                 content.append(line + "\n");
             }
+            
             bufferedReader.close();
             byte[] contentbytes = content.toString().getBytes("UTF-8");
             String s2 = new String(contentbytes, "UTF-8");
@@ -165,6 +166,7 @@ public class NAVConn
             WriteXml(s2);
             data = s2;
         }
+        
         return data;
     }
     
@@ -188,16 +190,19 @@ public class NAVConn
         outputStream.writeBytes(s);
         outputStream.flush();
         outputStream.close();
+        
         if (request.getResponseCode() != 200)
         {
             Logger("Print:" + request.getResponseCode() + "" + request.getResponseMessage(), true);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getErrorStream()));
             StringBuilder content = new StringBuilder();
             String line;
+            
             while ((line = bufferedReader.readLine()) != null)
             {
                 content.append(line + "\n");
             }
+            
             bufferedReader.close();
             byte[] contentbytes = content.toString().getBytes("UTF-8");
             s2 = new String(contentbytes, "UTF-8");
@@ -212,15 +217,18 @@ public class NAVConn
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
             StringBuilder content = new StringBuilder();
             String line;
+            
             while ((line = bufferedReader.readLine()) != null)
             {
                 content.append(line + "\n");
             }
+            
             bufferedReader.close();
             byte[] contentbytes = content.toString().getBytes("UTF-8");
             s2 = new String(contentbytes, "UTF-8");
             WriteXml(s2);
-        } 
+        }
+        
         return s2;
     }
     
@@ -244,16 +252,19 @@ public class NAVConn
         outputStream.writeBytes(s);
         outputStream.flush();
         outputStream.close();
+        
         if (request.getResponseCode() != 200)
         {
             Logger("Print:" + request.getResponseCode() + "" + request.getResponseMessage(), true);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getErrorStream()));
             StringBuilder content = new StringBuilder();
             String line;
+            
             while ((line = bufferedReader.readLine()) != null)
             {
                 content.append(line + "\n");
             }
+            
             bufferedReader.close();
             byte[] contentbytes = content.toString().getBytes("UTF-8");
             String s2 = new String(contentbytes, "UTF-8");
@@ -268,10 +279,12 @@ public class NAVConn
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
             StringBuilder content = new StringBuilder();
             String line;
+            
             while ((line = bufferedReader.readLine()) != null)
             {
                 content.append(line + "\n");
             }
+            
             bufferedReader.close();
             byte[] contentbytes = content.toString().getBytes("UTF-8");
             String s2 = new String(contentbytes, "UTF-8");
@@ -284,9 +297,19 @@ public class NAVConn
     {
         String s = xml;
         byte[] bytes = s.getBytes("UTF-8");
-        System.out.println("XML :" + s);
-        String xmlSplit = s.split("<"+"encodedExchangeToken"+">")[1].split("</"+"encodedExchangeToken"+">")[0];
-        System.out.println("XML split: " + xmlSplit);
+        String xmlSplit = "";
+        
+        try
+        {
+            xmlSplit = s.split("<" + "encodedExchangeToken" + ">")[1].split("</" + "encodedExchangeToken" + ">")[0];
+        }
+        catch(ArrayIndexOutOfBoundsException ex)
+        {
+            System.err.println("NAVConn.java/GetToken()");
+            //ex.printStackTrace();
+            UserMessage message = new UserMessage("GetToken Error", s);
+        }
+        
         return xmlSplit;
         
     }  
@@ -358,9 +381,20 @@ public class NAVConn
     {
         String s = xml;
         byte[] bytes = s.getBytes("UTF-8");
-        System.out.println("XML :" + s);
-        String xmlSplit = s.split("<"+"transactionId"+">")[1].split("</"+"transactionId"+">")[0];
-        System.out.println("XML split: " + xmlSplit);
+
+        String xmlSplit = "";
+        
+        try
+        {
+            xmlSplit = s.split("<"+"transactionId"+">")[1].split("</"+"transactionId"+">")[0];
+        }
+        catch(ArrayIndexOutOfBoundsException ex)
+        {
+            System.err.println("NAVConn.java/GetTransactionId()");
+            //ex.printStackTrace();
+            UserMessage message = new UserMessage("TransactionID error", s);
+        }
+
         return xmlSplit;
     }
     
@@ -385,37 +419,39 @@ public class NAVConn
         outputStream.close();
         
         String Id = "";
+        
         if (request.getResponseCode() != 200)
         {
             Logger("Print:" + request.getResponseCode() + "" + request.getResponseMessage(), true);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getErrorStream()));
             StringBuilder content = new StringBuilder();
             String line;
+            
             while ((line = bufferedReader.readLine()) != null)
             {
                 content.append(line + "\n");
             }
+            
             bufferedReader.close();
             byte[] contentbytes = content.toString().getBytes("UTF-8");
             s2 = new String(contentbytes, "UTF-8");
             WriteXml(s2);
             //System.out.println(s2);
             Id = GetTransactionId(s2);
-            
         }
-        /*
-        get responde from the server to xml
-        */
+        
         if (request.getResponseCode() == 200)
         {
             Logger("Print:" + request.getResponseCode() + "" + request.getResponseMessage(), true);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
             StringBuilder content = new StringBuilder();
             String line;
+            
             while ((line = bufferedReader.readLine()) != null)
             {
                 content.append(line + "\n");
             }
+            
             bufferedReader.close();
             byte[] contentbytes = content.toString().getBytes("UTF-8");
             s2 = new String(contentbytes, "UTF-8");
@@ -453,7 +489,7 @@ public class NAVConn
             e.printStackTrace();
         }
     }
-    //Logger
+    
     public void Logger(String logstring, boolean toconsole)
     {
         try
@@ -462,11 +498,12 @@ public class NAVConn
             {
                 System.out.println(logstring);
             }
+            
             Files.write(Paths.get(loggerpath), logstring.getBytes(), StandardOpenOption.APPEND);
         }
         catch (IOException e)
         {
-            System.out.println("Error occured: " + loggerpath);
+            System.out.println("Error occured: " + loggerpath + " (NAVConn.java/Logger())");
             e.printStackTrace();
         }
     }
@@ -483,18 +520,20 @@ public class NAVConn
         return timestampStr;
     }
     
-    public String getServerUrl() {
+    public String getServerUrl()
+    {
         Suppliers s = new Suppliers();
         String SupplierID = s.getSupplierID();
-        //System.out.println("This SupplierID: " + SupplierID);
+        
         Query query = new Query.QueryBuilder()
             .select("serverurl")
-            .from("szamlazo_ceg_adatok")
+            .from("szamlazo_suppliers")
             .where("id LIKE '" + SupplierID + "'")
             .build();
-        Object [][] serverURL = App.db.select(query.getQuery()); 
-        System.out.println("serverURL :" + serverURL[0][0].toString());
-        System.out.println("encoding: " + System.getProperty("file.encoding"));
+        Object [][] serverURL = App.db.select(query.getQuery());
+
+        System.out.println("serverURL :" + serverURL[0][0].toString() + " (NAVConn.kava/getServerUrl())");
+        System.out.println("encoding: " + System.getProperty("file.encoding") + " (NAVConn.kava/getServerUrl())");
         return serverURL[0][0].toString();
     }
 
@@ -503,7 +542,7 @@ public class NAVConn
         NAVConn transp = new NAVConn();
         String query = "tokenExchange";
         System.out.println("NAVconnRun");
-        transp.Post(transp.getServerUrl()+query, xmlpath);
+        transp.Post(transp.getServerUrl() + query, xmlpath);
     }
     
     public String GetResponseXML(String uri, String inputfile)
@@ -536,6 +575,7 @@ public class NAVConn
                 StringBuilder content = new StringBuilder();
 
                 String line;
+                
                 while ((line = bufferedReader.readLine()) != null)
                 {
                     content.append(line + "\n");
@@ -545,26 +585,25 @@ public class NAVConn
                 byte[] contentbytes = content.toString().getBytes("UTF-8");
                 String s2 = new String(contentbytes, "UTF-8");
                 WriteXml(s2);
-                System.err.println("No token");
+                System.err.println("No response");
                 xml = s2;
             }
-            /*
-            get responde from the server to xml
-            */
+
             if (request.getResponseCode() == 200)
             {
                 Logger("Print:" + request.getResponseCode() + "" + request.getResponseMessage(), true);
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
                 StringBuilder content = new StringBuilder();
                 String line;
+                
                 while ((line = bufferedReader.readLine()) != null)
                 {
                     content.append(line + "\n");
                 }
+                
                 bufferedReader.close();
                 byte[] contentbytes = content.toString().getBytes("UTF-8");
                 String s2 = new String(contentbytes, "UTF-8");
-                //System.err.println("Token is:" + GetToken(s2));
                 WriteXml(s2);
                 xml = s2;
             } 

@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package cezeszamlazo.ugyfel;
 
 import cezeszamlazo.HibaDialog;
@@ -18,11 +12,10 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 /**
- *
  * @author Fejlesztés
  */
-public class UjUgyfelDialog extends javax.swing.JDialog {
-
+public class UjUgyfelDialog extends javax.swing.JDialog
+{
     /**
      * A return status code - returned if Cancel button has been pressed
      */
@@ -31,15 +24,16 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
      * A return status code - returned if OK button has been pressed
      */
     public static final int RET_OK = 1;
-    /**
-     * 
-     */
+    
+    private int returnStatus = RET_CANCEL;
+    
     private Ugyfel ugyfel;
 
     /**
      * Creates new form UjUgyfelDialog
      */
-    public UjUgyfelDialog(int id) {
+    public UjUgyfelDialog(int id)
+    {
         initComponents();
         
         String title = "";
@@ -102,6 +96,14 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
         jLabel7 = new javax.swing.JLabel();
         kedvezmenySpinner = new javax.swing.JSpinner();
         jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        countryCode = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        country = new javax.swing.JTextField();
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -124,19 +126,19 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setText("Név:");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel2.setText("Irsz:");
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel3.setText("Utca, hsz.:");
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel3.setText("Utca:");
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel4.setText("Adószám:");
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel5.setText("Bankszámlaszám:");
 
         bankszamlaszamText.addActionListener(new java.awt.event.ActionListener() {
@@ -183,7 +185,7 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel6.setText("Város:");
 
         varosText.addActionListener(new java.awt.event.ActionListener() {
@@ -208,7 +210,7 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel7.setText("Kedvezmény:");
 
         kedvezmenySpinner.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -218,6 +220,18 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
         });
 
         jLabel8.setText("% az optimális árból");
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel9.setText("Közterület:");
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel10.setText("Házszám:");
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel11.setText("Ország kódja:");
+
+        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel12.setText("Ország:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -238,24 +252,35 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
                             .addComponent(jLabel4)
-                            .addComponent(jLabel7))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel11))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(bankszamlaszamText)
                             .addComponent(adoszamText)
                             .addComponent(utcaText)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(irszText, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(varosText, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE))
-                            .addComponent(nevText)
+                            .addComponent(jTextField1)
+                            .addComponent(jTextField2)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(kedvezmenySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel8)
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(nevText, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(countryCode, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(irszText, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(varosText)
+                                    .addComponent(country, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -266,6 +291,13 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
                     .addComponent(jLabel1)
                     .addComponent(nevText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel11)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(countryCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel12)
+                        .addComponent(country, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(irszText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -275,6 +307,14 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(utcaText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
@@ -383,8 +423,13 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
     private javax.swing.JTextField adoszamText;
     private javax.swing.JTextField bankszamlaszamText;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JTextField country;
+    private javax.swing.JTextField countryCode;
     private javax.swing.JTextField irszText;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -392,6 +437,9 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     private javax.swing.JSpinner kedvezmenySpinner;
     private javax.swing.JTextField nevText;
     private javax.swing.JButton okButton;
@@ -399,10 +447,8 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
     private javax.swing.JTextField varosText;
     // End of variables declaration//GEN-END:variables
 
-    private int returnStatus = RET_CANCEL;
-    
-    private void init(String title) {
-        
+    private void init(String title)
+    {
         nevText.setText(ugyfel.getNev());
         irszText.setText(ugyfel.getIrsz());
         varosText.setText(ugyfel.getVaros());
@@ -417,24 +463,29 @@ public class UjUgyfelDialog extends javax.swing.JDialog {
         int y = (screenSize.height - getHeight()) / 2;
 
         setModal(true);
-//        setIconImage(PixiRendszer.img);
+//      setIconImage(PixiRendszer.img);
         setLocation(x, y);
         setTitle(title);
         setVisible(true);
     }
     
-    private void mentes() {
+    private void mentes()
+    {
         String s = ugyfel.valid();
-        if (s.isEmpty()) {
+        
+        if (s.isEmpty())
+        {
             ugyfel.mentes();
             doClose(RET_OK);
-        } else {
+        }
+        else
+        {
             HibaDialog h = new HibaDialog(s, "", "Ok");
         }
     }
     
-    public int getId() {
+    public int getId()
+    {
         return ugyfel.getId();
     }
-    
 }

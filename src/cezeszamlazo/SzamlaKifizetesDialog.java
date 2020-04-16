@@ -1,6 +1,7 @@
 package cezeszamlazo;
 
 import cezeszamlazo.database.Query;
+import invoice.Invoice;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -18,8 +19,8 @@ import javax.swing.KeyStroke;
  *
  * @author adam.papp
  */
-public class SzamlaKifizetesDialog extends javax.swing.JDialog {
-
+public class SzamlaKifizetesDialog extends javax.swing.JDialog
+{
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
@@ -27,13 +28,15 @@ public class SzamlaKifizetesDialog extends javax.swing.JDialog {
     
     private String[][] szamlak;
     private String azon = "", szamlaszam = "";
+    private int type;
 
-    /** Creates new form SzamlaKifizetesDialog */
-    public SzamlaKifizetesDialog(String szamlaszam, String azon, String osszeg) {
+    public SzamlaKifizetesDialog(String szamlaszam, String azon, String osszeg, int type)
+    {
 	initComponents();
 	
 	this.szamlaszam = szamlaszam;
 	this.azon = azon;
+        this.type = type;
 	kifizetesOsszeg.setText(osszeg);
 	
 	kifizetesMsg.setText("A(z) " + szamlaszam + " sorszámú számla kifizetési dátuma:");
@@ -44,19 +47,24 @@ public class SzamlaKifizetesDialog extends javax.swing.JDialog {
 	String cancelName = "cancel";
 	InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-	ActionMap actionMap = getRootPane().getActionMap();
-	actionMap.put(cancelName, new AbstractAction() {
-
-	    public void actionPerformed(ActionEvent e) {
+	
+        ActionMap actionMap = getRootPane().getActionMap();
+	actionMap.put(cancelName, new AbstractAction()
+        {
+            @Override
+	    public void actionPerformed(ActionEvent e)
+            {
 		doClose(RET_CANCEL);
 	    }
 	});
     }
     
-    public SzamlaKifizetesDialog(String[][] szamlak) {
+    public SzamlaKifizetesDialog(String[][] szamlak, int type)
+    {
 	initComponents();
 	
 	this.szamlak = szamlak;
+        this.type = type;
 	
 	kifizetesMsg.setText("A kijelölt számlák kifizetési dátuma:");
 	
@@ -70,10 +78,13 @@ public class SzamlaKifizetesDialog extends javax.swing.JDialog {
 	String cancelName = "cancel";
 	InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-	ActionMap actionMap = getRootPane().getActionMap();
-	actionMap.put(cancelName, new AbstractAction() {
-
-	    public void actionPerformed(ActionEvent e) {
+	
+        ActionMap actionMap = getRootPane().getActionMap();
+	actionMap.put(cancelName, new AbstractAction()
+        {
+            @Override
+	    public void actionPerformed(ActionEvent e)
+            {
 		doClose(RET_CANCEL);
 	    }
 	});
@@ -210,48 +221,80 @@ public class SzamlaKifizetesDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-	if ((kifizetesOsszeg.getText().isEmpty() || kifizetesOsszeg.getText().equalsIgnoreCase("0")) && !azon.isEmpty()) {
+	String kifizetesek_tabla = "";
+        String szamla_tabla = "";
+        
+        if(type == Invoice.INVOICE)
+        {
+            kifizetesek_tabla = "szamlazo_invoice_payments";
+            szamla_tabla = "szamlazo_invoices";
+        }
+        else if (type == Invoice.PROFORMA)
+        {
+            kifizetesek_tabla = "szamlazo_pro_form_payments";
+            szamla_tabla = "szamlazo_pro_forms";
+        }
+        
+        if ((kifizetesOsszeg.getText().isEmpty() || kifizetesOsszeg.getText().equalsIgnoreCase("0")) && !azon.isEmpty())
+        {
 	    HibaDialog h = new HibaDialog("Nincs összeg megadva!", "Ok", "");
-	} else {
-	    if (!azon.isEmpty()) {
+	}
+        else
+        {
+	    if (!azon.isEmpty())
+            {
 		Object[] o = new Object[4];
-		o[0] = szamlaszam;
-		o[1] = kifizetesDatum.getText();
-		o[2] = kifizetesOsszeg.getText();
-		o[3] = azon;
-		App.db.insert("INSERT INTO szamlazo_szamla_kifizetesek (szamla_sorszam, datum, osszeg, azon) "
-			+ "VALUES (?, ?, ?, ?)", o, o.length);
+		o[0] = azon;
+		o[1] = szamlaszam;
+		o[2] = kifizetesDatum.getText();
+		o[3] = kifizetesOsszeg.getText();
+                
+		App.db.insert("INSERT INTO " + kifizetesek_tabla + " ("
+                    + "indentifier, "
+                    + "invoiceNumber, "
+                    + "paymentDate, "
+                    + "amountPaid) "
+                    + "VALUES (?, ?, ?, ?)", o);
+               
                 Query query = new Query.QueryBuilder()
-                        .select("SUM(k.osszeg) - (SELECT netto + afa_ertek FROM szamlazo_szamla WHERE azon = k.azon)")
-                        .from("szamlazo_szamla_kifizetesek k")
-                        .where("k.azon = '" + azon + "'")
-                        .build();
+                    .select("SUM(k.amountPaid) - (SELECT netPrice + vatAmount FROM " + szamla_tabla + " WHERE indentifier = k.indentifier)")
+                    .from(kifizetesek_tabla + " k")
+                    .where("k.indentifier = '" + azon + "'")
+                    .build();
 		Object[][] select = App.db.select(query.getQuery());
-		if (Double.parseDouble(String.valueOf(select[0][0])) == 0) {
-		    o[0] = "1";
-		    o[1] = kifizetesDatum.getText();
-		    o[2] = szamlaszam;
-		    o[3] = azon;
-		    App.db.insert("UPDATE szamlazo_szamla SET tipus = ?, kifizetes = ? "
-			    + "WHERE szamla_sorszam = ? && azon = ?", o, o.length);
+		
+                if (Double.parseDouble(String.valueOf(select[0][0])) == 0)
+                {
+		    o[0] = kifizetesDatum.getText();
+		    o[1] = szamlaszam;
+		    o[2] = azon;
+		    App.db.insert("UPDATE " + szamla_tabla + " SET "
+                        + "paymentDate = ?, "
+                        + "invoiceType = 'NEW' "
+                        + "WHERE invoiceNumber = ? && indentifier = ?", o);
 		}
-	    } else {
-		Object[] o = new Object[4];
-		for (String[] sz : szamlak) {
-		    o[0] = sz[0];
-		    o[1] = kifizetesDatum.getText();
-		    o[2] = sz[2];
-		    o[3] = sz[1];
-		    App.db.insert("INSERT INTO szamlazo_szamla_kifizetesek (szamla_sorszam, datum, osszeg, azon) "
-			+ "VALUES (?, ?, ?, ?)", o, o.length);
-		    o[0] = "1";
-		    o[1] = kifizetesDatum.getText();
-		    o[2] = sz[0];
-		    o[3] = sz[1];
-		    App.db.insert("UPDATE szamlazo_szamla SET tipus = ?, kifizetes = ? "
-			    + "WHERE szamla_sorszam = ? && azon = ?", o, o.length);
+            }
+            else
+            {
+		for (String[] sz : szamlak)
+                {
+                    Object [] o = new Object[4];
+                    o[0] = sz[1];
+		    o[1] = sz[0];
+		    o[2] = kifizetesDatum.getText();
+                    o[3] = sz[2];
+                    
+		    App.db.insert("INSERT INTO " + kifizetesek_tabla + " (indentifier, invoiceNumber, paymentDate, amountPaid) VALUES (?, ?, ?, ?)", o);
+                    
+                    o = new Object[3];
+		    o[0] = kifizetesDatum.getText();
+		    o[1] = sz[0];
+		    o[2] = sz[1];
+                    
+		    App.db.insert("UPDATE " + szamla_tabla + " SET paymentDate = ?, invoiceType = 'NEW' WHERE invoiceNumber = ? && indentifier = ?", o);
 		}
 	    }
+            
 	    doClose(RET_OK);
 	}
     }//GEN-LAST:event_okButtonActionPerformed
@@ -270,14 +313,18 @@ public class SzamlaKifizetesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_kifizetesDatumMouseClicked
 
     private void kifizetesOsszegKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_kifizetesOsszegKeyReleased
-	if (kifizetesPenznem.getText().equalsIgnoreCase("Ft")) {
+	if (kifizetesPenznem.getText().equalsIgnoreCase("Ft"))
+        {
 	    csakszam(kifizetesOsszeg, 0, false);
-	} else {
+	}
+        else
+        {
 	    csakszam(kifizetesOsszeg, 0, true);
 	}
     }//GEN-LAST:event_kifizetesOsszegKeyReleased
     
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
 	returnStatus = retStatus;
 	setVisible(false);
 	dispose();
@@ -294,7 +341,8 @@ public class SzamlaKifizetesDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     private int returnStatus = RET_CANCEL;
     
-    private void init(String title) {
+    private void init(String title)
+    {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	kifizetesDatum.setText(sdf.format(new Date()));
 	
@@ -314,32 +362,47 @@ public class SzamlaKifizetesDialog extends javax.swing.JDialog {
 	setVisible(true);
     }
     
-    private void csakszam(JTextField field, int size, boolean tizedes) {
+    private void csakszam(JTextField field, int size, boolean tizedes)
+    {
 	int caret = field.getCaretPosition();
 	field.setText(csakszam(field.getText(), size, tizedes));
-	try {
+        
+	try
+        {
 	    field.setCaretPosition(caret);
-	} catch (Exception ex) {
 	}
+        catch (Exception ex)
+        {}
     }
     
-    private String csakszam(String text, int size, boolean tizedes) {
+    private String csakszam(String text, int size, boolean tizedes)
+    {
 	String valid = "+-0123456789";
-	if (tizedes) {
+	
+        if (tizedes)
+        {
 	    valid += ".";
 	}
+        
 	text = text.replace(",", ".");
 	String result = "";
-	for (int i = 0; i < text.length(); i++) {
-	    if (valid.contains(text.substring(i, i + 1))) {
+	
+        for (int i = 0; i < text.length(); i++)
+        {
+	    if (valid.contains(text.substring(i, i + 1)))
+            {
 		result += text.substring(i, i + 1);
 	    }
 	}
-	if (size != 0) {
-	    if (result.length() > size) {
+        
+	if (size != 0)
+        {
+	    if (result.length() > size)
+            {
 		result = result.substring(0, size);
 	    }
 	}
+        
 	return result;
     }
 }

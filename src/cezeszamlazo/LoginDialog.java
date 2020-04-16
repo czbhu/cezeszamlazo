@@ -1,14 +1,12 @@
 package cezeszamlazo;
 
 import cezeszamlazo.controller.Functions;
-import cezeszamlazo.database.LocalDB;
 import cezeszamlazo.database.Query;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.UnsupportedEncodingException;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -18,8 +16,8 @@ import java.security.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LoginDialog extends javax.swing.JDialog {
-
+public class LoginDialog extends javax.swing.JDialog
+{
     /**
      * A return status code - returned if Cancel button has been pressed
      */
@@ -30,7 +28,8 @@ public class LoginDialog extends javax.swing.JDialog {
     public static final int RET_OK = 1;
 //    private Serial main;
 
-    public LoginDialog() {
+    public LoginDialog()
+    {
         initComponents();
 
 //	main = new Serial();
@@ -55,9 +54,11 @@ public class LoginDialog extends javax.swing.JDialog {
         String cancelName = "cancel";
         InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        
         ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-
+        actionMap.put(cancelName, new AbstractAction()
+        {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 doClose(RET_CANCEL);
             }
@@ -225,9 +226,6 @@ public class LoginDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * Closes the dialog
-     */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
@@ -269,6 +267,7 @@ public class LoginDialog extends javax.swing.JDialog {
         setVisible(false);
         dispose();
     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel cancel;
     private javax.swing.JLabel jLabel1;
@@ -279,6 +278,7 @@ public class LoginDialog extends javax.swing.JDialog {
     private javax.swing.JPanel ok;
     private javax.swing.JTextField usernev;
     // End of variables declaration//GEN-END:variables
+    
     private int returnStatus = RET_CANCEL;
 //    class LoginThread extends Thread {
 //	
@@ -294,36 +294,47 @@ public class LoginDialog extends javax.swing.JDialog {
 //	}
 //    }
 
-    private void login() {
-
-        if (usernev.getText().isEmpty()) {
+    private void login()
+    {
+        if (usernev.getText().isEmpty())
+        {
             HibaDialog hd = new HibaDialog(this, "A felhasználónév mező üres!", "Ok", "");
-        } else if (new String(jelszo.getPassword()).isEmpty()) {
+        }
+        else if (new String(jelszo.getPassword()).isEmpty())
+        {
             HibaDialog hd = new HibaDialog(this, "A jelszó mező üres!", "Ok", "");
-        } else {
-
-            try {
+        }
+        else
+        {
+            try
+            {
                 String usernameText = usernev.getText();
                 String jelszoText = new String(jelszo.getPassword());
                 
                 jelszoText = Functions.md5(jelszoText);
                 
                 Query query = new Query.QueryBuilder()
-                        .select("id, nev, usernev, jelszo, csoport, ceg")
-                        .from("szamlazo_users")
-                        .where("usernev = '" + usernameText + "' && jelszo = ('" + jelszoText + "')")
-                        .build();
+                    //.select("id, nev, usernev, jelszo, csoport, ceg")
+                    .select("id, name, username, password, `group`, companyIDs, defaultCompanyID")
+                    .from("szamlazo_users")
+                    .where("username = '" + usernameText + "' && password = ('" + jelszoText + "')")
+                    .build();
                 Object[][] select = App.db.select(query.getQuery());
-                if (select.length != 0) {
+                
+                if (select.length != 0)
+                {
                     App.user = new User(select);
                     doClose(RET_OK);
-                } else {
+                }
+                else
+                {
                     HibaDialog hd = new HibaDialog(this, "Hibás adatok!", "Ok", "");
                 }
-            } catch (NoSuchAlgorithmException ex) {
+            }
+            catch (NoSuchAlgorithmException ex)
+            {
                 Logger.getLogger(LoginDialog.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
     }
 }

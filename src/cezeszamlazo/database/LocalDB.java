@@ -1,14 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cezeszamlazo.database;
 
 import cezeszamlazo.EncodeDecode;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -23,8 +15,8 @@ import java.util.Calendar;
  *
  * @author szekus
  */
-public class LocalDB {
-
+public class LocalDB
+{
     private Connection connection;
     private Statement statement;
     private ResultSet resultset;
@@ -233,5 +225,4 @@ public class LocalDB {
             ex.printStackTrace();
         }
     }
-
 }

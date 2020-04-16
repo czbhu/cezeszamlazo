@@ -22,12 +22,13 @@ import javax.swing.table.TableColumn;
  *
  * @author Fejlesztés
  */
-public class UgyfelekFrame extends javax.swing.JFrame {
-
+public class UgyfelekFrame extends javax.swing.JFrame
+{
     /**
      * Creates new form UgyfelekFrame
      */
-    public UgyfelekFrame() {
+    public UgyfelekFrame()
+    {
         initComponents();
 
         init();
@@ -178,20 +179,27 @@ public class UgyfelekFrame extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         UjUgyfelDialog uud = new UjUgyfelDialog();
-        if (uud.getReturnStatus() == UjUgyfelDialog.RET_OK) {
+        
+        if (uud.getReturnStatus() == UjUgyfelDialog.RET_OK)
+        {
             frissites();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void toggleSelectedActionPerformed(java.awt.event.ActionEvent evt) {
-        if (kijeloltUgyfelekFrame == null) {
-            kijeloltUgyfelekFrame = new KijeloltUgyfelekFrame<UgyfelekFrame>((int) (this.getLocation().getX() + this.getSize().getWidth()), (int) (this.getLocation().getY()), this);
+    private void toggleSelectedActionPerformed(java.awt.event.ActionEvent evt)
+    {
+        if (kijeloltUgyfelekFrame == null)
+        {
+            kijeloltUgyfelekFrame = new KijeloltUgyfelekFrame<>((int) (this.getLocation().getX() + this.getSize().getWidth()), (int) (this.getLocation().getY()), this);
             kijeloltUgyfelekFrame.fillUp(produceData());
         }
 
-        if (kijeloltUgyfelekFrame.isVisible()) {
+        if (kijeloltUgyfelekFrame.isVisible())
+        {
             kijeloltUgyfelekFrame.setVisible(false);
-        } else {
+        }
+        else
+        {
             kijeloltUgyfelekFrame.sortTable(generateRegex());
             kijeloltUgyfelekFrame.nyit();
         }
@@ -199,16 +207,19 @@ public class UgyfelekFrame extends javax.swing.JFrame {
 
     private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
         int row = table.getSelectedRow();
-        if (row >= 0 && evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+        
+        if (row >= 0 && evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2)
+        {
             megnyitas(row);
         }
-
     }//GEN-LAST:event_tableMouseClicked
 
-    private Map<Integer, String> produceData() {
-        Map<Integer, String> data = new HashMap<Integer, String>();
+    private Map<Integer, String> produceData()
+    {
+        Map<Integer, String> data = new HashMap<>();
 
-        for (int i = 0; i < table.getRowCount(); i++) {
+        for (int i = 0; i < table.getRowCount(); i++)
+        {
             data.put(Integer.parseInt(String.valueOf(table.getValueAt(i, 0))), String.valueOf(table.getValueAt(i, 1)));
         }
 //    	for(int i = 0; i<table.getRowCount(); i++){
@@ -229,7 +240,9 @@ public class UgyfelekFrame extends javax.swing.JFrame {
 
     private void deleteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMenuItemActionPerformed
         HibaDialog h = new HibaDialog("Biztosan törlöd az ügyfelet?", "Igen", "Nem");
-        if (h.getReturnStatus() == HibaDialog.RET_OK) {
+        
+        if (h.getReturnStatus() == HibaDialog.RET_OK)
+        {
             int row = table.getSelectedRow();
             Ugyfel ugyfel = new Ugyfel(Integer.parseInt(String.valueOf(table.getValueAt(row, 0))));
             ugyfel.torles();
@@ -260,7 +273,8 @@ public class UgyfelekFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_tableMouseReleased
 
-    private String generateRegex() {
+    private String generateRegex()
+    {
         String regex = "";
 
         regex += "^(";
@@ -287,11 +301,16 @@ public class UgyfelekFrame extends javax.swing.JFrame {
     private void csoportositasMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_csoportositasMenuItemActionPerformed
         int[] rows = table.getSelectedRows();
         int[] ids = new int[rows.length];
-        for (int i = 0; i < rows.length; i++) {
+        
+        for (int i = 0; i < rows.length; i++)
+        {
             ids[i] = Integer.parseInt(String.valueOf(table.getValueAt(rows[i], 0)));
         }
+        
         UgyfelCsoportositasDialog ucsd = new UgyfelCsoportositasDialog(ids);
-        if (ucsd.getReturnStatus() == UgyfelCsoportositasDialog.RET_OK) {
+        
+        if (ucsd.getReturnStatus() == UgyfelCsoportositasDialog.RET_OK)
+        {
             frissites();
         }
     }//GEN-LAST:event_csoportositasMenuItemActionPerformed
@@ -313,24 +332,25 @@ public class UgyfelekFrame extends javax.swing.JFrame {
 //    private javax.swing.JButton toggleSelected;
     private KijeloltUgyfelekFrame<UgyfelekFrame> kijeloltUgyfelekFrame;
 
-    public void init() {
-
-//        deleteMenuItem.setVisible(PixiRendszer.user.getJogosultsag() != 0);
+    public void init()
+    {
+//      deleteMenuItem.setVisible(PixiRendszer.user.getJogosultsag() != 0);
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         int x = (screenSize.width - getWidth()) / 2;
         int y = (screenSize.height - getHeight()) / 2;
 
-//        setIconImage(PixiRendszer.img);
+//      setIconImage(PixiRendszer.img);
         setLocation(x, y);
         setTitle("Ügyfelek");
     }
 
-    public void frissites() {
+    public void frissites()
+    {
         String w = "1";
         String k = keresesText.getText();
         if (!k.isEmpty()) {
-            w += " && (nev LIKE '%" + k + "%' || irsz LIKE '%" + k + "%' || varos LIKE '%" + k + "%' || utca LIKE'%" + k + "%' || adoszam LIKE '%" + k + "%' || bankszamlaszam LIKE '%" + k + "%')";
+            w += " && (name LIKE '%" + k + "%' || postalCode LIKE '%" + k + "%' || city LIKE '%" + k + "%' || street LIKE'%" + k + "%' || publicPlace LIKE'%" + k + "%' || houseNumber LIKE'%" + k + "%' || taxNumber LIKE '%" + k + "%' || bankAccountNumber LIKE '%" + k + "%')";
         }
 //        if (PixiRendszer.user.getJogosultsag() == PixiUser.USER) {
 //            w += " && userid = " + PixiRendszer.user.getId();
@@ -343,19 +363,22 @@ public class UgyfelekFrame extends javax.swing.JFrame {
 //                + "ORDER BY nev ASC"), header);
 
         //TODO szebben
-        Object[][] vector1 = App.db.select("SELECT id, nev, CONCAT(irsz, ' ', varos, ', ', utca), adoszam, bankszamlaszam "
-                + "FROM pixi_ugyfel "
+        Object[][] vector1 = App.db.select("SELECT id, name, CONCAT(postalCode, ' ', city, ', ', street, ' ', publicPlace, ' ', houseNumber), taxNumber, bankAccountNumber "
+                + "FROM szamlazo_customers "
                 + "WHERE  " + w + " "
-                + "ORDER BY nev ASC");
+                + "ORDER BY name ASC");
 
         Object[][] vector2 = new Object[0][0];
-        if (vector1.length > 0) {
+        
+        if (vector1.length > 0)
+        {
             vector2 = new Object[vector1.length][vector1[0].length + 1];
         }
 
-        for (int i = 0; i < vector1.length; i++) {
-
-            for (int j = 0; j < vector1[0].length; j++) {
+        for (int i = 0; i < vector1.length; i++)
+        {
+            for (int j = 0; j < vector1[0].length; j++)
+            {
                 vector2[i][j] = vector1[i][j];
             }
             vector2[i][vector1[0].length] = false;
@@ -366,38 +389,47 @@ public class UgyfelekFrame extends javax.swing.JFrame {
         DefaultTableRender render = new DefaultTableRender();
         TableColumn col;
         int[] meret = {30, 150, 100, 50, 100};
-        for (int i = 0; i < meret.length; i++) {
+        
+        for (int i = 0; i < meret.length; i++)
+        {
             col = table.getColumnModel().getColumn(i);
             col.setPreferredWidth(meret[i]);
             col.setCellRenderer(render);
         }
-        if (kijeloltUgyfelekFrame != null) {
+        
+        if (kijeloltUgyfelekFrame != null)
+        {
             kijeloltUgyfelekFrame.fillUp(produceData());
             kijeloltUgyfelekFrame.sortTable(generateRegex());
         }
-
     }
 
-    private void megnyitas(int row) {
+    private void megnyitas(int row)
+    {
         UjUgyfelDialog uud = new UjUgyfelDialog(Integer.parseInt(String.valueOf(table.getValueAt(row, 0))));
-        if (uud.getReturnStatus() == UjUgyfelDialog.RET_OK) {
+        
+        if (uud.getReturnStatus() == UjUgyfelDialog.RET_OK)
+        {
             frissites();
         }
     }
 
-    public void setSelected(ArrayList<Integer> ids) {
+    public void setSelected(ArrayList<Integer> ids)
+    {
         table.clearSelection();
-        for (int i = 0; i < table.getRowCount(); i++) {
-            if (ids.contains(Integer.valueOf(String.valueOf(table.getValueAt(i, 0))))) {
+        for (int i = 0; i < table.getRowCount(); i++)
+        {
+            if (ids.contains(Integer.valueOf(String.valueOf(table.getValueAt(i, 0)))))
+            {
 //    		if (ids.contains(table.getValueAt(i, 0))){
                 table.addRowSelectionInterval(i, i);
             }
         }
     }
 
-    public void nyit() {
+    public void nyit()
+    {
         frissites();
         setVisible(true);
     }
-
 }

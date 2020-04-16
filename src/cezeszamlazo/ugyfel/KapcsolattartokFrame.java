@@ -12,17 +12,12 @@ import cezeszamlazo.database.Query;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -30,12 +25,15 @@ import javax.swing.table.TableColumn;
  *
  * @author Fejlesztés
  */
-public class KapcsolattartokFrame extends javax.swing.JFrame {
-
+public class KapcsolattartokFrame extends javax.swing.JFrame
+{
+    private KijeloltUgyfelekFrame<KapcsolattartokFrame> kijeloltUgyfelekFrame;
+    
     /**
      * Creates new form KapcsolattartokFrame
      */
-    public KapcsolattartokFrame() {
+    public KapcsolattartokFrame()
+    {
         initComponents();
 
         init();
@@ -181,7 +179,8 @@ public class KapcsolattartokFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private String generateRegex() {
+    private String generateRegex()
+    {
         String regex = "";
 
         regex += "^(";
@@ -189,8 +188,10 @@ public class KapcsolattartokFrame extends javax.swing.JFrame {
 //    		regex += String.valueOf(table.getValueAt(selected[i], 0)) + "|";
 //    	}
 
-        for (int i = 0; i < table.getRowCount(); i++) {
-            if ((boolean) table.getValueAt(i, 6)) {
+        for (int i = 0; i < table.getRowCount(); i++)
+        {
+            if ((boolean) table.getValueAt(i, 6))
+            {
                 regex += String.valueOf(table.getValueAt(i, 0)) + "|";
             }
         }
@@ -205,10 +206,12 @@ public class KapcsolattartokFrame extends javax.swing.JFrame {
         return regex;
     }
 
-    private Map<Integer, String> produceData() {
-        Map<Integer, String> data = new HashMap<Integer, String>();
+    private Map<Integer, String> produceData()
+    {
+        Map<Integer, String> data = new HashMap<>();
 
-        for (int i = 0; i < table.getRowCount(); i++) {
+        for (int i = 0; i < table.getRowCount(); i++)
+        {
             data.put(Integer.parseInt(String.valueOf(table.getValueAt(i, 0))), String.valueOf(table.getValueAt(i, 1)));
         }
 
@@ -240,7 +243,8 @@ public class KapcsolattartokFrame extends javax.swing.JFrame {
             int row = source.rowAtPoint(evt.getPoint());
             int column = source.columnAtPoint(evt.getPoint());
 
-            if (!source.isRowSelected(row)) {
+            if (!source.isRowSelected(row))
+            {
                 source.changeSelection(row, column, false, false);
             }
 
@@ -257,14 +261,18 @@ public class KapcsolattartokFrame extends javax.swing.JFrame {
 
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
         int row = table.getSelectedRow();
-        if (row >= 0) {
+        
+        if (row >= 0)
+        {
             megnyitas(row);
         }
     }//GEN-LAST:event_openMenuItemActionPerformed
 
     private void deleteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMenuItemActionPerformed
         HibaDialog h = new HibaDialog("Biztosan törlöd a kapcsolattartót?", "Igen", "Nem");
-        if (h.getReturnStatus() == HibaDialog.RET_OK) {
+        
+        if (h.getReturnStatus() == HibaDialog.RET_OK)
+        {
             int row = table.getSelectedRow();
             Kapcsolattarto kapcsolattarto = new Kapcsolattarto(Integer.parseInt(String.valueOf(table.getValueAt(row, 0))));
             kapcsolattarto.torles();
@@ -275,25 +283,34 @@ public class KapcsolattartokFrame extends javax.swing.JFrame {
     private void csoportositasMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_csoportositasMenuItemActionPerformed
         int[] rows = table.getSelectedRows();
         int[] ids = new int[rows.length];
-        for (int i = 0; i < rows.length; i++) {
+        
+        for (int i = 0; i < rows.length; i++)
+        {
             ids[i] = Integer.parseInt(String.valueOf(table.getValueAt(rows[i], 0)));
         }
+        
         KapcsolattartoCsoportositasDialog ucsd = new KapcsolattartoCsoportositasDialog(ids);
-        if (ucsd.getReturnStatus() == KapcsolattartoCsoportositasDialog.RET_OK) {
+        
+        if (ucsd.getReturnStatus() == KapcsolattartoCsoportositasDialog.RET_OK)
+        {
             frissites();
         }
     }//GEN-LAST:event_csoportositasMenuItemActionPerformed
 
     private void toggleSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleSelectedActionPerformed
-        if (kijeloltUgyfelekFrame == null) {
-            kijeloltUgyfelekFrame = new KijeloltUgyfelekFrame<KapcsolattartokFrame>((int) (this.getLocation().getX() + this.getSize().getWidth()), (int) (this.getLocation().getY()), this);
+        if (kijeloltUgyfelekFrame == null)
+        {
+            kijeloltUgyfelekFrame = new KijeloltUgyfelekFrame<>((int) (this.getLocation().getX() + this.getSize().getWidth()), (int) (this.getLocation().getY()), this);
             kijeloltUgyfelekFrame.setTitle("Kiválasztott Kapcsolattartók");
             kijeloltUgyfelekFrame.fillUp(produceData());
         }
 
-        if (kijeloltUgyfelekFrame.isVisible()) {
+        if (kijeloltUgyfelekFrame.isVisible())
+        {
             kijeloltUgyfelekFrame.setVisible(false);
-        } else {
+        }
+        else
+        {
             kijeloltUgyfelekFrame.sortTable(generateRegex());
             kijeloltUgyfelekFrame.nyit();
         }
@@ -313,11 +330,8 @@ public class KapcsolattartokFrame extends javax.swing.JFrame {
     private javax.swing.JButton ujButton;
     // End of variables declaration//GEN-END:variables
 
-//    private javax.swing.JButton toggleSelected;
-    private KijeloltUgyfelekFrame<KapcsolattartokFrame> kijeloltUgyfelekFrame;
-
-    public void init() {
-
+    public void init()
+    {
 //        deleteMenuItem.setVisible(PixiRendszer.user.getJogosultsag() != 0);
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
@@ -333,30 +347,34 @@ public class KapcsolattartokFrame extends javax.swing.JFrame {
         String[] header = {"Id", "Ügyfél", "Név", "Telefon", "Email", "Pénzügyes", "Kiválaszt"};
 
         Query query = new Query.QueryBuilder()
-                .select("k.id, uf.nev, k.nev, k.telefon, k.email, k.hirlevel, k.penzugyes")
-                .from("pixi_kapcsolattarto k, pixi_ugyfel uf ")
-                .where(" k.ugyfelid = uf.id && " + w + " ")
-                .order("k.nev ASC")
-                .build();
+            .select("co.id, cu.name, co.name, co.telNumber, co.email, co.newsletter, co.finance")
+            .from("szamlazo_contact co, szamlazo_customers cu")
+            .where("co.customerID = cu.id && " + w + " ")
+            .order("co.name ASC")
+            .build();
         Object[][] vector1 = App.db.select(query.getQuery());
 
         Object[][] vector2 = new Object[vector1.length][vector1[0].length + 1];
 
-        for (int i = 0; i < vector1.length; i++) {
-
-            for (int j = 0; j < vector1[0].length; j++) {
+        for (int i = 0; i < vector1.length; i++)
+        {
+            for (int j = 0; j < vector1[0].length; j++)
+            {
                 vector2[i][j] = vector1[i][j];
-
             }
+            
             int isSelected = Functions.getIntFromObject(vector2[i][5]);
-            if (isSelected == 1) {
+            
+            if (isSelected == 1)
+            {
                 vector2[i][5] = true;
-            } else {
+            }
+            else
+            {
                 vector2[i][5] = false;
             }
 
             vector2[i][vector1[0].length - 1] = false;
-
         }
 
         model.setDataVector(vector2, header);
@@ -373,13 +391,15 @@ public class KapcsolattartokFrame extends javax.swing.JFrame {
         col = table.getColumnModel().getColumn(5);
         col.setCellRenderer(checkBoxRenderer);
 
-        model.addTableModelListener(new CheckBoxModelListener(this));
+        //model.addTableModelListener(new CheckBoxModelListener(this));
     }
 
-    public void frissites() {
+    public void frissites()
+    {
         String w = "1";
         String k = keresesText.getText();
-        if (!k.isEmpty()) {
+        if (!k.isEmpty())
+        {
             w += " && (k.nev LIKE '%" + k + "%' || uf.nev LIKE '%" + k + "%' || k.telefon LIKE '%" + k + "%' || k.email LIKE '%" + k + "%' || k.id = '" + k + "')";
         }
 //        if (PixiRendszer.user.getJogosultsag() == PixiUser.USER) {
@@ -389,31 +409,33 @@ public class KapcsolattartokFrame extends javax.swing.JFrame {
         String[] header = {"Id", "Ügyfél", "Név", "Telefon", "Email", "Pénzügyes", "Kiválaszt"};
 
         Query query = new Query.QueryBuilder()
-                .select("k.id, uf.nev, k.nev, k.telefon, k.email, k.hirlevel, k.penzugyes")
-                .from("pixi_kapcsolattarto k, pixi_ugyfel uf ")
-                .where(" k.ugyfelid = uf.id && " + w + " ")
-                .order("k.nev ASC")
-                .build();
+            .select("co.id, cu.name, co.name, co.telNumber, co.email, co.newsletter, co.finance")
+            .from("szamlazo_contact co, szamlazo_customers cu")
+            .where("co.customerID = cu.id && " + w + " ")
+            .order("co.name ASC")
+            .build();
         Object[][] vector1 = App.db.select(query.getQuery());
 
         Object[][] vector2 = new Object[vector1.length][vector1[0].length + 1];
 
-        for (int i = 0; i < vector1.length; i++) {
-
-            for (int j = 0; j < vector1[0].length; j++) {
+        for (int i = 0; i < vector1.length; i++)
+        {
+            for (int j = 0; j < vector1[0].length; j++)
+            {
                 vector2[i][j] = vector1[i][j];
             }
             int isSelected = Functions.getIntFromObject(vector2[i][6]);
            
-           
-            if (isSelected == 1) {
+            if (isSelected == 1)
+            {
                 vector2[i][5] = true;
-            } else {
+            }
+            else
+            {
                 vector2[i][5] = false;
             }
 
             vector2[i][vector1[0].length - 1] = false;
-
         }
 
         model.setDataVector(vector2, header);
@@ -422,35 +444,45 @@ public class KapcsolattartokFrame extends javax.swing.JFrame {
         TableColumn col;
         CheckBoxRenderer checkBoxRenderer = new CheckBoxRenderer();
         int[] meret = {30, 200, 150, 100, 100};
-        for (int i = 0; i < meret.length; i++) {
+        
+        for (int i = 0; i < meret.length; i++)
+        {
             col = table.getColumnModel().getColumn(i);
             col.setPreferredWidth(meret[i]);
             col.setCellRenderer(render);
 
 //            col.setCellRenderer(render);
         }
+        
         col = table.getColumnModel().getColumn(5);
         col.setCellRenderer(checkBoxRenderer);
 
-        if (kijeloltUgyfelekFrame != null) {
+        if (kijeloltUgyfelekFrame != null)
+        {
             kijeloltUgyfelekFrame.fillUp(produceData());
             kijeloltUgyfelekFrame.sortTable(generateRegex());
         }
     }
 
-    public void setSelected(ArrayList<Integer> ids) {
+    public void setSelected(ArrayList<Integer> ids)
+    {
         table.clearSelection();
-        for (int i = 0; i < table.getRowCount(); i++) {
-            if (ids.contains(Integer.valueOf(String.valueOf(table.getValueAt(i, 0))))) {
+        for (int i = 0; i < table.getRowCount(); i++)
+        {
+            if (ids.contains(Integer.valueOf(String.valueOf(table.getValueAt(i, 0)))))
+            {
 //    		if (ids.contains(table.getValueAt(i, 0))){
                 table.addRowSelectionInterval(i, i);
             }
         }
     }
 
-    private void megnyitas(int row) {
+    private void megnyitas(int row)
+    {
         UjKapcsolattartoDialog ukd = new UjKapcsolattartoDialog(Integer.parseInt(String.valueOf(table.getValueAt(row, 0))));
-        if (ukd.getReturnStatus() == UjKapcsolattartoDialog.RET_OK) {
+        
+        if (ukd.getReturnStatus() == UjKapcsolattartoDialog.RET_OK)
+        {
             frissites();
         }
     }
@@ -459,5 +491,4 @@ public class KapcsolattartokFrame extends javax.swing.JFrame {
         frissites();
         setVisible(true);
     }
-
 }

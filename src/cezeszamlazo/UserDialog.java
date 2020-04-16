@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cezeszamlazo;
 
 import cezeszamlazo.password.Password;
@@ -12,9 +7,6 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.scene.control.PasswordField;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -25,8 +17,8 @@ import javax.swing.KeyStroke;
  *
  * @author szekus
  */
-public class UserDialog extends javax.swing.JDialog {
-
+public class UserDialog extends javax.swing.JDialog
+{
     /**
      * A return status code - returned if Cancel button has been pressed
      */
@@ -184,22 +176,28 @@ public class UserDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
+        try
+        {
             String passwordString_1 = new String(passwordField_1.getPassword());
             String passwordString_2 = new String(passwordField_2.getPassword());
 
             password_1 = password_1.createPasswordString(passwordString_1, passwordRules);
             password_1.comparePassword(passwordString_2);
-        } catch (PasswordRulesException ex) {
+        }
+        catch (PasswordRulesException ex)
+        {
             HibaDialog h = new HibaDialog(ex.getMessage(), "Ok", "");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void showPassCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPassCheckboxActionPerformed
-        if (showPassCheckbox.isSelected()) {
+        if (showPassCheckbox.isSelected())
+        {
             passwordField_1.setEchoChar((char) 0);
             passwordField_2.setEchoChar((char) 0);
-        } else {
+        }
+        else
+        {
             passwordField_1.setEchoChar('*');
             passwordField_2.setEchoChar('*');
         }
@@ -212,7 +210,8 @@ public class UserDialog extends javax.swing.JDialog {
         passwordField_2.setText(generatedPassword);
     }//GEN-LAST:event_passwordGenerateButtonActionPerformed
 
-    public UserDialog() {
+    public UserDialog()
+    {
         initComponents();
         init();
 
@@ -235,6 +234,7 @@ public class UserDialog extends javax.swing.JDialog {
         String cancelName = "cancel";
         InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        
         ActionMap actionMap = getRootPane().getActionMap();
         actionMap.put(cancelName, new AbstractAction() {
 
@@ -244,7 +244,8 @@ public class UserDialog extends javax.swing.JDialog {
         });
     }
 
-    private void doClose(int retStatus) {
+    private void doClose(int retStatus)
+    {
         returnStatus = retStatus;
         setVisible(false);
         dispose();
@@ -270,17 +271,17 @@ public class UserDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox showPassCheckbox;
     // End of variables declaration//GEN-END:variables
 
-    private void init() {
-
+    private void init()
+    {
         password_1 = Password.create();
 
         passwordRules = new PasswordRules.PasswordRulesBuilder()
-                .compare("A két jelszó nem egyezik!")
-                .empty("A jelszó mező nem lehet üres!")
-                .minLength(6, "A jelszónak mimimum 6 karekter hosszúnak kell lennie!")
-                .maxLength(12, "A jelszó maximum 12 karakter hosszú lehe!t")
-                .minNumberOfNumber(2, "A jelszónak legalább 2 számot kell tartalmaznia!")
-                .minUpperCaseCharacter(2, "A jelszónak legalább 2 nagybetűs karakter kell tartalmaznia!")
-                .build();
+            .compare("A két jelszó nem egyezik!")
+            .empty("A jelszó mező nem lehet üres!")
+            .minLength(6, "A jelszónak mimimum 6 karekter hosszúnak kell lennie!")
+            .maxLength(12, "A jelszó maximum 12 karakter hosszú lehe!t")
+            .minNumberOfNumber(2, "A jelszónak legalább 2 számot kell tartalmaznia!")
+            .minUpperCaseCharacter(2, "A jelszónak legalább 2 nagybetűs karakter kell tartalmaznia!")
+            .build();
     }
 }

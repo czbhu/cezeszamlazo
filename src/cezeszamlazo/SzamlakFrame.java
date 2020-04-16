@@ -17,6 +17,7 @@ import invoice.Invoice;
 import invoice.Invoice.InvoiceType;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
@@ -30,6 +31,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -83,7 +85,15 @@ public class SzamlakFrame extends javax.swing.JFrame
         String workingDir = System.getProperty("user.dir");
         //System.err.println(workingDir + " SzamlakFrame/SzamlakFrame()");
         File [] folders = {new File(workingDir + "/dokumentumok/csatolmanyok/kintlevoseg/"), new File(workingDir)};
-        deletePDFs(folders);
+        
+        try
+        {
+            deletePDFs(folders);
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
     
     private boolean GLSAvailable()
@@ -1983,7 +1993,7 @@ private void csvKeszitesEgyszeruMenuItemActionPerformed(java.awt.event.ActionEve
     }//GEN-LAST:event_table_InvoicesMousePressed
 
     private void comboBox_SortItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBox_SortItemStateChanged
-        if(!comboboxUpdate)
+        if(!comboboxUpdate && evt.getStateChange() == ItemEvent.SELECTED)
         {
             frissites();
         }
@@ -2110,8 +2120,8 @@ private void csvKeszitesEgyszeruMenuItemActionPerformed(java.awt.event.ActionEve
         int x = (screenSize.width - getWidth()) / 2;
         int y = (screenSize.height - getHeight()) / 2;
 
-        java.net.URL url = ClassLoader.getSystemResource("cezeszamlazo/resources/print_20.png");
-        java.awt.Image img = toolkit.createImage(url);
+        URL url = ClassLoader.getSystemResource("cezeszamlazo/resources/print_20.png");
+        Image img = toolkit.createImage(url);
 
         nyomtatasDialog.setSize(nyomtatasDialog.getPreferredSize().width, nyomtatasDialog.getPreferredSize().height + 35);
         nyomtatasDialog.setIconImage(img);
@@ -2197,17 +2207,14 @@ private void csvKeszitesEgyszeruMenuItemActionPerformed(java.awt.event.ActionEve
         {
             File[] listOfFiles = folders[i].listFiles();
             
-            if(listOfFiles != null)
+            for(int j = 0; j < listOfFiles.length; j++)
             {
-                for(int j = 0; j < listOfFiles.length; j++)
-                {
-                    String fileName = listOfFiles[j].getName();
-                    String extension = FilenameUtils.getExtension(fileName);
+                String fileName = listOfFiles[j].getName();
+                String extension = FilenameUtils.getExtension(fileName);
 
-                    if(extension.equals("pdf"))
-                    {
-                        listOfFiles[j].delete();
-                    }
+                if(extension.equals("pdf"))
+                {
+                    listOfFiles[j].delete();
                 }
             }
         }
@@ -2439,6 +2446,7 @@ private void csvKeszitesEgyszeruMenuItemActionPerformed(java.awt.event.ActionEve
 
     public void frissites()
     {
+        System.err.println(comboBox_Sort.getSelectedIndex());
         keres = "1";
         
         Calendar now = Calendar.getInstance();
@@ -2447,13 +2455,13 @@ private void csvKeszitesEgyszeruMenuItemActionPerformed(java.awt.event.ActionEve
         switch(comboBox_Sort.getSelectedIndex())
         {
             case 0:
-                keres += " && i.invoiceNumber LIKE '%" + currentYear + "%'";
+                keres += " && i.invoiceNumber LIKE '%" + (currentYear) + "%'";
                 break;
             case 1:
                 keres += " && i.invoiceNumber LIKE '%" + (currentYear - 1) + "%'";
                 break;
             case 2:
-                keres += " && i.invoiceNumber LIKE '%" + currentYear + "%' OR i.invoiceNumber LIKE '%" + (currentYear - 1) + "%'";
+                keres += " && i.invoiceNumber LIKE '%" + (currentYear) + "%' OR i.invoiceNumber LIKE '%" + (currentYear - 1) + "%'";
                 break;
             case 3:
                 
